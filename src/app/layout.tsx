@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { SpeedInsights } from "@vercel/speed-insights/next"
 import { Theme, ThemePanel } from '@radix-ui/themes';
 // import '@radix-ui/themes/styles.css';
 import "./globals.css";
