@@ -4,9 +4,9 @@ import { Theme, ThemePanel } from '@radix-ui/themes';
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Project Blueprint",
-  description: "A Next.js Template with Tailwind, ESLint, and Radix UI",
-  keywords: "Next.js, Tailwind CSS, ESLint, Radix UI",
+  title: "Test Crafters",
+  description: "A website for cuet students to give CUET mock tests.",
+  keywords: "CUET, Mock Tests, Online Tests",
   authors: [{ name: "Shreyas Ramachandran" }]
 };
 
