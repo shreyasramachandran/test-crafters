@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 
 // Target date for countdown (Year, Month (0-indexed), Day, Hour, Minute)
-const targetDate = new Date(2024, 3, 14, 12, 0).getTime();
+const targetDate = new Date(2024, 3, 17, 12, 0).getTime();
 
 export default function Home() {
   const [countdown, setCountdown] = useState({
