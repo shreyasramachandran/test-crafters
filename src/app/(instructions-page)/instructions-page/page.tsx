@@ -10,11 +10,11 @@ export default function Page() {
                 <Box className="bg-[#0249F5] bg-opacity-[0.099]" height='32px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <Text size='5' weight='regular' wrap='pretty' >Instructions</Text>
                 </Box>
-                <Box className="bg-[#0249F5] bg-opacity-[0.099]" height='32px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Box className="py-8" height='32px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <Text size='6' weight='light' wrap='pretty' >Please read the instructions carefully</Text>
                 </Box>
-                <Box className="bg-[#0249F5] bg-opacity-[0.099] pl-6" height='32px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
-                    <Text size='6' weight='medium' wrap='pretty' >General Instructions</Text>
+                <Box className="pl-6 py-8" height='42px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
+                    <Text size='6' weight='regular' wrap='pretty' >General Instructions</Text>
                 </Box>
                 <Box className="pl-6" flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
                     <div style={{ padding: '1rem' }}>
@@ -53,7 +53,7 @@ export default function Page() {
                         </ol>
                     </div>
                 </Box>
-                <Box className="pl-6" height='32px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
+                <Box className="pl-6 py-6" height='64px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
                     <Text color="red" size='3' weight='light' wrap='pretty' >Please note all questions will appear in your default language.
                         This language can be changed for a particular question later on.</Text>
                 </Box>
@@ -61,15 +61,14 @@ export default function Page() {
                     <label className="flex items-start space-x-2">
                         <input type="checkbox" className="form-checkbox text-blue-500 h-4 w-4 mt-1" />
                         <span className="text-gray-800">
-                            I have read and understood the instructions. All computer hardware allotted to me are in proper working condition.
-                            I declare that I am not in possession of / not wearing / not carrying any prohibited gadget like mobile phone, bluetooth devices etc. /
-                            any prohibited material with me into the Examination Hall. I agree that in case of not adhering to the instructions, I shall be liable
-                            to be debarred from this Test and/or to disciplinary action, which may include ban from future Tests / Examinations
+                            I have read and understood the instructions. My computer hardware are in proper working condition.
+                            I declare that I am not using any prohibited gadget like mobile phone, bluetooth devices etc. while giving the test. I agree that in case of not adhering to the instructions, I shall be liable
+                            to be debarred from this test and/or to disciplinary action, which may include ban from future tests/examinations.
                         </span>
                     </label>
                 </Box>
                 <Box className="p-4" style={{ height: '20%', width: '20%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                    <Button className="w-full h-full" size="3" variant='classic'>I am ready to begin</Button>
+                    <Button className="w-full h-full" size="3" variant='solid'>I am ready to begin</Button>
                 </Box>
             </Flex>
         </ScrollArea >
