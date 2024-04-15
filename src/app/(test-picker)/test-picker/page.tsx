@@ -7,7 +7,7 @@ export default function Page() {
     return (
         <Flex className="bg-[#F6F7FB]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
             <Box className="bg-white" style={{ 'height': '80%', 'width': '30%', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
-                <Flex className="h-full" direction='column' justify='center' py='8'>
+                <Flex className="h-full" direction='column' justify='center' py='9'>
                     <Box style={{ 'height': '10%', 'width': '47%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <Text size='6' weight='bold' wrap='pretty'>Pick a test</Text>
                     </Box>
