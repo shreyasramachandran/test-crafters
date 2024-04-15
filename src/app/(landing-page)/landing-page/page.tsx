@@ -6,7 +6,7 @@ export default function Page() {
             <Flex direction='column'>
                 <Box className="bg-white" height='64px' flexGrow='1' style={{ position: 'sticky', top: 0, zIndex: 10 }}>
                     <Flex className="h-full" justify='between' align='center' px='6'>
-                        <Text color='indigo' size='7' weight='bold' wrap='pretty'>TestCrafters</Text>
+                        <Text color='indigo' size='7' weight='bold' wrap='pretty'>Word Play Edu</Text>
                         <Flex className="h-full" gap='4' justify='center' align='center'>
                             <Text color='gray' size='5' weight='medium' wrap='pretty'>Features</Text>
                             <Text color='gray' size='5' weight='medium' wrap='pretty'>How It Works</Text>
