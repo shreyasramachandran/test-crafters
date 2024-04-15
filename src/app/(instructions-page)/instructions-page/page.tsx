@@ -26,10 +26,10 @@ export default function Page() {
                                 <li>You have not answered the question.</li>
                                 <li>You have answered the question.</li>
                                 <li>You have NOT answered the question, but have marked the question for review.</li>
-                                <li>The question(s) 'Answered and Marked for Review' will be considered for evaluation.</li>
+                                <li>The question(s) &apos;Answered and Marked for Review&apos; will be considered for evaluation.</li>
                             </ul>
                             <li>You can click on the &gt; arrow which appears to the left of question palette to collapse the question palette thereby maximizing the question window. To view the question palette again, you can click on &lt; which appears on the right side of question window.</li>
-                            <li>You can click on your 'Profile' image on top right corner of your screen to change the language during the exam for entire question paper. On clicking of Profile image you will get a drop-down to change the question content to the desired language.</li>
+                            <li>You can click on your &apos;Profile&apos; image on top right corner of your screen to change the language during the exam for entire question paper. On clicking of Profile image you will get a drop-down to change the question content to the desired language.</li>
                             <li>You can click on to navigate to the bottom and to navigate to top of the question area, without scrolling.</li>
                             <li>To answer a question, do the following:</li>
                             <ul className="list-[lower-alpha] pl-4">

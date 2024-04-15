@@ -50,7 +50,7 @@ export default function Page() {
                         <Text color='gray' size='2' weight='regular' wrap='pretty'>Forgot password?</Text>
                     </Box>
                     <Box className="pt-4 gap-3" style={{ 'height': '5%', 'width': '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                        <Text color='gray' size='2' weight='regular' wrap='pretty'>Don't have an account?</Text>
+                        <Text color='gray' size='2' weight='regular' wrap='pretty'>Don&apos;t have an account?</Text>
                         <Text color='gray' size='2' weight='regular' wrap='pretty'>Sign Up</Text>
                     </Box>
                 </Flex>
