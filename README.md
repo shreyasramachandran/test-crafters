@@ -4,7 +4,6 @@ TestCrafters is a website for cuet students to give mock tests.
 ## Features
 Comprehensive Mock Tests: We have a comprehensive list of mock tests for students to give.
 Instant Analysis: Get instant analysis of test after completing them.
-Absolutely Free: Absolutely free of cost.
 
 ## Getting Started
 To create a new project based on this blueprint:
