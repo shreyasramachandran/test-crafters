@@ -64,7 +64,7 @@ export default function Page() {
                         <Text color='gray' size='2' weight='regular' wrap='pretty'>Sign In</Text>
                     </Box>
                     <Box style={{ 'height': '8%', 'width': '77%', display: 'flex', textAlign: 'center', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                        <Text color='gray' size='2' weight='regular' wrap='pretty'>By continuing you agree to Word Play Edu&#x2019;s Terms of Service and Privacy Policy</Text>
+                        <Text color='gray' size='2' weight='regular' wrap='pretty'>By continuing you agree to Cuet Test Crafter&#x2019;s Terms of Service and Privacy Policy</Text>
                     </Box>
                 </Flex>
             </Box >
