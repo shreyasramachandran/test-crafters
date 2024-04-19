@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react';
 
 // Target date for countdown (Year, Month (0-indexed), Day, Hour, Minute)
-const targetDate = new Date(2024, 3, 14, 12, 0).getTime();
+const targetDate = new Date(2024, 3, 20, 12, 0).getTime();
 
 export default function Home() {
   const [countdown, setCountdown] = useState({
@@ -37,7 +37,7 @@ export default function Home() {
   return (
     <main className="min-h-screen flex flex-col items-center justify-center p-24 bg-gradient-to-r from-indigo-200 via-purple-300 to-indigo-300">
       <header className="absolute top-12 left-12">
-        <h1 className="text-4xl font-bold text-gray-700">WordPlayEdu</h1>
+        <h1 className="text-4xl font-bold text-gray-700">Cuet Test Crafters</h1>
       </header>
       <div className="flex flex-1 flex-col items-center justify-center text-center">
         <h2 className="text-6xl font-bold mb-8">We Are Coming Soon</h2>
