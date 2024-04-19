@@ -4,7 +4,7 @@ import React, { useState, useEffect } from 'react';
 
 // Target date for countdown (Year, Month (0-indexed), Day, Hour, Minute)
 
-const targetDate = new Date(2024, 3, 20, 12, 0).getTime();
+const targetDate = new Date(2024, 3, 21, 23, 59).getTime();
 
 
 
