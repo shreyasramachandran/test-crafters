@@ -40,3 +40,6 @@ next-env.d.ts
 
 # cherry blossom
 /public/cherry-blossom.avif
+
+# Keys
+/keys
