@@ -2,10 +2,13 @@
 import { Flex, Box, Text, Button } from "@radix-ui/themes"
 import ContinueWithGoogle from "@/app/components/ContinueWithGoogle"
 import useAuth from "@/app/hooks/useAuth"
+import { useState } from 'react';
 
 export default function Page() {
     // Get isAuthenticated in case you need to use it for future operations
     const isAuthenticated = useAuth();
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     return (
         <Flex className="bg-[#F6F7FB]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
@@ -29,6 +32,8 @@ export default function Page() {
                             type="text"
                             className="border border-solid border-[#79747E] bg-white h-10 px-5  text-sm focus:outline-none"
                             placeholder="Email"
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                             style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px' }}
                         />
                     </Box>
@@ -37,6 +42,8 @@ export default function Page() {
                             type="text"
                             className="border border-solid border-[#79747E] bg-white h-10 px-5  text-sm focus:outline-none"
                             placeholder="Password"
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                             style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px' }}
                         />
                         <button className="absolute mr-4">

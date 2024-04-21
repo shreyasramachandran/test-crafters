@@ -34,9 +34,9 @@ export default function Page() {
             }
 
             console.log('Received OAuth Tokens:', responseData);
-            sessionStorage.setItem('access_token', responseData.access_token);
-            sessionStorage.setItem('refresh_token', responseData.refresh_token);
-            sessionStorage.setItem('expires_in', responseData.expires_in);
+            localStorage.setItem('access_token', responseData.access_token);
+            localStorage.setItem('refresh_token', responseData.refresh_token);
+            localStorage.setItem('expires_in', responseData.expires_in);
             router.replace('/test-picker'); // redirect to test picker on success
         } catch (error: any) {
             console.error('Error in OAuth token fetching:', error);

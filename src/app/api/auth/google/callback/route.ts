@@ -40,8 +40,6 @@ export async function POST(request: Request, context: any) {
         const tokenData = await googleResponse.json();
         console.log('Token fetched successfully')
 
-        // Optionally store the tokens in your database or session
-
         // Return the token data to the client or handle accordingly
         return new Response(JSON.stringify(tokenData), {
             status: 200,
