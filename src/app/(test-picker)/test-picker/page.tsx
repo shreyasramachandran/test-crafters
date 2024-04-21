@@ -1,12 +1,25 @@
 'use client'
 import useAuth from "@/app/hooks/useAuth";
 import { Flex, Box, Text, DropdownMenu, Button } from "@radix-ui/themes"
+import { useState } from 'react';
 
 export default function Page() {
     // Get isAuthenticated in case you need to use it for future operations
     const isAuthenticated = useAuth();
     const subjects = ['English', 'Hindi', 'Mathematics', 'Physics', 'Chemistry']
     const languages = ['English', 'Hindi']
+
+    const [selectedSubject, setSelectedSubject] = useState("Subject");
+    const [selectedLanguage, setSelectedLanguage] = useState("Language");
+
+    // Event handlers to update the respective state variables
+    const handleSubjectChange = (subject: string) => {
+        setSelectedSubject(subject);
+    };
+
+    const handleLanguageChange = (language: string) => {
+        setSelectedLanguage(language);
+    };
 
     return (
         <Flex className="bg-[#F6F7FB]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
@@ -20,7 +33,7 @@ export default function Page() {
                             <DropdownMenu.Root>
                                 <DropdownMenu.Trigger>
                                     <button className="flex justify-between items-center px-4 py-2 bg-skyblue-200 border border-solid border-[#79747E] rounded-lg text-gray-700 shadow-sm w-full h-full">
-                                        Subject
+                                        {selectedSubject}
                                         <span className="ml-2">
                                             <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
@@ -30,7 +43,7 @@ export default function Page() {
                                 </DropdownMenu.Trigger>
                                 <DropdownMenu.Content className="bg-white shadow-lg rounded-md py-1 mt-1">
                                     {subjects.map((subject) => (
-                                        <DropdownMenu.Item key={subject} className="px-4 py-2 text-sm text-gray-700 hover:bg-skyblue-100">
+                                        <DropdownMenu.Item key={subject} onSelect={() => handleSubjectChange(subject)} className="px-4 py-2 text-sm text-gray-700 hover:bg-skyblue-100">
                                             {subject}
                                         </DropdownMenu.Item>
                                     ))}
@@ -41,7 +54,7 @@ export default function Page() {
                             <DropdownMenu.Root>
                                 <DropdownMenu.Trigger>
                                     <button className="flex justify-between items-center px-4 py-2 bg-skyblue-200 border border-solid border-[#79747E] rounded-lg text-gray-700 shadow-sm w-full h-full">
-                                        Language
+                                        {selectedLanguage}
                                         <span className="ml-2">
                                             <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
@@ -51,7 +64,7 @@ export default function Page() {
                                 </DropdownMenu.Trigger>
                                 <DropdownMenu.Content className="bg-white shadow-lg rounded-md py-1 mt-1">
                                     {languages.map((language) => (
-                                        <DropdownMenu.Item key={language} className="px-4 py-2 text-sm text-gray-700 hover:bg-skyblue-100">
+                                        <DropdownMenu.Item key={language} onSelect={() => handleLanguageChange(language)} className="px-4 py-2 text-sm text-gray-700 hover:bg-skyblue-100">
                                             {language}
                                         </DropdownMenu.Item>
                                     ))}

@@ -123,23 +123,23 @@ export default function Page() {
                 return updatedPalette;
             });
         }
-        else {
-            if (action == 'notAnswered') {
-                const nextQuestionIndex = index
-                // Update legend counts based on action
-                setLegendCounts(prevCounts => ({
-                    ...prevCounts,
-                    [action]: prevCounts[action as LegendAction] + 1
-                }));
-                // Update the question palette
-                const updatedQuestionPalette = [...questionPalette];
-                updatedQuestionPalette[nextQuestionIndex].state = QuestionState.NotAnswered
-                setQuestionPalette(updatedQuestionPalette)
-                // Change the currentQuestionNumber
-                setCurrentQuestionNumber(nextQuestionIndex + 1)
 
-            }
+        if (action == 'notAnswered') {
+            const nextQuestionIndex = index
+            // Update legend counts based on action
+            setLegendCounts(prevCounts => ({
+                ...prevCounts,
+                [action]: prevCounts[action as LegendAction] + 1
+            }));
+            // Update the question palette
+            const updatedQuestionPalette = [...questionPalette];
+            updatedQuestionPalette[nextQuestionIndex].state = QuestionState.NotAnswered
+            setQuestionPalette(updatedQuestionPalette)
+            // Change the currentQuestionNumber
+            setCurrentQuestionNumber(nextQuestionIndex + 1)
+
         }
+
     };
 
 
