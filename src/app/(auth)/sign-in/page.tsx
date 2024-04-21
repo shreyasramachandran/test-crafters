@@ -1,6 +1,11 @@
+'use client'
 import { Flex, Box, Text, Button } from "@radix-ui/themes"
+import ContinueWithGoogle from "@/app/components/ContinueWithGoogle"
+import useAuth from "@/app/hooks/useAuth"
 
 export default function Page() {
+    // Get isAuthenticated in case you need to use it for future operations
+    const isAuthenticated = useAuth();
 
     return (
         <Flex className="bg-[#F6F7FB]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
@@ -10,10 +15,7 @@ export default function Page() {
                         <Text size='6' weight='bold' wrap='pretty'>Sign In</Text>
                     </Box>
                     <Box style={{ 'height': '12%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                        <button className="inline-flex items-center justify-center px-4 py-2 border border-solid border-[#79747E] shadow-sm text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 w-full">
-                            <img src="google_icon.svg" alt="Google Sign-In" className="w-5 h-6 mr-2" />
-                            Continue with Google
-                        </button>
+                        <ContinueWithGoogle />
                     </Box>
                     <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                         <div className="flex items-center justify-center w-full">

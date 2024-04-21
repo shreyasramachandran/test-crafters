@@ -1,6 +1,10 @@
+'use client'
+import useAuth from "@/app/hooks/useAuth";
 import { Flex, Box, Text, DropdownMenu, Button } from "@radix-ui/themes"
 
 export default function Page() {
+    // Get isAuthenticated in case you need to use it for future operations
+    const isAuthenticated = useAuth();
     const subjects = ['English', 'Hindi', 'Mathematics', 'Physics', 'Chemistry']
     const languages = ['English', 'Hindi']
 

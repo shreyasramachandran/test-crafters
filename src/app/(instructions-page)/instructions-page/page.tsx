@@ -1,6 +1,11 @@
+'use client'
+import useAuth from "@/app/hooks/useAuth";
 import { Flex, Box, ScrollArea, Text, Button } from "@radix-ui/themes";
 
+
 export default function Page() {
+    // Get isAuthenticated in case you need to use it for future operations
+    const isAuthenticated = useAuth();
     return (
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh' }}>
             <Flex className="bg-[#F6F7FB]" direction='column'>
