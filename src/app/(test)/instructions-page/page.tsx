@@ -1,11 +1,105 @@
 'use client'
 import useAuth from "@/app/hooks/useAuth";
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Flex, Box, ScrollArea, Text, Button } from "@radix-ui/themes";
+import { useCallback, useEffect, useState } from 'react';
+import db, { ISubject } from '@/app/utils/index-db/operations';
 
 
 export default function Page() {
+    const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
     // Get isAuthenticated in case you need to use it for future operations
     const isAuthenticated = useAuth();
+    const router = useRouter();
+    const searchParams = useSearchParams()
+
+    const database = process.env.NEXT_PUBLIC_SQL_SERVER_DATABASE_NAME
+    const subject = searchParams.get('subject') as string
+    const language = searchParams.get('language')
+    // duration later populated via indexDB
+    const duration = '45 min'
+    const maxQuestions = 50
+
+    const [data, setData] = useState<ISubject[]>();
+
+    // Get a new searchParams string by merging the current
+    // searchParams with a provided key/value pair
+    const createQueryString = useCallback(
+        (searchParams: URLSearchParams, queryParams: Record<string, any>) => {
+            const params = new URLSearchParams(searchParams.toString())
+            // Add each query parameter to the URLSearchParams object
+            Object.entries(queryParams).forEach(([name, value]) => {
+                params.set(name, value);
+            });
+
+            return params.toString();
+        },
+        []
+    );
+
+    async function fetchData() {
+        // console.log("This is the userId", userId);
+        try {
+            const res = await fetch(`${baseUrl}/get-data`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache",
+                },
+                body: JSON.stringify({ database: database, table: subject }),
+
+            });
+            // Ensure proper error handling
+            if (!res.ok) {
+                // Handle errors, e.g., return an error response
+                return new Response(JSON.stringify({ error: "Error fetching data" }), {
+                    status: res.status,
+                    headers: { "Content-Type": "application/json" },
+                });
+            }
+            const responseData = await res.json();
+            console.log(responseData)
+            setData(responseData);
+            // await db.deleteDatabase()
+            await db.createTableIfNotExists(subject);
+            await db.addRecords(subject, responseData.data)
+            // const qsr = await db.getRecords(subject)
+            // console.log(qsr)
+        }
+        catch (error) {
+            // Handle other errors
+            console.error("Error fetching data:", error);
+        }
+    }
+
+    useEffect(() => {
+
+        // Ensure this runs only client-side
+        if (typeof window !== 'undefined') {
+            db.createTableIfNotExists('newTableName')
+                .then(() => console.log('Table created or already exists'))
+                .catch(err => console.error('Error creating table:', err));
+        }
+        fetchData()
+        // Store data if not empty into indexDB
+
+    }, [])
+
+    const [isChecked, setIsChecked] = useState(false);
+
+    const handleCheckboxChange = (event: any) => {
+        setIsChecked(event.target.checked);
+    };
+
+    const handleButtonClick = () => {
+        if (isChecked) {
+            const queryString = createQueryString(searchParams, { questionNumber: 1 });
+            router.push('/question' + '?' + queryString);
+        } else {
+            alert('Please check the box to indicate that you have read and understood the instructions.');
+        }
+    };
+
     return (
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh' }}>
             <Flex className="bg-[#F6F7FB]" direction='column'>
@@ -24,7 +118,7 @@ export default function Page() {
                 <Box className="pl-6" flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
                     <div style={{ padding: '1rem' }}>
                         <ol className="list-decimal">
-                            <li>Total duration of English Paper is 45 min.</li>
+                            <li>Total duration of {subject} Paper is {duration}.</li>
                             <li>The Questions Palette displayed on the right side of the screen will show the status of each question using one of the following symbols:</li>
                             <ul className="list-[lower-alpha] pl-4">
                                 <li>You have not visited the question yet.</li>
@@ -59,12 +153,13 @@ export default function Page() {
                     </div>
                 </Box>
                 <Box className="pl-6 py-6" height='64px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
-                    <Text color="red" size='3' weight='light' wrap='pretty' >Please note all questions will appear in your default language.
-                        This language can be changed for a particular question later on.</Text>
+                    <Text color="red" size='3' weight='light' wrap='pretty' >Please note all questions will appear in {language}.
+                        This language is fixed and cannot be changed later on.</Text>
                 </Box>
                 <Box className="pl-6" flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
                     <label className="flex items-start space-x-2">
-                        <input type="checkbox" className="form-checkbox text-blue-500 h-4 w-4 mt-1" />
+                        <input id="proceed-checkbox" type="checkbox" className="form-checkbox text-blue-500 h-4 w-4 mt-1" onChange={handleCheckboxChange}
+                            checked={isChecked} />
                         <span className="text-gray-800">
                             I have read and understood the instructions. My computer hardware are in proper working condition.
                             I declare that I am not using any prohibited gadget like mobile phone, bluetooth devices etc. while giving the test. I agree that in case of not adhering to the instructions, I shall be liable
@@ -73,7 +168,7 @@ export default function Page() {
                     </label>
                 </Box>
                 <Box className="p-4" style={{ height: '20%', width: '20%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                    <Button className="w-full h-full" size="3" variant='solid'>I am ready to begin</Button>
+                    <Button className="w-full h-full" size="3" variant='solid' onClick={handleButtonClick}>I am ready to begin</Button>
                 </Box>
             </Flex>
         </ScrollArea >

@@ -1,10 +1,13 @@
 'use client'
 import { useEffect, useState } from 'react';
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 
 export default function useAuth() {
     const router = useRouter();
-    let returnUrl = usePathname();
+    const pathName = usePathname();
+    const searchParams = useSearchParams()
+    let returnUrl = pathName + '?' + searchParams
+
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
     async function checkTokenValidity() {
@@ -24,8 +27,8 @@ export default function useAuth() {
         accessToken = await refreshAccessToken(refreshToken);
         if (!accessToken) return false;  // Refresh failed, return false
 
-        // Verify the new access token's validity
-        isValid = await validateToken(accessToken);
+        // Set the validity to true
+        isValid = true
         return isValid;  // Return true if the new token is valid, otherwise false
     }
 
@@ -84,10 +87,8 @@ export default function useAuth() {
             if (!isValid) {
                 // Redirect to the sign-in page and save the current path for redirect after login
                 if (returnUrl === '/sign-in' || returnUrl === '/sign-up') {
-                    returnUrl = '/'; // Redirect to home if the current page is sign-in
+                    router.push(`${returnUrl}?returnUrl=${encodeURIComponent('/')}`); // Redirect to home if the current page is sign-in
                 }
-
-                router.push(`/sign-in?returnUrl=${encodeURIComponent(returnUrl)}`);
             }
         };
 

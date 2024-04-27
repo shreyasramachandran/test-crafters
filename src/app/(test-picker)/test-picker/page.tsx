@@ -1,10 +1,32 @@
 'use client'
 import useAuth from "@/app/hooks/useAuth";
+import { useRouter, useSearchParams } from 'next/navigation';
 import { Flex, Box, Text, DropdownMenu, Button } from "@radix-ui/themes"
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 
 export default function Page() {
     // Get isAuthenticated in case you need to use it for future operations
+    const router = useRouter();
+    const searchParams = useSearchParams()
+
+    // Get a new searchParams string by merging the current
+    // searchParams with a provided key/value pair
+    const createQueryString = useCallback(
+        (searchParams: URLSearchParams, queryParams: Record<string, string>) => {
+            const params = new URLSearchParams(searchParams.toString())
+
+
+            // Add each query parameter to the URLSearchParams object
+            Object.entries(queryParams).forEach(([name, value]) => {
+                params.set(name, value);
+            });
+
+            return params.toString();
+        },
+        []
+    );
+
+
     const isAuthenticated = useAuth();
     const subjects = ['English', 'Hindi', 'Mathematics', 'Physics', 'Chemistry']
     const languages = ['English', 'Hindi']
@@ -74,7 +96,11 @@ export default function Page() {
                     </Flex>
                     <Flex className="h-full" direction='column' justify='center' gap='4'>
                         <Box style={{ 'height': '20%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                            <Button style={{ 'height': '100%', 'width': '100%', borderRadius: '5px' }} size="3" variant='solid'>Start Mock Test</Button>
+                            <Button style={{ 'height': '100%', 'width': '100%', borderRadius: '5px' }} size="3" variant='solid' onClick={() => {
+                                const queryString = createQueryString(searchParams, { subject: 'english', language: 'english' });
+                                router.push('/instructions-page' + '?' + queryString)
+                            }}>Start Mock Test
+                            </Button>
                         </Box>
                         <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                             <div className="flex items-center justify-center w-full">

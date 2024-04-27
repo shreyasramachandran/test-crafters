@@ -2,6 +2,8 @@
 import { Flex, Box, Text, Button } from "@radix-ui/themes"
 import ContinueWithGoogle from "@/app/components/ContinueWithGoogle"
 import useAuth from "@/app/hooks/useAuth"
+import Link from 'next/link';
+
 
 export default function Page() {
     // Get isAuthenticated in case you need to use it for future operations
@@ -48,12 +50,14 @@ export default function Page() {
                     <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                         <Button style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px' }} size="3" variant='solid'>Sign In</Button>
                     </Box>
-                    <Box className="pt-4" style={{ 'height': '3%', 'width': '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                    {/* <Box className="pt-4" style={{ 'height': '3%', 'width': '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                         <Text color='gray' size='2' weight='regular' wrap='pretty'>Forgot password?</Text>
-                    </Box>
+                    </Box> */}
                     <Box className="pt-4 gap-3" style={{ 'height': '5%', 'width': '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                         <Text color='gray' size='2' weight='regular' wrap='pretty'>Don&apos;t have an account?</Text>
-                        <Text color='gray' size='2' weight='regular' wrap='pretty'>Sign Up</Text>
+                        <Link href="/sign-up">
+                            <Text color='gray' size='2' weight='regular' wrap='pretty'>Sign Up</Text>
+                        </Link>
                     </Box>
                 </Flex>
             </Box >

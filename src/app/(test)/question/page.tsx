@@ -1,13 +1,20 @@
 "use client"
 import useAuth from "@/app/hooks/useAuth";
 import { Flex, Box, Text, Button, RadioGroup } from "@radix-ui/themes";
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import db from '@/app/utils/index-db/operations';
+import { useSearchParams } from 'next/navigation';
 
 export default function Page() {
     // Get isAuthenticated in case you need to use it for future operations
     const isAuthenticated = useAuth();
+    const searchParams = useSearchParams()
+
+    // Define currentQuestionNumber
     const [currentQuestionNumber, setCurrentQuestionNumber] = useState(1);
-    const [selectedOption, setSelectedOption] = useState("");
+    // Define selectedOption
+    const [selectedOption, setSelectedOption] = useState(-1);
+    // Define legendCounts
     const [legendCounts, setLegendCounts] = useState({
         notVisited: 50, // Assuming 50 questions initially
         notAnswered: 0,
@@ -16,6 +23,9 @@ export default function Page() {
         answeredAndMarkedForReview: 0
     });
 
+    type LegendAction = keyof typeof legendCounts;
+
+    // Define questionPalette
     // Define an enum for the possible states of a question
     enum QuestionState {
         NotVisited = 'notVisited',
@@ -29,25 +39,69 @@ export default function Page() {
     type QuestionPaletteItem = {
         index: number;
         state: QuestionState;
+        selectedAnswer: number;
     };
 
     // Define the initial state for the question palette
     const initialQuestionPaletteState: QuestionPaletteItem[] = Array.from({ length: 50 }).map((_, mapIndex) => ({
         index: mapIndex,
-        state: QuestionState.NotVisited // Initially set all questions to 'NotVisited'
+        state: QuestionState.NotVisited, // Initially set all questions to 'NotVisited'
+        selectedAnswer: -1
     }));
 
-    const [questionPalette, setQuestionPalette] = useState<QuestionPaletteItem[]>(initialQuestionPaletteState);
-    const question = 'Find out one substitution for the following phrase from the options given below "Never done or known before".'
-    const options = ['Unprecedented', 'Unpronounceable', 'Unprotected', 'Unquiet']
-
-    type LegendAction = keyof typeof legendCounts;
-
-    const incrementCurrentQuestionNumber = (incrementCount: number, action: LegendAction) => {
-        if (selectedOption != "") {
-            setCurrentQuestionNumber(prevQuestionNumber => prevQuestionNumber + incrementCount);
-        }
+    // Mapping of QuestionState to the corresponding keys in legendCounts
+    const stateToLegendAction = {
+        [QuestionState.NotVisited]: 'notVisited',
+        [QuestionState.Answered]: 'answered',
+        [QuestionState.NotAnswered]: 'notAnswered',
+        [QuestionState.MarkedForReview]: 'markedForReview',
+        [QuestionState.AnsweredAndMarkedForReview]: 'answeredAndMarkedForReview'
     };
+
+    const [questionPalette, setQuestionPalette] = useState<QuestionPaletteItem[]>(initialQuestionPaletteState);
+
+    // Define question and options
+    const [question, setQuestion] = useState('');
+    const [options, setOptions] = useState<string[]>([]);
+
+    // This useEffect is so that whenever selected option gets updated the selectedAnswer in questionPalette should also get updated
+    useEffect(() => {
+        if (selectedOption !== undefined) {
+            updateSelectedAnswerInQuestionItems(selectedOption);
+        }
+    }, [selectedOption]);
+
+    function updateSelectedAnswerInQuestionItems(selectedOption: number) {
+        questionPalette[currentQuestionNumber - 1].selectedAnswer = selectedOption
+        console.log('Question palette state answer', questionPalette[currentQuestionNumber - 1])
+    }
+
+    useEffect(() => {
+        const fetchQuestion = async () => {
+            try {
+                // Assuming the table name is 'subjects' and the questions are indexed by `id`
+                const subject = searchParams.get('subject') || 'english'
+                const questionData = await db.getRecordById(subject, currentQuestionNumber);
+                console.log('QuestionData', questionData)
+                if (questionData) {
+                    setQuestion(questionData.questionText || 'No question text available.');
+                    setOptions(questionData.optionsText || []);
+                } else {
+                    console.log('No data found for question number:', currentQuestionNumber);
+                }
+            } catch (error) {
+                console.error('Failed to fetch question:', error);
+            }
+        };
+
+        fetchQuestion();
+    }, [currentQuestionNumber]);
+
+    useEffect(() => {
+        // This ensures that when the current question number changes, the selected option updates correctly.
+        setSelectedOption(questionPalette[currentQuestionNumber - 1].selectedAnswer);
+    }, [currentQuestionNumber, questionPalette]);
+
 
     // Function to get the Tailwind component for a given question state
     const getComponentForState = (paletteItem: QuestionPaletteItem) => {
@@ -92,59 +146,73 @@ export default function Page() {
         }
     };
 
-    const updateQuestionPaletteAndLegendCounts = (index: number, action: LegendAction) => {
-        if (selectedOption != "") {
-            // Update legend counts based on action
-            setLegendCounts(prevCounts => ({
-                ...prevCounts,
-                [action]: prevCounts[action as LegendAction] + 1
-            }));
 
-            // Update question palette based on action
-            setQuestionPalette(prevPalette => {
-                const updatedPalette = prevPalette.map((item, i) => {
-                    // Update state for the palette item at the specified index based on the action
-                    if (i === index) {
-                        switch (action) {
-                            case 'notVisited':
-                                return { ...item, state: QuestionState.NotVisited };
-                            case 'answered':
-                                return { ...item, state: QuestionState.Answered };
-                            case 'markedForReview':
-                                return { ...item, state: QuestionState.MarkedForReview };
-                            case 'answeredAndMarkedForReview':
-                                return { ...item, state: QuestionState.AnsweredAndMarkedForReview };
-                            default:
-                                return item;
-                        }
-                    }
-                    return item; // Return unchanged item for other indices
-                });
-                return updatedPalette;
-            });
-        }
+    const onCickQuestionPalette = (index: number) => {
+        // Update questionPalette immutably
+        setQuestionPalette(prevPalette => {
+            const newPalette = [...prevPalette];
+            // Update the state of the current question if it's 'NotVisited'
+            if (newPalette[currentQuestionNumber - 1].state === QuestionState.NotVisited) {
+                newPalette[currentQuestionNumber - 1].state = QuestionState.NotAnswered;
+                // Update legend counts immutably for NotVisited to NotAnswered transition
+                setLegendCounts(prevCounts => ({
+                    ...prevCounts,
+                    notVisited: prevCounts.notVisited - 1,
+                    notAnswered: prevCounts.notAnswered + 1
+                }));
+            }
+            return newPalette;
+        });
 
-        if (action == 'notAnswered') {
-            const nextQuestionIndex = index
-            // Update legend counts based on action
-            setLegendCounts(prevCounts => ({
-                ...prevCounts,
-                [action]: prevCounts[action as LegendAction] + 1
-            }));
-            // Update the question palette
-            const updatedQuestionPalette = [...questionPalette];
-            updatedQuestionPalette[nextQuestionIndex].state = QuestionState.NotAnswered
-            setQuestionPalette(updatedQuestionPalette)
-            // Change the currentQuestionNumber
-            setCurrentQuestionNumber(nextQuestionIndex + 1)
-
-        }
-
+        // Update the current question number
+        setCurrentQuestionNumber(index + 1);
+        // Ensure selectedOption is updated for the new current question
+        setSelectedOption(prev => questionPalette[index].selectedAnswer);
     };
 
 
+
+    const onClickNavigationButtons = (state: QuestionState) => {
+        if (selectedOption !== -1) {
+            const currentIndex = currentQuestionNumber - 1;
+            const oldState = questionPalette[currentIndex].state;
+            // Update legend counts accordingly using the mapping
+            setLegendCounts(prevCounts => ({
+                ...prevCounts,
+                [stateToLegendAction[oldState]]: prevCounts[stateToLegendAction[oldState] as LegendAction] - 1,  // Decrement the count of the old state
+                [stateToLegendAction[state]]: prevCounts[stateToLegendAction[state] as LegendAction] + 1  // Increment the count of the new state
+            }));
+
+            // Correctly update questionPalette with immutability
+            setQuestionPalette(prevPalette => {
+                const newPalette = [...prevPalette];
+
+                // Ensure you are modifying the correct item by checking within bounds
+                if (currentQuestionNumber - 1 < newPalette.length) {
+                    newPalette[currentQuestionNumber - 1].state = state;
+                }
+
+                return newPalette;
+            });
+
+            // Increment the current question number correctly and handle selectedOption
+            setCurrentQuestionNumber(prevCurrent => {
+                const newCurrent = prevCurrent + 1;
+                // Make sure you're not accessing out of bounds
+                if (newCurrent - 1 < questionPalette.length) {
+                    setSelectedOption(questionPalette[newCurrent - 1].selectedAnswer);
+                } else {
+                    // Handle case where there is no next question
+                    setSelectedOption(-1);
+                }
+                return newCurrent;
+            });
+        }
+    }
+
+
     const clearResponse = () => {
-        setSelectedOption(""); // Clear the selected option when "Clear Response" button is clicked
+        setSelectedOption(-1); // Clear the selected option when "Clear Response" button is clicked
     };
 
 
@@ -178,9 +246,9 @@ export default function Page() {
                                             key={index}
                                             value={option}
                                             className="flex items-center h-8 w-8"
-                                            checked={selectedOption === option}
+                                            checked={selectedOption === index}
                                             onClickCapture={(isChecked) => {
-                                                if (isChecked) setSelectedOption(option); // Update the selected option state
+                                                if (isChecked) setSelectedOption(index); // Update the selected option state
                                             }}
                                         >
                                             {option}
@@ -197,19 +265,16 @@ export default function Page() {
                             {/* Navigation Buttons */}
                             <Box className="gap-8" style={{ 'height': '10%', 'width': '100%', 'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center' }}>
                                 <Button style={{ borderRadius: '5px' }} size="3" variant='solid' onClick={() => {
-                                    incrementCurrentQuestionNumber(1, 'answered');
-                                    updateQuestionPaletteAndLegendCounts(currentQuestionNumber - 1, 'answered');
+                                    onClickNavigationButtons(QuestionState.Answered)
                                 }}>Save and Next</Button>
                                 <Button style={{ borderRadius: '5px' }} size="3" variant='solid' onClick={() => {
                                     clearResponse()
                                 }}>Clear Response</Button>
                                 <Button style={{ borderRadius: '5px' }} size="3" variant='solid' onClick={() => {
-                                    incrementCurrentQuestionNumber(1, 'markedForReview');
-                                    updateQuestionPaletteAndLegendCounts(currentQuestionNumber - 1, 'markedForReview');
+                                    onClickNavigationButtons(QuestionState.AnsweredAndMarkedForReview)
                                 }}>Save and Mark for Review</Button>
                                 <Button style={{ borderRadius: '5px' }} size="3" variant='solid' onClick={() => {
-                                    incrementCurrentQuestionNumber(1, 'answeredAndMarkedForReview');
-                                    updateQuestionPaletteAndLegendCounts(currentQuestionNumber - 1, 'answeredAndMarkedForReview');
+                                    onClickNavigationButtons(QuestionState.MarkedForReview)
                                 }}>Mark for Review and Next</Button>
                             </Box>
                         </Flex>
@@ -225,7 +290,7 @@ export default function Page() {
                                     <div key={index} className="flex flex-col items-center justify-center">
                                         <button onClick={() => {
                                             // Here index is the index of the question that is clicked
-                                            updateQuestionPaletteAndLegendCounts(index, 'notAnswered');
+                                            onCickQuestionPalette(index)
                                         }}>{getComponentForState(state)}</button>
                                     </div>
                                 ))}

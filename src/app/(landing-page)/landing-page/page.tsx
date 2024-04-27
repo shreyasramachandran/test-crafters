@@ -1,6 +1,11 @@
+'use client'
 import { Flex, Box, ScrollArea, Grid, Text, Button, Card } from "@radix-ui/themes";
+import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 export default function Page() {
+    const router = useRouter();
+
     return (
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh' }}>
             <Flex direction='column'>
@@ -8,12 +13,18 @@ export default function Page() {
                     <Flex className="h-full" justify='between' align='center' px='6'>
                         <Text color='indigo' size='7' weight='bold' wrap='pretty'>Cuet Test Crafters</Text>
                         <Flex className="h-full" gap='4' justify='center' align='center'>
-                            <Text color='gray' size='5' weight='medium' wrap='pretty'>Features</Text>
-                            <Text color='gray' size='5' weight='medium' wrap='pretty'>How It Works</Text>
+                            <Link href="#maximize-prep" scroll>
+                                <Text color='gray' size='5' weight='medium' wrap='pretty'>Features</Text>
+                            </Link>
+                            <Link href="#get-started-now" scroll>
+                                <Text color='gray' size='5' weight='medium' wrap='pretty'>How It Works</Text>
+                            </Link>
                         </Flex>
                         <Flex className="h-full" gap='4' justify='center' align='center'>
-                            <Text color='gray' size='5' weight='medium' wrap='nowrap'>Log In</Text>
-                            <Button style={{ height: '60%', width: '60%' }} variant='solid'>Sign Up</Button>
+                            <div style={{ cursor: 'pointer' }} onClick={() => router.push('/sign-in')}>
+                                <Text color='gray' size='5' weight='medium' wrap='nowrap'>Log In</Text>
+                            </div>
+                            <Button style={{ height: '60%', width: '60%' }} variant='solid' onClick={() => router.push('/sign-up')}>Sign Up</Button>
                         </Flex>
                     </Flex>
                 </Box>
@@ -29,11 +40,11 @@ export default function Page() {
                                 to sharpen your skills. Where excellence meets preparation, your journey to top scores begins.</Text>
                         </Box>
                         <Box style={{ height: '8%' }} width={{ md: '12vw' }}>
-                            <Button size="4" variant='solid'>Sign Up Now</Button>
+                            <Button size="4" variant='solid' onClick={() => router.push('/sign-up')}>Sign Up Now</Button>
                         </Box>
                     </Flex>
                 </Box>
-                <Box className="bg-[#F6F7FB]" height='712px' flexGrow='1'>
+                <Box className="bg-[#F6F7FB]" height='712px' flexGrow='1' id="maximize-prep">
                     <Flex className="h-full" direction='column' gap='6' justify='center' align='center'>
                         <Box style={{ height: '30%', display: 'flex', textAlign: 'center', alignItems: 'center', justifyContent: 'center' }} width={{ md: '60vw' }}>
                             <Text className="text-stone-800" size='9' weight='bold' wrap='wrap'>
@@ -91,7 +102,7 @@ export default function Page() {
                 <Box className="bg-[#F6F7FB]" height='256px' flexGrow='1' pt='9'>
                     <Flex className="h-full" direction='column' gap='3' justify='center' align='center' pt='9'>
                         <Box style={{ height: '45%', width: '10%', display: 'flex', textAlign: 'center', alignItems: 'center', justifyContent: 'center' }}>
-                            <Button size="4" variant='solid'>Get Started Now</Button>
+                            <Button size="4" variant='solid' onClick={() => router.push('/sign-up')} id="get-started-now">Get Started Now</Button>
                         </Box>
                     </Flex>
                 </Box>
@@ -103,7 +114,7 @@ export default function Page() {
                                     <Text className="text-black" size='8' weight='bold' wrap='pretty'>Sign up for free</Text>
                                     <Text className="text-black" size='7' weight='light' wrap='pretty'>Embark on a hassle-free journey by starting
                                         your account in moments with our streamlined sign-up process.</Text>
-                                    <Button style={{ height: '10%', width: '30%' }} size="3" variant='solid'>Try out now</Button>
+                                    <Button style={{ height: '10%', width: '30%' }} size="3" variant='solid' onClick={() => router.push('/sign-up')}>Try out now</Button>
                                 </Box>
                                 <Box style={{ height: '90%', width: '30%' }}>
                                     <img src="/free_sign_up.svg" alt="Free Sign Up" style={{ position: 'relative', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -119,7 +130,7 @@ export default function Page() {
                                     <Text className="text-black" size='8' weight='bold' wrap='pretty'>Choose your test</Text>
                                     <Text className="text-black" size='7' weight='light' wrap='pretty'>Select your preferred test from a variety of subjects including
                                         English, Maths, or Science, tailored to your interests and needs.</Text>
-                                    <Button style={{ height: '10%', width: '30%' }} size="3" variant='solid'>Pick your test</Button>
+                                    <Button style={{ height: '10%', width: '30%' }} size="3" variant='solid' onClick={() => router.push('/sign-up')}>Pick your test</Button>
                                 </Box>
                             </Flex>
                         </Box>
@@ -129,7 +140,7 @@ export default function Page() {
                                     <Text className="text-black" size='8' weight='bold' wrap='pretty'>Practice & Improve</Text>
                                     <Text className="text-black" size='7' weight='light' wrap='pretty'>Practice and enhance your skills by completing the test and receiving
                                         instant feedback to help you improve.</Text>
-                                    <Button style={{ height: '10%', width: '35%' }} size="3" variant='solid'>Start Practicing</Button>
+                                    <Button style={{ height: '10%', width: '35%' }} size="3" variant='solid' onClick={() => router.push('/sign-up')}>Start Practicing</Button>
                                 </Box>
                                 <Box style={{ height: '90%', width: '30%' }}>
                                     <img src="/practice_and_improve.svg" alt="Practice And Improve" style={{ position: 'relative', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
@@ -150,7 +161,7 @@ export default function Page() {
                                     <Text className="text-black" size='7' weight='light' wrap='pretty'>Embark on the path to your dreams with the CUET, each step you take is a
                                         stride towards your aspirations. The peak of achievement awaits you, and your determination to succeed is the most powerful guide. Start your
                                         journey today, your future is not just a destination, but a rewarding adventure.</Text>
-                                    <Button style={{ height: '7%', width: '45%' }} size="2" variant='solid'>Begin your prep today</Button>
+                                    <Button style={{ height: '7%', width: '45%' }} size="2" variant='solid' onClick={() => router.push('/sign-up')}>Begin your prep today</Button>
                                 </Box>
                             </Flex>
                         </Box>

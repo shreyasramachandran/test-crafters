@@ -3,6 +3,7 @@ import { Flex, Box, Text, Button } from "@radix-ui/themes"
 import ContinueWithGoogle from "@/app/components/ContinueWithGoogle"
 import useAuth from "@/app/hooks/useAuth"
 import { useState } from 'react';
+import Link from 'next/link';
 
 export default function Page() {
     // Get isAuthenticated in case you need to use it for future operations
@@ -70,7 +71,9 @@ export default function Page() {
                     </Box>
                     <Box style={{ 'height': '3%', 'width': '50%', display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', alignSelf: 'center' }}>
                         <Text color='gray' size='2' weight='regular' wrap='pretty'>Already signed up?</Text>
-                        <Text color='gray' size='2' weight='regular' wrap='pretty'>Sign In</Text>
+                        <Link href="/sign-in">
+                            <Text color='gray' size='2' weight='regular' wrap='pretty'>Sign In</Text>
+                        </Link>
                     </Box>
                     <Box style={{ 'height': '8%', 'width': '77%', display: 'flex', textAlign: 'center', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                         <Text color='gray' size='2' weight='regular' wrap='pretty'>By continuing you agree to Cuet Test Crafter&#x2019;s Terms of Service and Privacy Policy</Text>
