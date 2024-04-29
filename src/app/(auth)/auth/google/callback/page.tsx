@@ -8,6 +8,26 @@ export default function Page() {
     const hasFetchedTokens = useRef(false); // ref to track if tokens have been fetched
     const [fetchError, setFetchError] = useState<string | null>(null); // state to track fetch errors
 
+    async function getUserInfo(accessToken: string) {
+        try {
+            const response = await fetch('https://www.googleapis.com/oauth2/v2/userinfo', {
+                headers: {
+                    'Authorization': `Bearer ${accessToken}`,
+                },
+            });
+
+            if (!response.ok) {
+                throw new Error('UserInfo request failed');
+            }
+
+            const data = await response.json();
+            return data; // This contains the user's profile information
+        } catch (error) {
+            console.error(error);
+            return null;
+        }
+    }
+
     async function fetchOAuthTokens(oAuthCode: string) {
         if (hasFetchedTokens.current) return; // guard against multiple invocations
 
@@ -37,6 +57,21 @@ export default function Page() {
             localStorage.setItem('access_token', responseData.access_token);
             localStorage.setItem('refresh_token', responseData.refresh_token);
             localStorage.setItem('expires_in', responseData.expires_in);
+            console.log('Google response data', responseData)
+            // Get user info
+            const userInfo = await getUserInfo(responseData.access_token); if (userInfo) {
+                const googleUserEmail = userInfo.email; // User's email address
+                const googleUserName = userInfo.name; // User's full name
+                const googleUserPicture = userInfo.picture; // URL of the user's profile picture
+
+                localStorage.setItem('google_user_email', googleUserEmail);
+                localStorage.setItem('google_user_name', googleUserName);
+                localStorage.setItem('google_user_picture', googleUserPicture);
+                // Log or use the user information as needed
+                console.log(`Google user Email: ${googleUserEmail}`);
+                console.log(`Google user Name: ${googleUserName}`);
+                console.log(`Google user Profile Picture: ${googleUserPicture}`);
+            }
             router.replace('/test-picker'); // redirect to test picker on success
         } catch (error: any) {
             console.error('Error in OAuth token fetching:', error);

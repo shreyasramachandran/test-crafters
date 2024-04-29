@@ -3,11 +3,17 @@ import { Flex, Box, Text, Button } from "@radix-ui/themes"
 import ContinueWithGoogle from "@/app/components/ContinueWithGoogle"
 import useAuth from "@/app/hooks/useAuth"
 import Link from 'next/link';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 
 
 export default function Page() {
     // Get isAuthenticated in case you need to use it for future operations
     const isAuthenticated = useAuth();
+    const router = useRouter();
+
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
 
     return (
         <Flex className="bg-[#F6F7FB]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
@@ -32,6 +38,8 @@ export default function Page() {
                             className="border border-solid border-[#79747E] bg-white h-10 px-5  text-sm focus:outline-none"
                             placeholder="Email"
                             style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px' }}
+                            value={email}
+                            onChange={(e) => setEmail(e.target.value)}
                         />
                     </Box>
                     <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'end', alignItems: 'center', alignSelf: 'center' }}>
@@ -40,6 +48,8 @@ export default function Page() {
                             className="border border-solid border-[#79747E] bg-white h-10 px-5  text-sm focus:outline-none"
                             placeholder="Password"
                             style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px' }}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
                         />
                         <button className="absolute mr-4">
                             <svg width="15" height="15" viewBox="0 0 22 20" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -48,7 +58,14 @@ export default function Page() {
                         </button>
                     </Box>
                     <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                        <Button style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px' }} size="3" variant='solid'>Sign In</Button>
+                        <Button style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px' }} size="3" variant='solid' onClick={() => {
+                            // Later create a users object store and use that
+                            const storedEmail = localStorage.getItem('email')
+                            const storedPassword = localStorage.getItem('password')
+                            if (storedEmail === email && storedPassword === password) {
+                                router.push('/test-prep');
+                            }
+                        }}>Sign In</Button>
                     </Box>
                     {/* <Box className="pt-4" style={{ 'height': '3%', 'width': '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                         <Text color='gray' size='2' weight='regular' wrap='pretty'>Forgot password?</Text>

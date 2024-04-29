@@ -1,6 +1,14 @@
+'use client'
 import { Flex, Box, Text, Button } from "@radix-ui/themes"
+import { useRef } from 'react';
+import { useRouter } from 'next/navigation';
 
 export default function Page() {
+    const router = useRouter();
+
+    const verificationCode = localStorage.getItem('verification_code')
+    const typedVerificationCode = useRef<HTMLInputElement>(null)
+
     return (
         <Flex className="bg-[#F6F7FB]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
             <Box className="bg-white" style={{ 'height': '55%', 'width': '30%', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
@@ -15,12 +23,18 @@ export default function Page() {
                         <input
                             type="text"
                             className="border border-solid border-[#79747E] bg-white h-10 px-5  text-sm focus:outline-none"
-                            placeholder="Email"
+                            placeholder="VerificationCode"
                             style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px' }}
+                            ref={typedVerificationCode}
                         />
                     </Box>
                     <Box style={{ 'height': '15%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                        <Button style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px' }} size="3" variant='solid'>Verify Account</Button>
+                        <Button style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px' }} size="3" variant='solid' onClick={() => {
+                            if (typedVerificationCode.current?.value === verificationCode) {
+                                // Store the email and password
+                                router.push('/test-picker');
+                            }
+                        }}>Verify Account</Button>
                     </Box>
                 </Flex>
             </Box>

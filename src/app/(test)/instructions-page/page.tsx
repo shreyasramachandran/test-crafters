@@ -2,25 +2,23 @@
 import useAuth from "@/app/hooks/useAuth";
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Flex, Box, ScrollArea, Text, Button } from "@radix-ui/themes";
-import { useCallback, useEffect, useState } from 'react';
-import db, { ISubject } from '@/app/utils/index-db/operations';
+import { useCallback, useEffect, useState, useRef } from 'react';
+import db from '@/app/utils/index-db/operations';
 
 
 export default function Page() {
-    const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
     // Get isAuthenticated in case you need to use it for future operations
     const isAuthenticated = useAuth();
     const router = useRouter();
     const searchParams = useSearchParams()
+    const hasRun = useRef(false);
 
-    const database = process.env.NEXT_PUBLIC_SQL_SERVER_DATABASE_NAME
     const subject = searchParams.get('subject') as string
     const language = searchParams.get('language')
     // duration later populated via indexDB
-    const duration = '45 min'
-    const maxQuestions = 50
-
-    const [data, setData] = useState<ISubject[]>();
+    const duration = searchParams.get('duration')
+    const maxQuestions = searchParams.get('maxQuestions')
+    const minimumRequiredQuestions = searchParams.get('minimumRequiredQuestions')
 
     // Get a new searchParams string by merging the current
     // searchParams with a provided key/value pair
@@ -37,53 +35,14 @@ export default function Page() {
         []
     );
 
-    async function fetchData() {
-        // console.log("This is the userId", userId);
-        try {
-            const res = await fetch(`${baseUrl}/get-data`, {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                    "Cache-Control": "no-cache",
-                },
-                body: JSON.stringify({ database: database, table: subject }),
-
-            });
-            // Ensure proper error handling
-            if (!res.ok) {
-                // Handle errors, e.g., return an error response
-                return new Response(JSON.stringify({ error: "Error fetching data" }), {
-                    status: res.status,
-                    headers: { "Content-Type": "application/json" },
-                });
-            }
-            const responseData = await res.json();
-            console.log(responseData)
-            setData(responseData);
-            // await db.deleteDatabase()
-            await db.createTableIfNotExists(subject);
-            await db.addRecords(subject, responseData.data)
-            // const qsr = await db.getRecords(subject)
-            // console.log(qsr)
-        }
-        catch (error) {
-            // Handle other errors
-            console.error("Error fetching data:", error);
-        }
-    }
-
     useEffect(() => {
-
-        // Ensure this runs only client-side
-        if (typeof window !== 'undefined') {
-            db.createTableIfNotExists('newTableName')
-                .then(() => console.log('Table created or already exists'))
-                .catch(err => console.error('Error creating table:', err));
+        if (!hasRun.current) {
+            // Note that this function not only fetches data but also stores it in indexDB later on
+            db.storeQuestionsData(subject, Number(maxQuestions))
+            hasRun.current = true
         }
-        fetchData()
-        // Store data if not empty into indexDB
-
     }, [])
+
 
     const [isChecked, setIsChecked] = useState(false);
 
@@ -118,7 +77,9 @@ export default function Page() {
                 <Box className="pl-6" flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
                     <div style={{ padding: '1rem' }}>
                         <ol className="list-decimal">
-                            <li>Total duration of {subject} Paper is {duration}.</li>
+                            <li>Total duration of {subject.charAt(0).toUpperCase() + subject.slice(1)} paper is {duration}.</li>
+                            <li>The total number of questions are {maxQuestions}</li>
+                            <li>The minimum number of questions to be attempted are {minimumRequiredQuestions}</li>
                             <li>The Questions Palette displayed on the right side of the screen will show the status of each question using one of the following symbols:</li>
                             <ul className="list-[lower-alpha] pl-4">
                                 <li>You have not visited the question yet.</li>

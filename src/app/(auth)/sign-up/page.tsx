@@ -2,14 +2,57 @@
 import { Flex, Box, Text, Button } from "@radix-ui/themes"
 import ContinueWithGoogle from "@/app/components/ContinueWithGoogle"
 import useAuth from "@/app/hooks/useAuth"
-import { useState } from 'react';
 import Link from 'next/link';
+import { useState } from 'react';
+import { useRouter } from 'next/navigation';
+import { randomBytes } from 'crypto';
 
 export default function Page() {
     // Get isAuthenticated in case you need to use it for future operations
     const isAuthenticated = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    const router = useRouter();
+
+    async function sendVerificationEmail() {
+        const verificationCode = await generateVerificationCode()
+        localStorage.setItem('verification_code', verificationCode);
+        // Later find a better way to pass email and password
+        localStorage.setItem('other_email', email);
+        localStorage.setItem('other_password', password);
+        // Note that this function not only fetches data but also stores it in indexDB later on
+        try {
+            const res = await fetch(`/api/send-email`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache",
+                },
+                body: JSON.stringify({ to: email, verificationCode: verificationCode }),
+            });
+            // Ensure proper error handling
+            if (!res.ok) {
+                // Handle errors, e.g., return an error response
+                return new Response(JSON.stringify({ error: "Error fetching data" }), {
+                    status: res.status,
+                    headers: { "Content-Type": "application/json" },
+                });
+            }
+        }
+        catch (error) {
+            // Handle other errors
+            console.error("Error sending verification email:", error);
+        }
+    }
+
+    async function generateVerificationCode() {
+        const bytes = randomBytes(3);  // Generates a buffer of secure random bytes
+        const code = bytes.toString('hex');  // Convert it to a hexadecimal string
+        const verificationCode = code.toUpperCase()
+        return verificationCode
+    }
+
 
     return (
         <Flex className="bg-[#F6F7FB]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
@@ -67,7 +110,10 @@ export default function Page() {
                         </button>
                     </Box>
                     <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                        <Button style={{ 'height': '75%', 'width': '100%', borderRadius: '5px' }} size="3" variant='solid'>Sign Up</Button>
+                        <Button style={{ 'height': '75%', 'width': '100%', borderRadius: '5px' }} size="3" variant='solid' onClick={() => {
+                            sendVerificationEmail()
+                            router.push('/verification');
+                        }}>Sign Up</Button>
                     </Box>
                     <Box style={{ 'height': '3%', 'width': '50%', display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', alignSelf: 'center' }}>
                         <Text color='gray' size='2' weight='regular' wrap='pretty'>Already signed up?</Text>

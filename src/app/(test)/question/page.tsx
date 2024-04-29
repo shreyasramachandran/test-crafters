@@ -1,14 +1,17 @@
 "use client"
 import useAuth from "@/app/hooks/useAuth";
-import { Flex, Box, Text, Button, RadioGroup } from "@radix-ui/themes";
+import { Flex, Box, Text, Button, RadioGroup, Dialog } from "@radix-ui/themes";
 import { useState, useEffect } from 'react';
-import db from '@/app/utils/index-db/operations';
-import { useSearchParams } from 'next/navigation';
+import db, { IQuestion } from '@/app/utils/index-db/operations';
+import { useRouter, useSearchParams } from 'next/navigation';
 
 export default function Page() {
     // Get isAuthenticated in case you need to use it for future operations
     const isAuthenticated = useAuth();
     const searchParams = useSearchParams()
+    const maxQuestions = searchParams.get('maxQuestions')
+    const minimumRequiredQuestions = searchParams.get('minimumRequiredQuestions')
+    const router = useRouter();
 
     // Define currentQuestionNumber
     const [currentQuestionNumber, setCurrentQuestionNumber] = useState(1);
@@ -40,14 +43,31 @@ export default function Page() {
         index: number;
         state: QuestionState;
         selectedAnswer: number;
+        uniqueIdentification: number;
     };
 
-    // Define the initial state for the question palette
-    const initialQuestionPaletteState: QuestionPaletteItem[] = Array.from({ length: 50 }).map((_, mapIndex) => ({
-        index: mapIndex,
-        state: QuestionState.NotVisited, // Initially set all questions to 'NotVisited'
-        selectedAnswer: -1
-    }));
+    const [questionPalette, setQuestionPalette] = useState<QuestionPaletteItem[]>([]);
+
+    useEffect(() => {
+        const fetchQuestions = async () => {
+            try {
+                const questions = await db.questions.toArray(); // Assuming 'questions' table is correctly referenced
+
+                const initialPalette = questions.map((question, index) => ({
+                    index: index,
+                    uniqueIdentification: question.uniqueIdentification || 0, // Fallback to 0 if undefined
+                    state: QuestionState.NotVisited,
+                    selectedAnswer: -1
+                }));
+                setQuestionPalette(initialPalette);
+            } catch (error) {
+                console.error("Failed to load questions from database:", error);
+                // Handle errors appropriately
+            }
+        };
+
+        fetchQuestions();
+    }, []);
 
     // Mapping of QuestionState to the corresponding keys in legendCounts
     const stateToLegendAction = {
@@ -58,31 +78,36 @@ export default function Page() {
         [QuestionState.AnsweredAndMarkedForReview]: 'answeredAndMarkedForReview'
     };
 
-    const [questionPalette, setQuestionPalette] = useState<QuestionPaletteItem[]>(initialQuestionPaletteState);
-
     // Define question and options
     const [question, setQuestion] = useState('');
     const [options, setOptions] = useState<string[]>([]);
 
     // This useEffect is so that whenever selected option gets updated the selectedAnswer in questionPalette should also get updated
     useEffect(() => {
-        if (selectedOption !== undefined) {
+        if (questionPalette.length > 0 && selectedOption !== undefined) {
             updateSelectedAnswerInQuestionItems(selectedOption);
         }
     }, [selectedOption]);
 
+
     function updateSelectedAnswerInQuestionItems(selectedOption: number) {
-        questionPalette[currentQuestionNumber - 1].selectedAnswer = selectedOption
-        console.log('Question palette state answer', questionPalette[currentQuestionNumber - 1])
+        setQuestionPalette(prevPalette => {
+            // Create a new array with updated data
+            return prevPalette.map((item, index) => {
+                if (index === currentQuestionNumber - 1) {
+                    return { ...item, selectedAnswer: selectedOption };
+                }
+                return item;
+            });
+        });
     }
+
 
     useEffect(() => {
         const fetchQuestion = async () => {
             try {
                 // Assuming the table name is 'subjects' and the questions are indexed by `id`
-                const subject = searchParams.get('subject') || 'english'
-                const questionData = await db.getRecordById(subject, currentQuestionNumber);
-                console.log('QuestionData', questionData)
+                const questionData = await db.getRecordById<IQuestion>('questions', currentQuestionNumber);
                 if (questionData) {
                     setQuestion(questionData.questionText || 'No question text available.');
                     setOptions(questionData.optionsText || []);
@@ -98,9 +123,13 @@ export default function Page() {
     }, [currentQuestionNumber]);
 
     useEffect(() => {
-        // This ensures that when the current question number changes, the selected option updates correctly.
-        setSelectedOption(questionPalette[currentQuestionNumber - 1].selectedAnswer);
+        if (questionPalette.length > 0) {
+            // Ensure the index is valid to avoid accessing undefined
+            const currentSelection = questionPalette[currentQuestionNumber - 1]?.selectedAnswer;
+            setSelectedOption(currentSelection);
+        }
     }, [currentQuestionNumber, questionPalette]);
+
 
 
     // Function to get the Tailwind component for a given question state
@@ -195,18 +224,33 @@ export default function Page() {
                 return newPalette;
             });
 
-            // Increment the current question number correctly and handle selectedOption
-            setCurrentQuestionNumber(prevCurrent => {
-                const newCurrent = prevCurrent + 1;
-                // Make sure you're not accessing out of bounds
-                if (newCurrent - 1 < questionPalette.length) {
-                    setSelectedOption(questionPalette[newCurrent - 1].selectedAnswer);
-                } else {
-                    // Handle case where there is no next question
-                    setSelectedOption(-1);
-                }
-                return newCurrent;
-            });
+            // Increment the current question number correctly and handle selectedOption. 
+            // Make sure you are not incrementing out of bounds.
+            if (currentQuestionNumber !== Number(maxQuestions)) {
+                setCurrentQuestionNumber(prevCurrent => {
+                    const newCurrent = prevCurrent + 1;
+                    // Make sure you're not accessing out of bounds
+                    if (newCurrent - 1 < questionPalette.length) {
+                        setSelectedOption(questionPalette[newCurrent - 1].selectedAnswer);
+                    } else {
+                        // Handle case where there is no next question
+                        setSelectedOption(-1);
+                    }
+                    return newCurrent;
+                });
+            }
+        }
+        // Check if its the last question and minimum number of questions have been answered.
+        const minimumAnsweredQuestions = legendCounts.answered + legendCounts.answeredAndMarkedForReview + 1
+        if (currentQuestionNumber === Number(maxQuestions) && minimumAnsweredQuestions >= Number(minimumRequiredQuestions)) {
+            setDialogOpen(true);
+            setIsCompleted(true);
+        }
+        else {
+            if (currentQuestionNumber === Number(maxQuestions) && minimumAnsweredQuestions < Number(minimumRequiredQuestions)) {
+                setDialogOpen(true);
+                setIsCompleted(false);
+            }
         }
     }
 
@@ -215,6 +259,21 @@ export default function Page() {
         setSelectedOption(-1); // Clear the selected option when "Clear Response" button is clicked
     };
 
+    // Function to populate question palette state
+    async function populateQuestionPalette(items: QuestionPaletteItem[]) {
+        // Clear any existing records in the questionPalette object store
+        await db.questionPalette.clear();
+        // Add the initial state to the questionPalette object store
+        await db.questionPalette.bulkPut(items);
+    }
+
+    useEffect(() => {
+        // Define the interval for running your function periodically
+        populateQuestionPalette(questionPalette);
+    }, [questionPalette]);
+
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [isCompleted, setIsCompleted] = useState(false);
 
     return (
         <Flex className="bg-[#F6F7FB]" direction='column' height={{ md: '100vh' }} width={{ md: '100vw' }}>
@@ -262,7 +321,35 @@ export default function Page() {
                                     <div className="flex-grow border-t border-black"></div>
                                 </div>
                             </Box>
+                            {/* Dialog Box */}
+                            <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
+                                <Dialog.Content style={{ background: 'white', borderRadius: '5px', padding: '20px', boxShadow: '0px 10px 50px hsla(0, 0%, 0%, 0.1)' }}>
+                                    <Dialog.Description>
+                                        {!isCompleted ?
+                                            <Text trim="both" size="4">
+                                                Solve at least {minimumRequiredQuestions} questions to complete the test.
+                                            </Text> :
+                                            <Flex gap='5' style={{ 'height': '100%', 'width': '100%', 'display': 'flex', 'flexDirection': 'column', 'alignItems': 'flex-start', 'justifyContent': 'flex-start' }}>
+                                                <Text className="pl-4" size='6' weight='medium' align='left'>Proceed to submit</Text>
+                                                <Text className="pl-4" size='4' weight='regular' align='left'>You have reached the end of the test.
+                                                    Do you wish to proceed to submit?</Text>
+                                                <Flex gap='4' className="pl-4" style={{ 'height': '100%', 'width': '100%', 'display': 'flex', 'flexDirection': 'row', 'justifyContent': 'flex-start' }} >
+                                                    <Dialog.Close>
+                                                        <Button style={{ borderRadius: '5px' }} size="3" variant='soft' onClick={() => {
+                                                        }}>Cancel</Button>
+                                                    </Dialog.Close>
+                                                    <Button style={{ borderRadius: '5px' }} size="3" variant='solid' onClick={() => {
+                                                        router.push('/analysis')
+                                                    }}>Proceed</Button>
+                                                </Flex>
+                                            </Flex>
+                                        }
+                                    </Dialog.Description>
+                                </Dialog.Content>
+                            </Dialog.Root>
+
                             {/* Navigation Buttons */}
+
                             <Box className="gap-8" style={{ 'height': '10%', 'width': '100%', 'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center' }}>
                                 <Button style={{ borderRadius: '5px' }} size="3" variant='solid' onClick={() => {
                                     onClickNavigationButtons(QuestionState.Answered)

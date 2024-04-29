@@ -2,7 +2,8 @@
 import useAuth from "@/app/hooks/useAuth";
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Flex, Box, Text, DropdownMenu, Button } from "@radix-ui/themes"
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect, useRef } from 'react';
+import db from '@/app/utils/index-db/operations';
 
 export default function Page() {
     // Get isAuthenticated in case you need to use it for future operations
@@ -26,13 +27,18 @@ export default function Page() {
         []
     );
 
-
     const isAuthenticated = useAuth();
+    // These need to be populated from metadata
     const subjects = ['English', 'Hindi', 'Mathematics', 'Physics', 'Chemistry']
     const languages = ['English', 'Hindi']
 
     const [selectedSubject, setSelectedSubject] = useState("Subject");
     const [selectedLanguage, setSelectedLanguage] = useState("Language");
+    const [duration, setDuration] = useState("Duration");
+    const [maxQuestions, setMaxQuestions] = useState("MaxQuestions");
+    const [minimumRequiredQuestions, setMinimumRequiredQuestions] = useState("MinimumRequiredQuestions");
+
+
 
     // Event handlers to update the respective state variables
     const handleSubjectChange = (subject: string) => {
@@ -42,6 +48,47 @@ export default function Page() {
     const handleLanguageChange = (language: string) => {
         setSelectedLanguage(language);
     };
+
+    async function filterMetadata(subject: string) {
+        try {
+            const [filteredMetadata] = await db.filterMetadataBySubject(subject);
+            const { duration, maxQuestions, minimumRequiredQuestions } = filteredMetadata;
+            setDuration(duration as string)
+            setMaxQuestions(maxQuestions as string)
+            setMinimumRequiredQuestions(minimumRequiredQuestions as string)
+        } catch (error) {
+            console.error("Failed to fetch metadata:", error);
+        }
+    }
+
+    useEffect(() => {
+        db.initializeDatabase().then(() => {
+            console.log("Database initialized in Some Component.");
+        }).catch(error => {
+            console.error("Error initializing database in Some Component:", error);
+        });
+        // Store the user record for future use if any
+        const record = {
+            googleUserEmail: localStorage.getItem('google_user_email') || '',
+            googleUserName: localStorage.getItem('google_user_name') || '',
+            googleUserPicture: localStorage.getItem('google_user_picture') || '',
+            otherEmail: localStorage.getItem('other_email') || '',
+            otherPassword: localStorage.getItem('other_password') || ''
+        }
+        db.addRecord('user', record).then(() => {
+            console.log("User record added.");
+        }).catch(error => {
+            console.error("Error adding user record:", error);
+        });
+    }, []);
+
+
+    useEffect(() => {
+        if (selectedSubject !== 'Subject') {
+            filterMetadata(selectedSubject)
+        }
+    }, [selectedSubject])
+
 
     return (
         <Flex className="bg-[#F6F7FB]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
@@ -97,8 +144,10 @@ export default function Page() {
                     <Flex className="h-full" direction='column' justify='center' gap='4'>
                         <Box style={{ 'height': '20%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                             <Button style={{ 'height': '100%', 'width': '100%', borderRadius: '5px' }} size="3" variant='solid' onClick={() => {
-                                const queryString = createQueryString(searchParams, { subject: 'english', language: 'english' });
-                                router.push('/instructions-page' + '?' + queryString)
+                                if (selectedSubject !== 'Subject' && duration !== 'Duration') {
+                                    const queryString = createQueryString(searchParams, { subject: 'english', language: 'english', duration: duration, maxQuestions: maxQuestions, minimumRequiredQuestions: minimumRequiredQuestions });
+                                    router.push('/instructions-page' + '?' + queryString)
+                                }
                             }}>Start Mock Test
                             </Button>
                         </Box>
@@ -114,7 +163,7 @@ export default function Page() {
                         </Box>
                     </Flex>
                 </Flex>
-            </Box>
-        </Flex>
+            </Box >
+        </Flex >
     )
 }
