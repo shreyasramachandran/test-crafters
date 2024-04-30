@@ -13,11 +13,11 @@ export default function Page() {
             const verificationCode = sessionStorage.getItem('verification_code');
             return verificationCode;
         }
-        return null; // Return null or a default value if not on client-side
+        return ''; // Return null or a default value if not on client-side
     }
 
     useEffect(() => {
-        const code = sessionStorage.getItem('verification_code');
+        const code = getSessionStorage();
         if (code) {
             setVerificationCode(code);
         }

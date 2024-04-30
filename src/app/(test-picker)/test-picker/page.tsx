@@ -2,13 +2,19 @@
 import useAuth from "@/app/hooks/useAuth";
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Flex, Box, Text, DropdownMenu, Button } from "@radix-ui/themes"
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import db from '@/app/utils/index-db/operations';
+import { Suspense } from 'react'
+
+function useSearch() {
+    const searchParams = useSearchParams();
+    return searchParams;
+}
 
 export default function Page() {
     // Get isAuthenticated in case you need to use it for future operations
     const router = useRouter();
-    const searchParams = useSearchParams()
+    const searchParams = useSearch()
 
     // Get a new searchParams string by merging the current
     // searchParams with a provided key/value pair
@@ -143,13 +149,15 @@ export default function Page() {
                     </Flex>
                     <Flex className="h-full" direction='column' justify='center' gap='4'>
                         <Box style={{ 'height': '20%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                            <Button style={{ 'height': '100%', 'width': '100%', borderRadius: '5px' }} size="3" variant='solid' onClick={() => {
-                                if (selectedSubject !== 'Subject' && duration !== 'Duration') {
-                                    const queryString = createQueryString(searchParams, { subject: 'english', language: 'english', duration: duration, maxQuestions: maxQuestions, minimumRequiredQuestions: minimumRequiredQuestions });
-                                    router.push('/instructions-page' + '?' + queryString)
-                                }
-                            }}>Start Mock Test
-                            </Button>
+                            <Suspense>
+                                <Button style={{ 'height': '100%', 'width': '100%', borderRadius: '5px' }} size="3" variant='solid' onClick={() => {
+                                    if (selectedSubject !== 'Subject' && duration !== 'Duration') {
+                                        const queryString = createQueryString(searchParams, { subject: 'english', language: 'english', duration: duration, maxQuestions: maxQuestions, minimumRequiredQuestions: minimumRequiredQuestions });
+                                        router.push('/instructions-page' + '?' + queryString)
+                                    }
+                                }}>Start Mock Test
+                                </Button>
+                            </Suspense>
                         </Box>
                         <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                             <div className="flex items-center justify-center w-full">
