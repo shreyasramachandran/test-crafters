@@ -42,6 +42,7 @@ export const NavigationProvider: React.FC<NavigationProviderProps> = ({ children
         </NavigationContext.Provider>
     );
 };
+NavigationProvider.displayName = 'NavigationProvider'; // Adding display name
 
 // Custom hook to use navigation
 export const useNavigate = (): ((props: StartMockTestProps) => void) | null => useContext(NavigationContext);
@@ -49,7 +50,7 @@ export const useNavigate = (): ((props: StartMockTestProps) => void) | null => u
 
 const Page = () => {
     // Get isAuthenticated in case you need to use it for future operations
-    const isAuthenticated = useAuth();
+    // const isAuthenticated = useAuth();
     const navigate = useNavigate();
     // These need to be populated from metadata
     const subjects = ['English', 'Hindi', 'Mathematics', 'Physics', 'Chemistry']
