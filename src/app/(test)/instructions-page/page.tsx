@@ -4,9 +4,9 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Flex, Box, ScrollArea, Text, Button } from "@radix-ui/themes";
 import { useCallback, useEffect, useState, useRef } from 'react';
 import db from '@/app/utils/index-db/operations';
+import { Suspense } from 'react'
 
-
-export default function Page() {
+const MainComponent = () => {
     // Get isAuthenticated in case you need to use it for future operations
     const isAuthenticated = useAuth();
     const router = useRouter();
@@ -135,3 +135,11 @@ export default function Page() {
         </ScrollArea >
     )
 }
+
+const Page = () => (
+    <Suspense fallback={<div>Loading...</div>}>
+        <MainComponent />
+    </Suspense>
+);
+
+export default Page;

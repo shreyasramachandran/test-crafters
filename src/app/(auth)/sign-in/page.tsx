@@ -5,9 +5,10 @@ import useAuth from "@/app/hooks/useAuth"
 import Link from 'next/link';
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { Suspense } from 'react'
 
 
-export default function Page() {
+const MainComponent = () => {
     // Get isAuthenticated in case you need to use it for future operations
     const isAuthenticated = useAuth();
     const router = useRouter();
@@ -81,3 +82,11 @@ export default function Page() {
         </Flex >
     )
 }
+
+const Page = () => (
+    <Suspense fallback={<div>Loading...</div>}>
+        <MainComponent />
+    </Suspense>
+);
+
+export default Page;

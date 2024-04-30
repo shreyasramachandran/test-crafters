@@ -4,8 +4,9 @@ import { Flex, Box, Text, Button, RadioGroup, Dialog } from "@radix-ui/themes";
 import { useState, useEffect } from 'react';
 import db, { IQuestion } from '@/app/utils/index-db/operations';
 import { useRouter, useSearchParams } from 'next/navigation';
+import { Suspense } from 'react'
 
-export default function Page() {
+const MainComponent = () => {
     // Get isAuthenticated in case you need to use it for future operations
     const isAuthenticated = useAuth();
     const searchParams = useSearchParams()
@@ -433,3 +434,11 @@ export default function Page() {
         </Flex >
     )
 }
+
+const Page = () => (
+    <Suspense fallback={<div>Loading...</div>}>
+        <MainComponent />
+    </Suspense>
+);
+
+export default Page;
