@@ -17,7 +17,7 @@ export default function Page() {
 
     async function sendVerificationEmail() {
         const verificationCode = await generateVerificationCode()
-        localStorage.setItem('verification_code', verificationCode);
+        sessionStorage.setItem('verification_code', verificationCode);
         // Later find a better way to pass email and password
         localStorage.setItem('other_email', email);
         localStorage.setItem('other_password', password);

@@ -6,7 +6,13 @@ import { useRouter } from 'next/navigation';
 export default function Page() {
     const router = useRouter();
 
-    const verificationCode = localStorage.getItem('verification_code')
+
+    function getSessionStorage() {
+        const verificationCode = sessionStorage.getItem('verification_code');
+        return verificationCode
+    }
+
+    const verificationCode = getSessionStorage()
     const typedVerificationCode = useRef<HTMLInputElement>(null)
 
     return (
