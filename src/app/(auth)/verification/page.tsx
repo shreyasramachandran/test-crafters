@@ -1,19 +1,27 @@
 'use client'
 import { Flex, Box, Text, Button } from "@radix-ui/themes"
-import { useRef } from 'react';
+import { useRef, useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 
 export default function Page() {
     const router = useRouter();
-
+    const [verificationCode, setVerificationCode] = useState('');
+    const typedVerificationCode = useRef<HTMLInputElement>(null)
 
     function getSessionStorage() {
-        const verificationCode = sessionStorage.getItem('verification_code');
-        return verificationCode
+        if (typeof window !== 'undefined') {
+            const verificationCode = sessionStorage.getItem('verification_code');
+            return verificationCode;
+        }
+        return null; // Return null or a default value if not on client-side
     }
 
-    const verificationCode = getSessionStorage()
-    const typedVerificationCode = useRef<HTMLInputElement>(null)
+    useEffect(() => {
+        const code = sessionStorage.getItem('verification_code');
+        if (code) {
+            setVerificationCode(code);
+        }
+    }, []);
 
     return (
         <Flex className="bg-[#F6F7FB]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
