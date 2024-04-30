@@ -2,38 +2,55 @@
 import useAuth from "@/app/hooks/useAuth";
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Flex, Box, Text, DropdownMenu, Button } from "@radix-ui/themes"
-import { useState, useCallback, useEffect } from 'react';
-import db from '@/app/utils/index-db/operations';
+import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode } from 'react';
 import { Suspense } from 'react'
+import db from '@/app/utils/index-db/operations';
 
-function useSearch() {
-    const searchParams = useSearchParams();
-    return searchParams;
+interface StartMockTestProps {
+    selectedSubject: string;
+    selectedLanguage: string;
+    duration: string;
+    maxQuestions: string;
+    minimumRequiredQuestions: string;
 }
 
-export default function Page() {
-    // Get isAuthenticated in case you need to use it for future operations
+interface NavigationProviderProps {
+    children: ReactNode;
+}
+
+const NavigationContext = createContext<((props: StartMockTestProps) => void) | null>(null);
+
+export const NavigationProvider: React.FC<NavigationProviderProps> = ({ children }) => {
     const router = useRouter();
-    const searchParams = useSearch()
+    const searchParams = useSearchParams();
 
-    // Get a new searchParams string by merging the current
-    // searchParams with a provided key/value pair
-    const createQueryString = useCallback(
-        (searchParams: URLSearchParams, queryParams: Record<string, string>) => {
-            const params = new URLSearchParams(searchParams.toString())
+    const navigate = useCallback((props: StartMockTestProps) => {
+        const params = new URLSearchParams(searchParams.toString());
+        params.set('subject', props.selectedSubject.toLocaleLowerCase());
+        params.set('language', props.selectedLanguage.toLocaleLowerCase());
+        params.set('duration', props.duration);
+        params.set('maxQuestions', props.maxQuestions);
+        params.set('minimumRequiredQuestions', props.minimumRequiredQuestions);
 
+        const queryString = params.toString();
+        router.push(`/instructions-page?${queryString}`);
+    }, [router, searchParams]);
 
-            // Add each query parameter to the URLSearchParams object
-            Object.entries(queryParams).forEach(([name, value]) => {
-                params.set(name, value);
-            });
-
-            return params.toString();
-        },
-        []
+    return (
+        <NavigationContext.Provider value={navigate}>
+            {children}
+        </NavigationContext.Provider>
     );
+};
 
+// Custom hook to use navigation
+export const useNavigate = (): ((props: StartMockTestProps) => void) | null => useContext(NavigationContext);
+
+
+const Page = () => {
+    // Get isAuthenticated in case you need to use it for future operations
     const isAuthenticated = useAuth();
+    const navigate = useNavigate();
     // These need to be populated from metadata
     const subjects = ['English', 'Hindi', 'Mathematics', 'Physics', 'Chemistry']
     const languages = ['English', 'Hindi']
@@ -95,6 +112,20 @@ export default function Page() {
         }
     }, [selectedSubject])
 
+    const handleNavigate = () => {
+        if (navigate) { // Check if navigate is not null
+            navigate({
+                selectedSubject,
+                selectedLanguage,
+                duration,
+                maxQuestions,
+                minimumRequiredQuestions
+            });
+        } else {
+            console.error("Navigation function is not available.");
+        }
+    };
+
 
     return (
         <Flex className="bg-[#F6F7FB]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
@@ -150,14 +181,9 @@ export default function Page() {
                     <Flex className="h-full" direction='column' justify='center' gap='4'>
                         <Box style={{ 'height': '20%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                             <Suspense>
-                                <Button style={{ 'height': '100%', 'width': '100%', borderRadius: '5px' }} size="3" variant='solid' onClick={() => {
-                                    if (selectedSubject !== 'Subject' && duration !== 'Duration') {
-                                        const queryString = createQueryString(searchParams, { subject: 'english', language: 'english', duration: duration, maxQuestions: maxQuestions, minimumRequiredQuestions: minimumRequiredQuestions });
-                                        router.push('/instructions-page' + '?' + queryString)
-                                    }
-                                }}>Start Mock Test
-                                </Button>
+                                <Button style={{ height: '100%', width: '100%', borderRadius: '5px' }} size="3" variant='solid' onClick={handleNavigate}>Start Mock Test</Button>
                             </Suspense>
+
                         </Box>
                         <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                             <div className="flex items-center justify-center w-full">
@@ -175,3 +201,5 @@ export default function Page() {
         </Flex >
     )
 }
+
+export default () => <NavigationProvider><Page /></NavigationProvider>;
