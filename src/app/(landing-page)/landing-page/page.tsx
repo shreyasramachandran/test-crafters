@@ -170,22 +170,22 @@ export default function Page() {
                 <Box className="bg-[#ECF0FF]" height='128px'>
                     <Grid style={{ height: '100%', width: '100%', 'textAlign': 'center', justifyItems: 'center' }} columns="3" rows="2" gap='3' align='center'>
                         <Box style={{ height: '40%', width: '30%' }} >
-                            <Text className="text-black" size='2' weight='medium' wrap='pretty'>Terms and Conditions</Text>
+                            <Text style={{ cursor: 'pointer' }} className="text-black" size='2' weight='medium' wrap='pretty' onClick={() => router.push('/terms-and-conditions')}>Terms and Conditions</Text>
                         </Box>
                         <Box style={{ height: '40%', width: '30%' }} >
-                            <Text className="text-black" size='2' weight='medium' wrap='pretty'>About Us</Text>
+                            <Text style={{ cursor: 'pointer' }} className="text-black" size='2' weight='medium' wrap='pretty' onClick={() => router.push('/contact-us')}>About Us</Text>
                         </Box>
                         <Box style={{ height: '40%', width: '30%' }} >
-                            <Text className="text-black" size='2' weight='medium' wrap='pretty'>Refunds & Cancellations</Text>
+                            <Text style={{ cursor: 'pointer' }} className="text-black" size='2' weight='medium' wrap='pretty' onClick={() => router.push('/refunds-and-cancellations')}>Refunds & Cancellations</Text>
                         </Box>
                         <Box style={{ height: '40%', width: '30%' }} >
-                            <Text className="text-black" size='2' weight='medium' wrap='pretty'>Privacy</Text>
+                            <Text style={{ cursor: 'pointer' }} className="text-black" size='2' weight='medium' wrap='pretty' onClick={() => router.push('/privacy')}>Privacy</Text>
                         </Box>
                         <Box style={{ height: '40%', width: '30%' }} >
-                            <Text className="text-black" size='2' weight='medium' wrap='pretty'>Contact Us</Text>
+                            <Text style={{ cursor: 'pointer' }} className="text-black" size='2' weight='medium' wrap='pretty' onClick={() => router.push('/contact-us')}>Contact Us</Text>
                         </Box>
                         <Box style={{ height: '40%', width: '30%' }} >
-                            <Text className="text-black" size='2' weight='medium' wrap='pretty'>Pricing</Text>
+                            <Text style={{ cursor: 'pointer' }} className="text-black" size='2' weight='medium' wrap='pretty' onClick={() => router.push('/pricing')}>Pricing</Text>
                         </Box>
                     </Grid>
                 </Box>
