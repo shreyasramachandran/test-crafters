@@ -13,6 +13,7 @@ export default function Page() {
                 </div>
 
                 <div className="mt-8">
+                    <p className="text-gray-600">Our operating address is E7 MIG 207 Arera Colony Bhopal. 462016</p>
                     <p className="text-gray-600">Our operating hours are all days at all hours. Feel free to reach out at any time.</p>
                 </div>
             </div>
