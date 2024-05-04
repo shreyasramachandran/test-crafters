@@ -10,9 +10,51 @@ export default function useAuth() {
 
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+    async function getCookie(cookieName: string) {
+        try {
+            const res = await fetch(`/api/cookies/get-cookie?cookieName=${cookieName}`, {
+                method: "GET",
+                headers: {
+                    "Cache-Control": "no-cache",
+                }
+            });
+            // Ensure proper error handling
+            if (!res.ok) {
+                // Handle errors, e.g., return an error response
+                return new Response(JSON.stringify({ error: "Error fetching cookie" }), {
+                    status: res.status,
+                    headers: { "Content-Type": "application/json" },
+                });
+            }
+            const data = await res.json();
+            const cookie = await data.cookie
+            return cookie;
+
+        } catch (error) {
+            console.error('Error fetching cookie', error);
+            return false;
+        }
+    }
+
+    async function setCookie(cookieName: string, cookieValue: string) {
+        const res = await fetch(`/api/cookies/set-cookie?${cookieName}?value=${cookieValue}`, {
+            method: "GET",
+            headers: {
+                "Cache-Control": "no-cache",
+            }
+        });
+        // Ensure proper error handling
+        if (!res.ok) {
+            // Handle errors, e.g., return an error response
+            return new Response(JSON.stringify({ error: "Error setting cookie" }), {
+                status: res.status,
+                headers: { "Content-Type": "application/json" },
+            });
+        }
+    }
+
     async function checkTokenValidity() {
-        let accessToken = localStorage.getItem('access_token');
-        console.log(accessToken)
+        let accessToken = await getCookie('access_token')
         if (!accessToken) return false;
 
         // Check the current access token's validity
@@ -20,7 +62,7 @@ export default function useAuth() {
         if (isValid) return true;  // If the token is valid, return true immediately
 
         // If the token is not valid, attempt to refresh it
-        const refreshToken = localStorage.getItem('refresh_token');
+        const refreshToken = await getCookie('refresh_token');
         if (!refreshToken) return false;  // No refresh token available, can't refresh
 
         // Try to refresh the access token using the refresh token
@@ -61,7 +103,7 @@ export default function useAuth() {
             });
             const data = await response.json();
             if (response.ok) {
-                localStorage.setItem('access_token', data.accessToken);
+                setCookie('access_token', data.access_token)
                 // Update the access token in storage
                 return data.accessToken;  // Return the new access token
             }
@@ -78,7 +120,7 @@ export default function useAuth() {
             const isValid = await checkTokenValidity();
             setIsAuthenticated(isValid);
             if (isValid) {
-                if (returnUrl === '/sign-in' || returnUrl === '/sign-up') {
+                if (returnUrl === '/sign-in?' || returnUrl === '/sign-up?') {
                     returnUrl = '/test-picker'; // Redirect to home if the current page is sign-in
                 }
                 router.push(returnUrl)
@@ -93,7 +135,7 @@ export default function useAuth() {
         };
 
         initAuthCheck();
-    }, [router]);
+    }, []);
 
     return isAuthenticated;
 }

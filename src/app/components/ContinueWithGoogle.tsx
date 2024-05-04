@@ -1,9 +1,12 @@
 "use client"
 import { useRouter } from 'next/navigation';
+import useAuth from "@/app/hooks/useAuth";
 
 
 export default function ContinueWithGoogle() {
     const router = useRouter();
+    // Use useAuth to check if the token and cookies are valid.
+    const isAuthenticated = useAuth();
 
     const initiateGoogleSignIn = () => {
         // Define your Google Client ID and the redirect URI

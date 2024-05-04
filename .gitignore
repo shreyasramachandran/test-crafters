@@ -37,6 +37,7 @@ next-env.d.ts
 
 # playground
 /src/app/(playground)
+/src/app/api/playground
 
 # cherry blossom
 /public/cherry-blossom.avif
