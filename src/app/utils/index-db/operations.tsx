@@ -30,10 +30,19 @@ export interface IUser {
     otherPassword?: string;
 }
 
+export interface ISession {
+    id?: number;
+    start?: number;
+    end?: string;
+    userId?: string;
+    questionPaletteId?: string;
+}
+
 // The schema string should only have valid field names from ISubject
 const QuestionsSchema = '++id, uniqueIdentification, questionPreText, questionText, questionType, optionsText, answerHuman';
 const MetadataSchema = '++id, subject, duration, maxQuestions, minimumRequiredQuestions, category, markingScheme, mediumOfExamination';
 const UserSchema = '++id, googleUserEmail, googleUserName, googleUserPicture, otherEmail, otherPassword';
+const SessionSchema = '++id, start, end, userId, questionPaletteId';
 
 // Your enum and type definitions
 enum QuestionState {
@@ -59,6 +68,7 @@ class QuestionsDB extends Dexie {
     public questions!: Table<IQuestion>;
     public questionPalette!: Table<IQuestionPaletteItem>;
     public user!: Table<IUser>;
+    public session!: Table<ISession>;
 
     constructor(databaseName: string) {
         super(databaseName);
@@ -66,12 +76,14 @@ class QuestionsDB extends Dexie {
             metadata: MetadataSchema,
             questions: QuestionsSchema,
             questionPalette: QuestionPaletteItemSchema,
-            user: UserSchema
+            user: UserSchema,
+            session: SessionSchema
         });
         this.metadata = this.table("metadata");
         this.questions = this.table("questions");
         this.questionPalette = this.table("questionPalette");
         this.user = this.table('user')
+        this.session = this.table('session')
     }
 
     async initializeDatabase(database = 'QuestionsDatabase') {
@@ -92,7 +104,8 @@ class QuestionsDB extends Dexie {
             this.checkTableExists('metadata'),
             this.checkTableExists('questions'),
             this.checkTableExists('questionPalette'),
-            this.checkTableExists('user')
+            this.checkTableExists('user'),
+            this.checkTableExists('session')
         ]).then(() => {
             console.log("All tables checked and ready.");
         }).catch(err => {
@@ -188,7 +201,7 @@ class QuestionsDB extends Dexie {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
                 },
-                body: JSON.stringify({ database: database, table: table }),
+                body: JSON.stringify({ table: table }),
 
             });
             // Ensure proper error handling
@@ -209,18 +222,19 @@ class QuestionsDB extends Dexie {
         }
     }
 
-    async storeQuestionsData(table: string, maxQuestions: number) {
+    async storeQuestionsData(subject: string, maxQuestions: number) {
         try {
             const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
             const database = process.env.NEXT_PUBLIC_SQL_SERVER_DATABASE_NAME
             const indexDBTableName = 'questions'
-            const res = await fetch(`${baseUrl}/get-data`, {
+            const tableName = 'questions'
+            const res = await fetch(`${baseUrl}/get-subject-data`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
                 },
-                body: JSON.stringify({ database: database, table: table }),
+                body: JSON.stringify({ subject: subject, table: tableName }),
 
             });
             // Ensure proper error handling
