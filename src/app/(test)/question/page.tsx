@@ -1,6 +1,6 @@
 "use client"
 import useAuth from "@/app/hooks/useAuth";
-import { Flex, Box, Text, Button, RadioGroup, Dialog } from "@radix-ui/themes";
+import { Flex, Box, Text, Button, RadioGroup, Dialog, ScrollArea } from "@radix-ui/themes";
 import { useState, useEffect } from 'react';
 import db, { IQuestion } from '@/app/utils/index-db/operations';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -80,6 +80,7 @@ const MainComponent = () => {
     };
 
     // Define question and options
+    const [questionPreText, setQuestionPreText] = useState('');
     const [question, setQuestion] = useState('');
     const [options, setOptions] = useState<string[]>([]);
 
@@ -110,6 +111,7 @@ const MainComponent = () => {
                 // Assuming the table name is 'subjects' and the questions are indexed by `id`
                 const questionData = await db.getRecordById<IQuestion>('questions', currentQuestionNumber);
                 if (questionData) {
+                    setQuestionPreText(questionData.questionPreText || 'No question pre text available')
                     setQuestion(questionData.questionText || 'No question text available.');
                     setOptions(questionData.optionsText || []);
                 } else {
@@ -294,28 +296,36 @@ const MainComponent = () => {
                                     <div className="flex-grow border-t border-black"></div>
                                 </div>
                             </Box>
-                            {/* Question */}
-                            <Box style={{ 'height': '10%', 'width': '100%', 'display': 'flex', 'alignItems': 'center' }}>
-                                <Text className="pl-8" size='4' weight='light' wrap='pretty' >{question}</Text>
-                            </Box>
-                            {/* Options */}
-                            <Box style={{ 'height': '20%', 'width': '100%', 'display': 'flex', 'alignItems': 'center' }}>
-                                <RadioGroup.Root size='3' name="Options" className="pl-8" style={{ fontSize: '1.1rem', width: '100%' }}>
-                                    {options.map((option, index) => (
-                                        <RadioGroup.Item
-                                            key={index}
-                                            value={option}
-                                            className="flex items-center h-8 w-8"
-                                            checked={selectedOption === index}
-                                            onClickCapture={(isChecked) => {
-                                                if (isChecked) setSelectedOption(index); // Update the selected option state
-                                            }}
-                                        >
-                                            {option}
-                                        </RadioGroup.Item>
-                                    ))}
-                                </RadioGroup.Root>
-                            </Box>
+                            <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '50%' }}>
+                                <Flex direction='column' gap='3'>
+                                    {/* Question Pre Text*/}
+                                    <Box style={{ 'height': '10%', 'width': '100%', 'display': 'flex', 'alignItems': 'center' }}>
+                                        <Text className="pl-8 pr-8" size='3' weight='regular' wrap='pretty' >{questionPreText}</Text>
+                                    </Box>
+                                    {/* Question */}
+                                    <Box style={{ 'height': '10%', 'width': '100%', 'display': 'flex', 'alignItems': 'center' }}>
+                                        <Text className="pl-8 pr-8" size='3' weight='medium' wrap='pretty' >{question}</Text>
+                                    </Box>
+                                    {/* Options */}
+                                    <Box style={{ 'height': '20%', 'width': '100%', 'display': 'flex', 'alignItems': 'center' }}>
+                                        <RadioGroup.Root size='3' name="Options" className="pl-8 pr-8" style={{ fontSize: '1.1rem', width: '100%' }}>
+                                            {options.map((option, index) => (
+                                                <RadioGroup.Item
+                                                    key={index}
+                                                    value={option}
+                                                    className="flex items-center h-8 w-8 pr-8"
+                                                    checked={selectedOption === index}
+                                                    onClickCapture={(isChecked) => {
+                                                        if (isChecked) setSelectedOption(index); // Update the selected option state
+                                                    }}
+                                                >
+                                                    {option}
+                                                </RadioGroup.Item>
+                                            ))}
+                                        </RadioGroup.Root>
+                                    </Box>
+                                </Flex>
+                            </ScrollArea>
                             {/* Saperator */}
                             <Box style={{ 'height': '5%', 'width': '100%', 'display': 'flex', 'alignItems': 'center' }}>
                                 <div className="flex items-center justify-center w-full p-8">
