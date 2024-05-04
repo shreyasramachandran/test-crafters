@@ -194,14 +194,12 @@ class QuestionsDB extends Dexie {
     async storeMetadata(table = 'metadata') {
         try {
             const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
-            const database = process.env.NEXT_PUBLIC_SQL_SERVER_DATABASE_NAME;
-            const res = await fetch(`${baseUrl}/get-metadata`, {
-                method: "POST",
+            const res = await fetch(`${baseUrl}/get-metadata?table=${table}`, {
+                method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
                 },
-                body: JSON.stringify({ table: table }),
 
             });
             // Ensure proper error handling
@@ -228,13 +226,12 @@ class QuestionsDB extends Dexie {
             const database = process.env.NEXT_PUBLIC_SQL_SERVER_DATABASE_NAME
             const indexDBTableName = 'questions'
             const tableName = 'questions'
-            const res = await fetch(`${baseUrl}/get-subject-data`, {
-                method: "POST",
+            const res = await fetch(`${baseUrl}/get-subject-data?subject=${subject}&table=${tableName}`, {
+                method: "GET",
                 headers: {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
                 },
-                body: JSON.stringify({ subject: subject, table: tableName }),
 
             });
             // Ensure proper error handling
