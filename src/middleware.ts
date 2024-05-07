@@ -11,7 +11,8 @@ export async function middleware(request: NextRequest) {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json"
-                }
+                },
+                credentials: 'include'
             });
             // Ensure proper error handling
             if (!res.ok) {
@@ -41,10 +42,11 @@ export async function middleware(request: NextRequest) {
             name: 'sessionId',
             value: sessionId, // Generate a random session IDx
             path: '/',
-            // domain: 'localhost',
+            domain: '.cuet.net.in',
             httpOnly: true,
-            // secure: false, // Set to true if using HTTPS
-            // sameSite: 'lax' // Recommended for most use cases
+            secure: true, // Set to true if using HTTPS
+            sameSite: 'none', // Recommended for most use cases
+            maxAge: 630720000
         })
         return response
     }
