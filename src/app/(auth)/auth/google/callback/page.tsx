@@ -7,25 +7,9 @@ export default function Page() {
     const router = useRouter();
     const hasFetchedTokens = useRef(false); // ref to track if tokens have been fetched
 
-    async function setCookie(cookieName: string, cookieValue: string) {
-        const res = await fetch(`/api/cookies/set-cookie?${cookieName}?value=${cookieValue}`, {
-            method: "GET",
-            headers: {
-                "Cache-Control": "no-cache",
-            }
-        });
-        // Ensure proper error handling
-        if (!res.ok) {
-            // Handle errors, e.g., return an error response
-            return new Response(JSON.stringify({ error: "Error setting cookie" }), {
-                status: res.status,
-                headers: { "Content-Type": "application/json" },
-            });
-        }
-    }
-
     async function getCookie(cookieName: string) {
         try {
+            console.log('Get cookie name', cookieName)
             const res = await fetch(`/api/cookies/get-cookie?cookieName=${cookieName}`, {
                 method: "GET",
                 headers: {
@@ -41,12 +25,38 @@ export default function Page() {
                 });
             }
             const data = await res.json();
-            const cookie = await data.cookie
+            const cookie = data.cookie
             return cookie;
-
         } catch (error) {
             console.error('Error fetching cookie', error);
             return false;
+        }
+    }
+
+    async function createUser(userData: any) {
+        try {
+            const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
+            console.log(userData)
+
+            const res = await fetch(`${baseUrl}/create-user`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache"
+                },
+                body: JSON.stringify(userData),
+                credentials: 'include'
+            });
+            // Ensure proper error handling
+            if (!res.ok) {
+                // Handle errors, e.g., return an error response
+                throw new Error(`HTTP error, status = ${res.status}`);
+            }
+        }
+        catch (error) {
+            // Handle other errors
+            console.error("Error creating user", error);
+            throw error
         }
     }
 
@@ -70,29 +80,17 @@ export default function Page() {
         }
     }
 
-    // async function createUserData(userData: any) {
-    //     try {
-    //         const response = await fetch(`/create-user-data`, {
-    //             method: "POST",
-    //             headers: {
-    //                 "Content-Type": "application/json"
-    //             },
-    //             body: userData,
-    //             cache: 'no-store'
-    //         });
-    //         if (!response.ok) {
-    //             console.error('Error in storing user data')
-    //         }
-    //     } catch (error: any) {
-    //         console.error('Error in storing user data:', error);
-    //     }
-    //     return;
-    // }
-
     async function fetchOAuthTokens(oAuthCode: string) {
         if (hasFetchedTokens.current) return; // guard against multiple invocations
 
         hasFetchedTokens.current = true; // mark that token fetch is in progress
+        console.log('Reached fetchOAuthToken')
+        // Check if userId is already present in which case direct to test-prep.
+        // Later add a userId validity check
+        let userId = await getCookie('userId')
+        if (userId) {
+            router.replace('/test-picker');
+        }
 
         try {
             const response = await fetch(`/api/auth/google/callback`, {
@@ -113,27 +111,21 @@ export default function Page() {
                 return;
             }
 
-
-            // Later simplify it into one function
-            setCookie('access_token', responseData.access_token)
-            setCookie('refresh_token', responseData.access_token)
-            setCookie('expires_token', responseData.access_token)
-
-
             // Get user info
             const userInfo = await getUserInfo(responseData.access_token);
             if (userInfo) {
-                const googleUserEmail = userInfo.email; // User's email address
-                const googleUserName = userInfo.name; // User's full name
-
+                console.log(userInfo)
                 const userData = {
-                    'google_user_email': googleUserEmail,
-                    'google_user_name': googleUserName,
-                    'access_token': responseData.access_token,
-                    'refresh_token': responseData.refresh_token,
-                    'expires_in': responseData.expires_in
+                    'googleEmail': userInfo.email,
+                    'googleName': userInfo.name,
+                    'googleId': userInfo.id,
+                    'googleLocale': userInfo.locale,
+                    'googlePicture': userInfo.picture,
+                    'accessToken': responseData.access_token,
+                    'refreshToken': responseData.refresh_token,
+                    'expiresIn': String(responseData.expires_in)
                 }
-                // createUserData(userData)
+                createUser(userData)
             }
 
             // Call a backend api to create a new session and a new user. 

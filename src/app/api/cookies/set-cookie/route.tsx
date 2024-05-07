@@ -5,13 +5,14 @@ export async function GET(request: NextRequest) {
     try {
         const searchParams = request.nextUrl.searchParams
         const cookieName = searchParams.get('cookieName') as string
-        let cookieValue = searchParams.get('cookieName') as string
+        let cookieValue = searchParams.get('cookieValue') as string
         // Call a backend api to create a new session, it will also give you cookie value
         cookies().set({
             name: cookieName,
             value: cookieValue,
+            path: '/',
             httpOnly: true,
-            secure: true
+            maxAge: 630720000
         })
         return new Response(JSON.stringify({ message: `Cookie ${cookieName} has been set` }), { status: 200 });
     }

@@ -3,7 +3,7 @@ import { Flex, Box, Text, Button } from "@radix-ui/themes"
 import ContinueWithGoogle from "@/app/components/ContinueWithGoogle"
 import useAuth from "@/app/hooks/useAuth"
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { Suspense } from 'react'
 
@@ -15,6 +15,62 @@ const MainComponent = () => {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+
+    async function validateEmail(email: string, password: string) {
+        try {
+            const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
+            const res = await fetch(`${baseUrl}/validate-email?other_email=${email}&other_password=${password}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache",
+                },
+
+            });
+            // Ensure proper error handling
+            if (!res.ok) {
+                // Handle errors, e.g., return an error response
+                return new Response(JSON.stringify({ error: "Error fetching metadata" }), {
+                    status: res.status,
+                    headers: { "Content-Type": "application/json" },
+                });
+            }
+            const responseData = await res.json();
+            return responseData.isValid
+        }
+        catch (error) {
+            // Handle other errors
+            console.error("Error validating email", error);
+        }
+    }
+
+    // Function to validate email using a regular expression
+    function validateEmailString(email: string) {
+        const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        return re.test(email);
+    }
+
+    // Function to validate password based on your criteria
+    function validatePasswordString(password: string) {
+        // Example: Check for a minimum length of 8 characters
+        return password.length >= 8;
+    }
+
+    const handleSignIn = async () => {
+        if (!validateEmailString(email) || !validatePasswordString(password)) {
+            console.error("Invalid email or password format.");
+            // Show a toast message
+        }
+        else {
+            const isValid = await validateEmail(email, password);
+            if (isValid) {
+                router.push('/test-picker');
+            }
+            else {
+                console.log('Email address not found, please sign in to continue')
+            }
+        }
+    };
 
     return (
         <Flex className="bg-[#F6F7FB]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
@@ -59,14 +115,8 @@ const MainComponent = () => {
                         </button>
                     </Box>
                     <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                        <Button style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px' }} size="3" variant='solid' onClick={() => {
-                            // Later create a users object store and use that
-                            const storedEmail = localStorage.getItem('email')
-                            const storedPassword = localStorage.getItem('password')
-                            if (storedEmail === email && storedPassword === password) {
-                                router.push('/test-prep');
-                            }
-                        }}>Sign In</Button>
+                        <Button style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px' }} size="3" variant='solid' onClick={handleSignIn}
+                        >Sign In</Button>
                     </Box>
                     {/* <Box className="pt-4" style={{ 'height': '3%', 'width': '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                         <Text color='gray' size='2' weight='regular' wrap='pretty'>Forgot password?</Text>

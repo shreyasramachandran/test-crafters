@@ -19,10 +19,9 @@ const MainComponent = () => {
     async function sendVerificationEmail() {
         const verificationCode = await generateVerificationCode()
         sessionStorage.setItem('verification_code', verificationCode);
-        // Later find a better way to pass email and password
-        localStorage.setItem('other_email', email);
-        localStorage.setItem('other_password', password);
-        // Note that this function not only fetches data but also stores it in indexDB later on
+        sessionStorage.setItem('other_email', email);
+        sessionStorage.setItem('other_password', password);
+
         try {
             const res = await fetch(`/api/send-email`, {
                 method: "POST",
@@ -47,11 +46,73 @@ const MainComponent = () => {
         }
     }
 
+    async function checkUserExists() {
+        try {
+            const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
+            const body = {
+                otherEmail: email,
+                otherPassword: password
+            }
+            const res = await fetch(`${baseUrl}/check-user-exists`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache"
+                },
+                body: JSON.stringify(body)
+            });
+            // Ensure proper error handling
+            if (!res.ok) {
+                // Handle errors, e.g., return an error response
+                return new Response(JSON.stringify({ error: "Error checking if user exists or not" }), {
+                    status: res.status,
+                    headers: { "Content-Type": "application/json" },
+                });
+            }
+            const responseData = await res.json();
+            const userExists = responseData.exists
+            return userExists
+        }
+        catch (error) {
+            // Handle other errors
+            console.error("Error checking if user exists", error);
+        }
+    }
+
     async function generateVerificationCode() {
         const bytes = randomBytes(3);  // Generates a buffer of secure random bytes
         const code = bytes.toString('hex');  // Convert it to a hexadecimal string
         const verificationCode = code.toUpperCase()
         return verificationCode
+    }
+
+    // Function to validate email using a regular expression
+    function validateEmailString(email: string) {
+        const re = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,6}$/;
+        return re.test(email);
+    }
+
+    // Function to validate password based on your criteria
+    function validatePasswordString(password: string) {
+        // Example: Check for a minimum length of 8 characters
+        return password.length >= 8;
+    }
+
+    const handleSignUp = async () => {
+        if (!validateEmailString(email) || !validatePasswordString(password)) {
+            console.error("Invalid email or password format.");
+            // Show a toast message
+        }
+        else {
+            const userExists = checkUserExists()
+            if (!userExists) {
+                sendVerificationEmail()
+                router.push('/verification');
+            }
+            else {
+                console.error("User exists.");
+            }
+        }
     }
 
 
@@ -111,10 +172,7 @@ const MainComponent = () => {
                         </button>
                     </Box>
                     <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                        <Button style={{ 'height': '75%', 'width': '100%', borderRadius: '5px' }} size="3" variant='solid' onClick={() => {
-                            sendVerificationEmail()
-                            router.push('/verification');
-                        }}>Sign Up</Button>
+                        <Button style={{ 'height': '75%', 'width': '100%', borderRadius: '5px' }} size="3" variant='solid' onClick={handleSignUp}>Sign Up</Button>
                     </Box>
                     <Box style={{ 'height': '3%', 'width': '50%', display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', alignSelf: 'center' }}>
                         <Text color='gray' size='2' weight='regular' wrap='pretty'>Already signed up?</Text>
