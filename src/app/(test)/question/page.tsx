@@ -44,7 +44,7 @@ const MainComponent = () => {
         index: number;
         state: QuestionState;
         selectedAnswer: number;
-        uniqueIdentification: number;
+        uniqueIdentification: string;
     };
 
     const [questionPalette, setQuestionPalette] = useState<QuestionPaletteItem[]>([]);
@@ -54,9 +54,9 @@ const MainComponent = () => {
             try {
                 const questions = await db.questions.toArray(); // Assuming 'questions' table is correctly referenced
 
-                const initialPalette = questions.map((question, index) => ({
+                const initialPalette: QuestionPaletteItem[] = questions.map((question, index) => ({
                     index: index,
-                    uniqueIdentification: question.uniqueIdentification || 0, // Fallback to 0 if undefined
+                    uniqueIdentification: question.uniqueIdentification || 'N/A', // Fallback to 0 if undefined
                     state: QuestionState.NotVisited,
                     selectedAnswer: -1
                 }));
