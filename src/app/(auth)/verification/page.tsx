@@ -23,6 +23,50 @@ export default function Page() {
         }
     }, []);
 
+    async function createUser(email: string, password: string) {
+
+        try {
+            const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
+            const body = {
+                otherEmail: email,
+                otherPassword: password
+            }
+            const res = await fetch(`${baseUrl}/create-user`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache"
+                },
+                credentials: 'include',
+                body: JSON.stringify(body)
+            });
+            // Ensure proper error handling
+            if (!res.ok) {
+                // Handle errors, e.g., return an error response
+                return new Response(JSON.stringify({ error: "Error creating user" }), {
+                    status: res.status,
+                    headers: { "Content-Type": "application/json" },
+                });
+            }
+            const responseData = await res.json();
+            return responseData
+        }
+        catch (error) {
+            // Handle other errors
+            console.error("Error creating user", error);
+        }
+    }
+
+    const handleVarification = async () => {
+        if (typedVerificationCode.current?.value === verificationCode) {
+            const otherEmail = sessionStorage.getItem('other_email') as string
+            const otherPassword = sessionStorage.getItem('other_password') as string
+            createUser(otherEmail, otherPassword)
+            // Create a new user and store his otherEmail and otherPassword
+            router.push('/test-picker');
+        }
+    };
+
     return (
         <Flex className="bg-[#F6F7FB]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
             <Box className="bg-white" style={{ 'height': '55%', 'width': '30%', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
@@ -43,12 +87,7 @@ export default function Page() {
                         />
                     </Box>
                     <Box style={{ 'height': '15%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                        <Button style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px' }} size="3" variant='solid' onClick={() => {
-                            if (typedVerificationCode.current?.value === verificationCode) {
-                                // Store the email and password
-                                router.push('/test-picker');
-                            }
-                        }}>Verify Account</Button>
+                        <Button style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px' }} size="3" variant='solid' onClick={handleVarification}>Verify Account</Button>
                     </Box>
                 </Flex>
             </Box>

@@ -8,7 +8,7 @@ export async function GET(request: NextRequest) {
         const cookieName = searchParams.get('cookieName') as string
         if (cookieName) {
             const cookie = cookies().get(cookieName)
-            return new Response(JSON.stringify({ 'data': { 'cookie': cookie } }), { status: 200 });
+            return new Response(JSON.stringify({ 'cookie': cookie }), { status: 200 });
         }
         else {
             return new Response(JSON.stringify({ 'Error': 'No params found' }), { status: 500 });

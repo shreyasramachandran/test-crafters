@@ -29,7 +29,7 @@ export default function Page() {
                     </Flex>
                 </Box>
                 <Box className="bg-[#F6F7FB]" height='730px' flexGrow='1' position='relative'>
-                    <img src="landing_page_cover.webp" alt="Background Image" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 1 }} />
+                    <img src="images/landing_page_cover.webp" alt="Background Image" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 1 }} />
                     <Flex className="h-full" style={{ position: 'relative', zIndex: 2 }} direction='column' gap='9' justify='center' align='start' pl='6'>
                         <Box style={{ height: '20%' }} width={{ md: '40vw' }} >
                             <Text className="text-stone-800" size='9' weight='bold' wrap='pretty'>Conquer CUET exam with confidence</Text>
@@ -57,7 +57,7 @@ export default function Page() {
                                     <Flex className="h-full" direction='column' gap='3' justify='center' align='center' py='3'>
                                         <Box style={{ height: '75%', width: '75%' }}>
                                             <Card style={{ height: '100%', width: '100%', padding: 0 }}>
-                                                <img src="/comprehensive_mock_tests.svg" alt="Comprehensive Mock Tests" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                <img src="images/comprehensive_mock_tests.svg" alt="Comprehensive Mock Tests" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
                                             </Card>
                                         </Box>
                                         <Box style={{ height: '20%', width: '95%', textAlign: 'center', alignItems: 'center', justifyContent: 'center' }}>
@@ -71,7 +71,7 @@ export default function Page() {
                                     <Flex className="h-full" direction='column' gap='3' justify='center' align='center' py='3'>
                                         <Box style={{ height: '70%', width: '75%' }} >
                                             <Card style={{ height: '100%', width: '100%', padding: 0 }}>
-                                                <img src="/instant_test_analysis.svg" alt="Instant Test Analysis" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                <img src="images/instant_test_analysis.svg" alt="Instant Test Analysis" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
                                             </Card>
                                         </Box>
                                         <Box style={{ height: '20%', width: '85%', textAlign: 'center', alignItems: 'center', justifyContent: 'center' }} >
@@ -85,7 +85,7 @@ export default function Page() {
                                     <Flex className="h-full" direction='column' gap='3' justify='center' align='center' py='3'>
                                         <Box style={{ height: '70%', width: '75%' }} >
                                             <Card style={{ height: '100%', width: '100%', padding: 0 }}>
-                                                <img src="/absolutely_free_access.svg" alt="Absolutely Free Access" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                                                <img src="images/absolutely_free_access.svg" alt="Absolutely Free Access" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
                                             </Card>
                                         </Box>
                                         <Box style={{ height: '20%', width: '85%', textAlign: 'center', alignItems: 'center', justifyContent: 'center' }} >
@@ -117,14 +117,14 @@ export default function Page() {
                                     <Button style={{ height: '10%', width: '30%' }} size="3" variant='solid' onClick={() => router.push('/sign-up')}>Try out now</Button>
                                 </Box>
                                 <Box style={{ height: '90%', width: '30%' }}>
-                                    <img src="/free_sign_up.svg" alt="Free Sign Up" style={{ position: 'relative', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    <img src="images/free_sign_up.svg" alt="Free Sign Up" style={{ position: 'relative', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
                                 </Box>
                             </Flex>
                         </Box>
                         <Box style={{ height: '27%', width: '100%' }}>
                             <Flex className="h-full" gap='8' justify='center' align='center'>
                                 <Box style={{ height: '90%', width: '30%' }}>
-                                    <img src="/choose_your_test.svg" alt="Choose Your Test" style={{ position: 'relative', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    <img src="images/choose_your_test.svg" alt="Choose Your Test" style={{ position: 'relative', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
                                 </Box>
                                 <Box style={{ height: '90%', width: '30%', display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly' }} >
                                     <Text className="text-black" size='8' weight='bold' wrap='pretty'>Choose your test</Text>
@@ -143,7 +143,7 @@ export default function Page() {
                                     <Button style={{ height: '10%', width: '35%' }} size="3" variant='solid' onClick={() => router.push('/sign-up')}>Start Practicing</Button>
                                 </Box>
                                 <Box style={{ height: '90%', width: '30%' }}>
-                                    <img src="/practice_and_improve.svg" alt="Practice And Improve" style={{ position: 'relative', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                                    <img src="images/practice_and_improve.svg" alt="Practice And Improve" style={{ position: 'relative', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
                                 </Box>
                             </Flex>
                         </Box>
@@ -152,7 +152,7 @@ export default function Page() {
                 <Box className="bg-[#F6F7FB]" height='1024px' flexGrow='1'>
                     <Flex className="h-full" gap='8' justify='center' align='center'>
                         <Box style={{ height: '70%', width: '30%' }} >
-                            <img src="/begin_your_journey.svg" alt="Begin your Journey" style={{ position: 'relative', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
+                            <img src="images/begin_your_journey.svg" alt="Begin your Journey" style={{ position: 'relative', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover' }} />
                         </Box>
                         <Box style={{ height: '75%', width: '30%' }} >
                             <Flex className="h-full" direction='column' gap='4' justify='center' align='center'>

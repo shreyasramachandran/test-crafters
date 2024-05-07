@@ -44,7 +44,7 @@ const MainComponent = () => {
         index: number;
         state: QuestionState;
         selectedAnswer: number;
-        uniqueIdentification: number;
+        uniqueIdentification: string;
     };
 
     const [questionPalette, setQuestionPalette] = useState<QuestionPaletteItem[]>([]);
@@ -54,9 +54,9 @@ const MainComponent = () => {
             try {
                 const questions = await db.questions.toArray(); // Assuming 'questions' table is correctly referenced
 
-                const initialPalette = questions.map((question, index) => ({
+                const initialPalette: QuestionPaletteItem[] = questions.map((question, index) => ({
                     index: index,
-                    uniqueIdentification: question.uniqueIdentification || 0, // Fallback to 0 if undefined
+                    uniqueIdentification: question.uniqueIdentification || 'N/A', // Fallback to 0 if undefined
                     state: QuestionState.NotVisited,
                     selectedAnswer: -1
                 }));
@@ -143,28 +143,28 @@ const MainComponent = () => {
             case QuestionState.NotAnswered:
                 return (
                     <div className="w-8 h-8 relative inline-block">
-                        <img src="/not_answered.svg" alt="Not Answered" className="block w-full h-auto" />
+                        <img src="images/not_answered.svg" alt="Not Answered" className="block w-full h-auto" />
                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{index + 1}</span>
                     </div>
                 );
             case QuestionState.Answered:
                 return (
                     <div className="w-8 h-8 relative inline-block">
-                        <img src="/answered.svg" alt="Answered" className="block w-full h-auto" />
+                        <img src="images/answered.svg" alt="Answered" className="block w-full h-auto" />
                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{index + 1}</span>
                     </div>
                 );
             case QuestionState.MarkedForReview:
                 return (
                     <div className="w-8 h-8 relative inline-block">
-                        <img src="/marked_for_review.svg" alt="Marked for Review" className="block w-full h-auto" />
+                        <img src="images/marked_for_review.svg" alt="Marked for Review" className="block w-full h-auto" />
                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{index + 1}</span>
                     </div>
                 );
             case QuestionState.AnsweredAndMarkedForReview:
                 return (
                     <div className="relative inline-block">
-                        <img src="/marked_for_review_other.svg" alt="Answered & Marked for Review" className="block w-8 h-8" />
+                        <img src="images/marked_for_review_other.svg" alt="Answered & Marked for Review" className="block w-8 h-8" />
                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{index + 1}</span>
                     </div>
                 );
@@ -410,28 +410,28 @@ const MainComponent = () => {
                                 </div>
                                 <div className="flex flex-row items-center justify-center">
                                     <div className="w-8 h-8 relative inline-block">
-                                        <img src="/not_answered.svg" alt="Custom Vector" className="block w-full h-auto" />
+                                        <img src="images/not_answered.svg" alt="Custom Vector" className="block w-full h-auto" />
                                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{legendCounts.notAnswered}</span>
                                     </div>
                                     <div className="pl-1 whitespace-nowrap">Not Answered</div>
                                 </div>
                                 <div className="pl-8 flex flex-row items-center justify-center">
                                     <div className="w-8 h-8 relative inline-block">
-                                        <img src="/answered.svg" alt="Custom Vector" className="block w-full h-auto" />
+                                        <img src="images/answered.svg" alt="Custom Vector" className="block w-full h-auto" />
                                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{legendCounts.answered}</span>
                                     </div>
                                     <div className="pl-1">Answered</div>
                                 </div>
                                 <div className="pl-8 flex flex-row items-center justify-center">
                                     <div className="w-8 h-8 relative inline-block">
-                                        <img src="/marked_for_review.svg" alt="Custom Vector" className="block w-full h-auto" />
+                                        <img src="images/marked_for_review.svg" alt="Custom Vector" className="block w-full h-auto" />
                                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{legendCounts.markedForReview}</span>
                                     </div>
                                     <div className="pl-1">Marked for Review</div>
                                 </div>
                                 <div className="pl-11 flex flex-row items-center justify-center" style={{ 'gridColumn': '1 / span 2', 'gridRow': '3 / 4' }}>
                                     <div className="relative inline-block">
-                                        <img src="/marked_for_review_other.svg" alt="Custom Vector" className="block w-12 h-12" />
+                                        <img src="images/marked_for_review_other.svg" alt="Custom Vector" className="block w-12 h-12" />
                                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{legendCounts.answeredAndMarkedForReview}</span>
                                     </div>
                                     <div className="pl-1">Answered & Marked for Review (will be considered for evaluation)</div>

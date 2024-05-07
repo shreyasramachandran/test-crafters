@@ -13,7 +13,7 @@ export interface IMetadata {
 
 export interface IQuestion {
     id?: number;
-    uniqueIdentification?: number;
+    uniqueIdentification?: string;
     questionPreText?: string;
     questionText?: string;
     questionType?: string;
@@ -57,10 +57,11 @@ type IQuestionPaletteItem = {
     index: number;
     state: QuestionState;
     selectedAnswer: number;
-    uniqueIdentification: number;
+    uniqueIdentification: string;
 };
 
-const QuestionPaletteItemSchema = '++index, state, selectedAnswer, uniqueIdentification'
+// This has been named as Question Palette but is used to store state of answers 
+const QuestionPaletteItemSchema = '++id, state, selectedAnswer, uniqueIdentification'
 
 // Class to handle the IndexedDB operations
 class QuestionsDB extends Dexie {
@@ -265,6 +266,71 @@ class QuestionsDB extends Dexie {
         return array;
     }
 
+    async calculatePerformanceScores(): Promise<{ correctAnswers: number, incorrectAnswers: number }> {
+        const allQuestions: IQuestion[] = await this.getRecords('questions')
+        const allAnswers: IQuestionPaletteItem[] = await this.getRecords('questionPalette')
+        let correctAnswers = 0
+        let incorrectAnswers = 0
+
+        // Map questions by their uniqueIdentification for quick lookup
+        const questionMap = new Map();
+        allQuestions.forEach(question => {
+            questionMap.set(question.uniqueIdentification, question);
+        });
+
+        // Iterate over all answers to compare with questions
+        allAnswers.forEach(answer => {
+            const correspondingQuestion = questionMap.get(answer.uniqueIdentification);
+            if (correspondingQuestion) {
+                // Assuming answerSelected gives the index of the selected option
+                // and answerHuman contains the correct answer
+                const correctAnswerIndex = correspondingQuestion.optionsText.indexOf(correspondingQuestion.answerHuman);
+                if (answer.selectedAnswer === correctAnswerIndex) {
+                    correctAnswers++;
+                } else {
+                    incorrectAnswers++;
+                }
+            }
+        });
+
+        return { correctAnswers, incorrectAnswers }
+    }
+
+    async generatePerformanceTable(): Promise<Array<{ question_number: number, user_answer: string, correct_answer: string, result_status: string }>> {
+        const allQuestions: IQuestion[] = await this.getRecords('questions')
+        const allAnswers: IQuestionPaletteItem[] = await this.getRecords('questionPalette')
+
+        const questionMap = new Map<string, IQuestion>();
+        allQuestions.forEach(question => {
+            questionMap.set(question.uniqueIdentification!, question);
+        });
+
+        const analysisTable = allAnswers.map(answer => {
+            const correspondingQuestion = questionMap.get(answer.uniqueIdentification);
+            if (correspondingQuestion) {
+                const userAnswerText = correspondingQuestion.optionsText![answer.selectedAnswer];
+                const correctAnswerText = correspondingQuestion.answerHuman;
+                const resultStatus = userAnswerText === correctAnswerText ? 'Correct' : 'Incorrect';
+
+                return {
+                    question_number: correspondingQuestion.id || -1,
+                    user_answer: userAnswerText || 'N/A',
+                    correct_answer: correctAnswerText || 'N/A',
+                    result_status: resultStatus || 'Unanswered'
+                };
+            } else {
+                // Handle the case where no corresponding question is found
+                return {
+                    question_number: -1,
+                    user_answer: 'N/A',
+                    correct_answer: 'N/A',
+                    result_status: 'Unanswered'  // or any other appropriate status
+                };
+            }
+        });
+
+        return analysisTable;
+    }
 }
 
 const db = new QuestionsDB('QuestionsDatabase');

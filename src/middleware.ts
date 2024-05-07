@@ -1,19 +1,50 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from 'next/server'
 
-export function middleware(request: NextRequest) {
-    // Check if there's an existing session cookie
-    let sessionCookie = request.cookies.get('session')
-    console.log(sessionCookie)
+export async function middleware(request: NextRequest) {
+    async function createSession() {
+        try {
+            const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
 
-    // If no session cookie exists, generate a new session ID
-    // Also put condition for if it has expired
-    if (!sessionCookie) {
+            // Your fetch request
+            const res = await fetch(`${baseUrl}/create-session`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            // Ensure proper error handling
+            if (!res.ok) {
+                // Handle errors, e.g., return an error response
+                throw new Error(`HTTP error, status = ${res.status}`);
+            }
+            // Extract sessionId and send it
+            const sessionId = res.headers.getSetCookie()[0].split(';')[0].split('=')[1];
+            return sessionId
+        }
+        catch (error) {
+            // Handle other errors
+            console.error("Error creating session", error);
+            throw error;
+        }
+    }
+
+    // Check if there's an existing sessionId
+    let sessionId = request.cookies.get('sessionId')?.value as string
+    // If no session cookie exists, generate a new session session and store its id as a cookie
+    if (!sessionId) {
+        sessionId = await createSession()
+        console.log('sessionId', sessionId)
+        // SessionId is sent via http cookies
         const response = NextResponse.next()
-        response.cookies.set({
-            name: 'session',
-            value: Math.random().toString(36).substring(7), // Generate a random session IDx
+        response?.cookies.set({
+            name: 'sessionId',
+            value: sessionId, // Generate a random session IDx
             path: '/',
+            // domain: 'localhost',
+            httpOnly: true,
+            // secure: false, // Set to true if using HTTPS
+            // sameSite: 'lax' // Recommended for most use cases
         })
         return response
     }
@@ -28,7 +59,8 @@ export const config = {
          * - _next/static (static files)
          * - _next/image (image optimization files)
          * - favicon.ico (favicon file)
+         * - images (images used in the application)
          */
-        '/((?!api|_next/static|_next/image|favicon.ico).*)'
+        '/((?!api|_next/static|_next/image|favicon.ico|images).*)'
     ],
 }
