@@ -42,7 +42,7 @@ export async function middleware(request: NextRequest) {
             name: 'sessionId',
             value: sessionId, // Generate a random session IDx
             path: '/',
-            domain: '.cuet.net.in',
+            domain: 'localhost',
             httpOnly: true,
             secure: true, // Set to true if using HTTPS
             sameSite: 'none', // Recommended for most use cases
