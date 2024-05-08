@@ -146,7 +146,7 @@ const MainComponent = () => {
                         <Box style={{ 'height': '20%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                             <Button style={{ 'height': '100%', 'width': '100%', borderRadius: '5px' }} size="3" variant='solid' onClick={() => {
                                 if (selectedSubject !== 'Subject' && duration !== 'Duration') {
-                                    const queryString = createQueryString(searchParams, { subject: 'english', language: 'english', duration: duration, maxQuestions: maxQuestions, minimumRequiredQuestions: minimumRequiredQuestions });
+                                    const queryString = createQueryString(searchParams, { subject: selectedSubject, language: selectedLanguage, duration: duration, maxQuestions: maxQuestions, minimumRequiredQuestions: minimumRequiredQuestions });
                                     router.push('/instructions-page' + '?' + queryString)
                                 }
                             }}>Start Mock Test
