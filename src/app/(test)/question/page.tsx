@@ -278,6 +278,10 @@ const MainComponent = () => {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [isCompleted, setIsCompleted] = useState(false);
 
+    const handleTestCompletion = async () => {
+        router.push('/analysis')
+    }
+
     return (
         <Flex className="bg-[#F6F7FB]" direction='column' height={{ md: '100vh' }} width={{ md: '100vw' }}>
             <Box className="bg-[#0144FF] bg-opacity-[0.059]" flexGrow='1' style={{ height: '5%', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -335,7 +339,7 @@ const MainComponent = () => {
                             {/* Dialog Box */}
                             <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
                                 <Dialog.Content style={{ background: 'white', borderRadius: '5px', padding: '20px', boxShadow: '0px 10px 50px hsla(0, 0%, 0%, 0.1)' }}>
-                                    <Dialog.Description>
+                                    <div>
                                         {!isCompleted ?
                                             <Text trim="both" size="4">
                                                 Solve at least {minimumRequiredQuestions} questions to complete the test.
@@ -349,13 +353,11 @@ const MainComponent = () => {
                                                         <Button style={{ borderRadius: '5px' }} size="3" variant='soft' onClick={() => {
                                                         }}>Cancel</Button>
                                                     </Dialog.Close>
-                                                    <Button style={{ borderRadius: '5px' }} size="3" variant='solid' onClick={() => {
-                                                        router.push('/analysis')
-                                                    }}>Proceed</Button>
+                                                    <Button style={{ borderRadius: '5px' }} size="3" variant='solid' onClick={handleTestCompletion}>Proceed</Button>
                                                 </Flex>
                                             </Flex>
                                         }
-                                    </Dialog.Description>
+                                    </div>
                                 </Dialog.Content>
                             </Dialog.Root>
 
