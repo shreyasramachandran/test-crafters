@@ -30,7 +30,8 @@ const MainComponent = () => {
 
     const isAuthenticated = useAuth();
     // These need to be populated from metadata
-    const subjects = ['English', 'Physics', 'Agriculture', 'Sociology', 'General Test']
+    const subjects = ['Political Science', 'English', 'French', 'Agriculture', 'Chemistry',
+        'General Test', 'Physics', 'Sociology', 'Computer Science', 'Home Sciences']
     const languages = ['English']
 
     const [selectedSubject, setSelectedSubject] = useState("Subject");
