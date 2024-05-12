@@ -28,20 +28,10 @@ export default function Page() {
                         </Flex>
                     </Flex>
                 </Box>
-                <Box className="bg-[#F6F7FB]" height='730px' flexGrow='1' position='relative'>
-                    <img src="images/landing_page_cover.webp" alt="Background Image" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 1 }} />
-                    <Flex className="h-full" style={{ position: 'relative', zIndex: 2 }} direction='column' gap='9' justify='center' align='start' pl='6'>
-                        <Box style={{ height: '20%' }} width={{ md: '40vw' }} >
-                            <Text className="text-stone-800" size='9' weight='bold' wrap='pretty'>Conquer CUET exam with confidence</Text>
-                        </Box>
-                        <Box style={{ height: '40%' }} width={{ md: '40vw' }}>
-                            <Text className="text-stone-800" size='8' weight='light' wrap='pretty'>Ace your CUET with ease! Explore, practice,
-                                and perfect your skills with our free, detailed practice tests. Then harness the power of detailed post-test analysis
-                                to sharpen your skills. Where excellence meets preparation, your journey to top scores begins.</Text>
-                        </Box>
-                        <Box style={{ height: '8%' }} width={{ md: '12vw' }}>
-                            <Button size="4" variant='solid' onClick={() => router.push('/sign-up')}>Sign Up Now</Button>
-                        </Box>
+                <Box className="bg-[#F6F7FB]" height='800px' flexGrow='1' position='relative'>
+                    <img src="images/landing_page_cover.png" alt="Background Image" style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', objectFit: 'cover', zIndex: 1 }} />
+                    <Flex className="h-full" style={{ position: 'relative', zIndex: 2 }} direction='row' gap='9' justify='center' align='end' pl='240px' py='155px'>
+                        <Button style={{ position: 'relative', zIndex: 2, backgroundColor: '#120052', color: '#FFFFFF', height: '60px', width: '160px', fontSize: 'large', cursor: 'pointer' }} variant='solid' onClick={() => router.push('/sign-up')}>Sign Up Now</Button>
                     </Flex>
                 </Box>
                 <Box className="bg-[#F6F7FB]" height='712px' flexGrow='1' id="maximize-prep">
