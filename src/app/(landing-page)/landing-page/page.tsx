@@ -11,20 +11,20 @@ export default function Page() {
             <Flex direction='column'>
                 <Box className="bg-white" height='64px' flexGrow='1' style={{ position: 'sticky', top: 0, zIndex: 10 }}>
                     <Flex className="h-full" justify='between' align='center' px='6'>
-                        <Text color='indigo' size='7' weight='bold' wrap='pretty'>Cuet Test Crafters</Text>
-                        <Flex className="h-full" gap='4' justify='center' align='center'>
+                        <Text size='8' weight='bold' wrap='pretty'></Text>
+                        <Flex className="h-full pl-60" gap='4' justify='center' align='center'>
                             <Link href="#maximize-prep" scroll>
-                                <Text color='gray' size='5' weight='medium' wrap='pretty'>Features</Text>
+                                <Text color='gray' size='6' weight='medium' wrap='pretty'>Features</Text>
                             </Link>
                             <Link href="#get-started-now" scroll>
-                                <Text color='gray' size='5' weight='medium' wrap='pretty'>How It Works</Text>
+                                <Text color='gray' size='6' weight='medium' wrap='pretty'>How It Works</Text>
                             </Link>
                         </Flex>
                         <Flex className="h-full" gap='4' justify='center' align='center'>
                             <div style={{ cursor: 'pointer' }} onClick={() => router.push('/sign-in')}>
-                                <Text color='gray' size='5' weight='medium' wrap='nowrap'>Log In</Text>
+                                <Text color='gray' size='6' weight='medium' wrap='nowrap'>Log In</Text>
                             </div>
-                            <Button style={{ height: '60%', width: '60%' }} variant='solid' onClick={() => router.push('/sign-up')}>Sign Up</Button>
+                            <Button size='4' style={{ height: '70%', width: '70%', backgroundColor: '#38b6ff', color: '#FFFFFF' }} variant='solid' onClick={() => router.push('/sign-up')}>Sign Up</Button>
                         </Flex>
                     </Flex>
                 </Box>
@@ -179,7 +179,7 @@ export default function Page() {
                         </Box>
                     </Grid>
                 </Box>
-            </Flex>
+            </Flex >
         </ScrollArea >
     )
 }
