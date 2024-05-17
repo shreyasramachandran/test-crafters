@@ -89,7 +89,7 @@ export default function Page() {
                         </Box>
                     </Flex>
                 </Box>
-                <Box className="bg-[#38B6FF]" height='256px' flexGrow='1' pt='9'>
+                <Box className="bg-[#38B6FF]" height='240px' flexGrow='1' pt='9'>
                     <Flex className="h-full" direction='column' gap='3' justify='center' align='center' pt='9'>
                         <Box style={{ height: '45%', width: '10%', display: 'flex', textAlign: 'center', alignItems: 'center', justifyContent: 'center' }}>
                             <Button radius="small" style={{ backgroundColor: '#120052', color: '#FFFFFF', height: '70px', width: '180px', fontSize: 'large', cursor: 'pointer' }} variant='solid' onClick={() => router.push('/sign-up')} id="get-started-now">Get Started Now</Button>
