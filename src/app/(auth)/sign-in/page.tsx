@@ -73,8 +73,8 @@ const MainComponent = () => {
     };
 
     return (
-        <Flex className="bg-[#F6F7FB]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
-            <Box className="bg-white" style={{ 'height': '80%', 'width': '30%', 'borderRadius': '10px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
+        <Flex className="bg-[#38B6FF]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
+            <Box className="bg-[#EAF6FA]" style={{ 'height': '80%', 'width': '30%', 'borderRadius': '10px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
                 <Flex className="h-full" direction='column' justify='start' gap='2' pt='6'>
                     <Box style={{ 'height': '10%', 'width': '40%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <Text size='6' weight='bold' wrap='pretty'>Sign In</Text>
@@ -92,7 +92,7 @@ const MainComponent = () => {
                     <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'end', alignItems: 'center', alignSelf: 'center' }}>
                         <input
                             type="text"
-                            className="border border-solid border-[#79747E] bg-white h-10 px-5  text-sm focus:outline-none"
+                            className="border border-solid border-[#79747E] bg-[#EAF6FA] h-10 px-5  text-sm focus:outline-none"
                             placeholder="Email"
                             style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px' }}
                             value={email}
@@ -102,7 +102,7 @@ const MainComponent = () => {
                     <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'end', alignItems: 'center', alignSelf: 'center' }}>
                         <input
                             type="text"
-                            className="border border-solid border-[#79747E] bg-white h-10 px-5  text-sm focus:outline-none"
+                            className="border border-solid border-[#79747E] bg-[#EAF6FA] h-10 px-5  text-sm focus:outline-none"
                             placeholder="Password"
                             style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px' }}
                             value={password}
@@ -115,7 +115,7 @@ const MainComponent = () => {
                         </button>
                     </Box>
                     <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                        <Button style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px' }} size="3" variant='solid' onClick={handleSignIn}
+                        <Button style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px', 'backgroundColor': '#120052' }} size="3" variant='solid' onClick={handleSignIn}
                         >Sign In</Button>
                     </Box>
                     {/* <Box className="pt-4" style={{ 'height': '3%', 'width': '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>

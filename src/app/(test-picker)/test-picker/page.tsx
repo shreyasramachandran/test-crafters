@@ -2,7 +2,7 @@
 import useAuth from "@/app/hooks/useAuth";
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Flex, Box, Text, DropdownMenu, Button } from "@radix-ui/themes"
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import db from '@/app/utils/index-db/operations';
 import { Suspense } from 'react'
 
@@ -32,7 +32,7 @@ const MainComponent = () => {
     // These need to be populated from metadata
     const subjects = ['Political Science', 'English', 'French', 'Agriculture', 'Chemistry',
         'General Test', 'Physics', 'Sociology', 'Computer Science', 'Home Science', 'Economics', 'Legal Studies', 'Fine Arts',
-        'Anthropolgy']
+        'Anthropolgy', 'Olympiad English']
     const languages = ['English']
 
     const [selectedSubject, setSelectedSubject] = useState("Subject");
@@ -94,14 +94,14 @@ const MainComponent = () => {
 
 
     return (
-        <Flex className="bg-[#F6F7FB]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
-            <Box className="bg-white" style={{ 'height': '80%', 'width': '30%', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
-                <Flex className="h-full" direction='column' justify='center' py='9'>
+        <Flex className="bg-[#38B6FF]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
+            <Box className="bg-[#EAF6FA]" style={{ 'height': '60%', 'width': '30%', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
+                <Flex className="h-full" direction='column' py='9' gap='8'>
                     <Box style={{ 'height': '10%', 'width': '47%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <Text size='6' weight='bold' wrap='pretty'>Pick a test</Text>
                     </Box>
                     <Flex className="h-full" direction='column' justify='center' gap='5'>
-                        <Box style={{ height: '20%', width: '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                        <Box style={{ height: '40%', width: '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                             <DropdownMenu.Root>
                                 <DropdownMenu.Trigger>
                                     <button className="flex justify-between items-center px-4 py-2 bg-skyblue-200 border border-solid border-[#79747E] rounded-lg text-gray-700 shadow-sm w-full h-full">
@@ -113,16 +113,16 @@ const MainComponent = () => {
                                         </span>
                                     </button>
                                 </DropdownMenu.Trigger>
-                                <DropdownMenu.Content className="bg-white shadow-lg rounded-md py-1 mt-1">
+                                <DropdownMenu.Content style={{ 'backgroundColor': '#EAF6FA' }} className="bg-white shadow-lg rounded-md py-1 mt-1">
                                     {subjects.map((subject) => (
-                                        <DropdownMenu.Item key={subject} onSelect={() => handleSubjectChange(subject)} className="px-4 py-2 text-sm text-gray-700 hover:bg-skyblue-100">
+                                        <DropdownMenu.Item key={subject} onSelect={() => handleSubjectChange(subject)} className="px-4 py-2 text-sm text-gray-700 hover:bg-[#120052]">
                                             {subject}
                                         </DropdownMenu.Item>
                                     ))}
                                 </DropdownMenu.Content>
                             </DropdownMenu.Root>
                         </Box>
-                        <Box style={{ height: '20%', width: '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                        <Box style={{ height: '40%', width: '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                             <DropdownMenu.Root>
                                 <DropdownMenu.Trigger>
                                     <button className="flex justify-between items-center px-4 py-2 bg-skyblue-200 border border-solid border-[#79747E] rounded-lg text-gray-700 shadow-sm w-full h-full">
@@ -134,9 +134,9 @@ const MainComponent = () => {
                                         </span>
                                     </button>
                                 </DropdownMenu.Trigger>
-                                <DropdownMenu.Content className="bg-white shadow-lg rounded-md py-1 mt-1">
+                                <DropdownMenu.Content style={{ 'backgroundColor': '#EAF6FA' }} className="bg-white shadow-lg rounded-md py-1 mt-1">
                                     {languages.map((language) => (
-                                        <DropdownMenu.Item key={language} onSelect={() => handleLanguageChange(language)} className="px-4 py-2 text-sm text-gray-700 hover:bg-skyblue-100">
+                                        <DropdownMenu.Item key={language} onSelect={() => handleLanguageChange(language)} className="px-4 py-2 text-sm text-gray-700 hover:bg-[#120052]">
                                             {language}
                                         </DropdownMenu.Item>
                                     ))}
@@ -145,24 +145,14 @@ const MainComponent = () => {
                         </Box>
                     </Flex>
                     <Flex className="h-full" direction='column' justify='center' gap='4'>
-                        <Box style={{ 'height': '20%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                            <Button style={{ 'height': '100%', 'width': '100%', borderRadius: '5px' }} size="3" variant='solid' onClick={() => {
+                        <Box style={{ 'height': '52%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                            <Button style={{ 'height': '100%', 'width': '100%', borderRadius: '5px', 'backgroundColor': '#120052' }} size="3" variant='solid' onClick={() => {
                                 if (selectedSubject !== 'Subject' && duration !== 'Duration') {
                                     const queryString = createQueryString(searchParams, { subject: selectedSubject, language: selectedLanguage, duration: duration, maxQuestions: maxQuestions, minimumRequiredQuestions: minimumRequiredQuestions });
                                     router.push('/instructions-page' + '?' + queryString)
                                 }
                             }}>Start Mock Test
                             </Button>
-                        </Box>
-                        <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                            <div className="flex items-center justify-center w-full">
-                                <div className="flex-grow border-t border-black"></div>
-                                <span className="flex-shrink mx-4 text-black">or</span>
-                                <div className="flex-grow border-t border-black"></div>
-                            </div>
-                        </Box>
-                        <Box style={{ 'height': '20%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                            <Button style={{ 'height': '100%', 'width': '100%', borderRadius: '5px' }} size="3" variant='solid'>Download Paper</Button>
                         </Box>
                     </Flex>
                 </Flex>
