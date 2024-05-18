@@ -96,12 +96,12 @@ const MainComponent = () => {
     return (
         <Flex className="bg-[#38B6FF]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
             <Box className="bg-[#EAF6FA]" style={{ 'height': '60%', 'width': '30%', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
-                <Flex className="h-full" direction='column' py='9' gap='8'>
+                <Flex className="h-full" direction='column' py='9' gap='6'>
                     <Box style={{ 'height': '10%', 'width': '47%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <Text size='6' weight='bold' wrap='pretty'>Pick a test</Text>
                     </Box>
                     <Flex className="h-full" direction='column' justify='center' gap='5'>
-                        <Box style={{ height: '40%', width: '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                        <Box style={{ height: '42%', width: '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                             <DropdownMenu.Root>
                                 <DropdownMenu.Trigger>
                                     <button className="flex justify-between items-center px-4 py-2 bg-skyblue-200 border border-solid border-[#79747E] rounded-lg text-gray-700 shadow-sm w-full h-full">
@@ -122,7 +122,7 @@ const MainComponent = () => {
                                 </DropdownMenu.Content>
                             </DropdownMenu.Root>
                         </Box>
-                        <Box style={{ height: '40%', width: '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                        <Box style={{ height: '42%', width: '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                             <DropdownMenu.Root>
                                 <DropdownMenu.Trigger>
                                     <button className="flex justify-between items-center px-4 py-2 bg-skyblue-200 border border-solid border-[#79747E] rounded-lg text-gray-700 shadow-sm w-full h-full">
@@ -145,7 +145,7 @@ const MainComponent = () => {
                         </Box>
                     </Flex>
                     <Flex className="h-full" direction='column' justify='center' gap='4'>
-                        <Box style={{ 'height': '52%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                        <Box style={{ 'height': '40%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                             <Button style={{ 'height': '100%', 'width': '100%', borderRadius: '5px', 'backgroundColor': '#120052' }} size="3" variant='solid' onClick={() => {
                                 if (selectedSubject !== 'Subject' && duration !== 'Duration') {
                                     const queryString = createQueryString(searchParams, { subject: selectedSubject, language: selectedLanguage, duration: duration, maxQuestions: maxQuestions, minimumRequiredQuestions: minimumRequiredQuestions });
