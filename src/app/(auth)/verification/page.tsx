@@ -1,9 +1,13 @@
 'use client'
 import { Flex, Box, Text, Button } from "@radix-ui/themes"
-import { useRef, useState, useEffect } from 'react';
+import { useRef, useState, useEffect, Suspense } from 'react';
 import { useRouter } from 'next/navigation';
+import useAuth from "@/app/hooks/useAuth";
+import dynamic from "next/dynamic";
+import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
 
-export default function Page() {
+const MainComponent = () => {
+    const { isAuthenticated, loading } = useAuth();
     const router = useRouter();
     const [verificationCode, setVerificationCode] = useState('');
     const typedVerificationCode = useRef<HTMLInputElement>(null)
@@ -67,6 +71,10 @@ export default function Page() {
         }
     };
 
+    if (loading) {
+        return <OrigamiAnimation />;
+    }
+
     return (
         <Flex className="bg-[#38B6FF]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
             <Box className="bg-[#EAF6FA]" style={{ 'height': '55%', 'width': '30%', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
@@ -94,3 +102,14 @@ export default function Page() {
         </Flex>
     )
 }
+
+// Dynamically import MainComponent with ssr: false
+const DynamicMainComponent = dynamic(() => Promise.resolve(MainComponent), { ssr: false });
+
+const Page = () => (
+    <Suspense fallback={<div>Loading...</div>}>
+        <DynamicMainComponent />
+    </Suspense>
+);
+
+export default Page;
