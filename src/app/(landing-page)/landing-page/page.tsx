@@ -2,9 +2,12 @@
 import { Flex, Box, ScrollArea, Grid, Text, Button, Card } from "@radix-ui/themes";
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import useAuth from "@/app/hooks/useAuth";
+import { useEffect } from 'react';
 
 export default function Page() {
     const router = useRouter();
+    const isAuthenticated = useAuth();
 
     return (
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh' }}>
