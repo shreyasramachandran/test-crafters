@@ -1,6 +1,7 @@
 'use client'
 import { useEffect, useState } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
+import { getCookie, setCookie } from '../utils/cookieUtils';
 
 export default function useAuth() {
     const router = useRouter();
@@ -10,48 +11,6 @@ export default function useAuth() {
 
     const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-    async function getCookie(cookieName: string) {
-        try {
-            const res = await fetch(`/api/cookies/get-cookie?cookieName=${cookieName}`, {
-                method: "GET",
-                headers: {
-                    "Cache-Control": "no-cache",
-                }
-            });
-            // Ensure proper error handling
-            if (!res.ok) {
-                // Handle errors, e.g., return an error response
-                return new Response(JSON.stringify({ error: "Error fetching cookie" }), {
-                    status: res.status,
-                    headers: { "Content-Type": "application/json" },
-                });
-            }
-            const data = await res.json();
-            const cookie = await data.cookie
-            return cookie;
-
-        } catch (error) {
-            console.error('Error fetching cookie', error);
-            return false;
-        }
-    }
-
-    async function setCookie(cookieName: string, cookieValue: string) {
-        const res = await fetch(`/api/cookies/set-cookie?${cookieName}?value=${cookieValue}`, {
-            method: "GET",
-            headers: {
-                "Cache-Control": "no-cache",
-            }
-        });
-        // Ensure proper error handling
-        if (!res.ok) {
-            // Handle errors, e.g., return an error response
-            return new Response(JSON.stringify({ error: "Error setting cookie" }), {
-                status: res.status,
-                headers: { "Content-Type": "application/json" },
-            });
-        }
-    }
 
     async function checkTokenValidity() {
         let accessToken = await getCookie('access_token')
@@ -120,16 +79,21 @@ export default function useAuth() {
             const isValid = await checkTokenValidity();
             setIsAuthenticated(isValid);
             if (isValid) {
-                if (returnUrl === '/sign-in?' || returnUrl === '/sign-up?') {
+                // Write rules of validity of urls based on previous url
+                if (returnUrl === '/sign-in?' || returnUrl === '/sign-up?' || returnUrl === '/landing-page?') {
                     returnUrl = '/test-picker'; // Redirect to home if the current page is sign-in
                 }
                 router.push(returnUrl)
             }
 
             if (!isValid) {
+
                 // Redirect to the sign-in page and save the current path for redirect after login
-                if (returnUrl === '/sign-in' || returnUrl === '/sign-up') {
-                    router.push(`${returnUrl}?returnUrl=${encodeURIComponent('/')}`); // Redirect to home if the current page is sign-in
+                if (returnUrl === '/sign-in?' || returnUrl === '/sign-up?') {
+                    router.push(returnUrl);
+                }
+                else {
+                    router.push('/sign-in');
                 }
             }
         };

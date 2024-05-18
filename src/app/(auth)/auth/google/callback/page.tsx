@@ -2,36 +2,12 @@
 
 import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation'; // Ensure this is the correct import
+import { getCookie, setCookie } from '@/app/utils/cookieUtils';
 
 export default function Page() {
     const router = useRouter();
     const hasFetchedTokens = useRef(false); // ref to track if tokens have been fetched
 
-    async function getCookie(cookieName: string) {
-        try {
-            console.log('Get cookie name', cookieName)
-            const res = await fetch(`/api/cookies/get-cookie?cookieName=${cookieName}`, {
-                method: "GET",
-                headers: {
-                    "Cache-Control": "no-cache",
-                }
-            });
-            // Ensure proper error handling
-            if (!res.ok) {
-                // Handle errors, e.g., return an error response
-                return new Response(JSON.stringify({ error: "Error fetching cookie" }), {
-                    status: res.status,
-                    headers: { "Content-Type": "application/json" },
-                });
-            }
-            const data = await res.json();
-            const cookie = data.cookie
-            return cookie;
-        } catch (error) {
-            console.error('Error fetching cookie', error);
-            return false;
-        }
-    }
 
     async function createUser(userData: any) {
         try {
@@ -84,9 +60,8 @@ export default function Page() {
         if (hasFetchedTokens.current) return; // guard against multiple invocations
 
         hasFetchedTokens.current = true; // mark that token fetch is in progress
-        console.log('Reached fetchOAuthToken')
+
         // Check if userId is already present in which case direct to test-prep.
-        // Later add a userId validity check
         let userId = await getCookie('userId')
         if (userId) {
             router.replace('/test-picker');
@@ -114,7 +89,7 @@ export default function Page() {
             // Get user info
             const userInfo = await getUserInfo(responseData.access_token);
             if (userInfo) {
-                console.log(userInfo)
+                // Check if user is present in the database, in which case retrieve
                 const userData = {
                     'googleEmail': userInfo.email,
                     'googleName': userInfo.name,
@@ -125,6 +100,8 @@ export default function Page() {
                     'refreshToken': responseData.refresh_token,
                     'expiresIn': String(responseData.expires_in)
                 }
+                setCookie('access_token', responseData.access_token)
+                setCookie('refresh_token', responseData.access_token)
                 createUser(userData)
             }
 

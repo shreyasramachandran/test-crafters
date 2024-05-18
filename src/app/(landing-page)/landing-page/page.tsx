@@ -2,9 +2,12 @@
 import { Flex, Box, ScrollArea, Grid, Text, Button, Card } from "@radix-ui/themes";
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
+import useAuth from "@/app/hooks/useAuth";
+import { Suspense, useEffect } from 'react';
 
-export default function Page() {
+const MainComponent = () => {
     const router = useRouter();
+    const isAuthenticated = useAuth();
 
     return (
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh' }}>
@@ -183,3 +186,11 @@ export default function Page() {
         </ScrollArea >
     )
 }
+
+const Page = () => (
+    <Suspense fallback={<div>Loading...</div>}>
+        <MainComponent />
+    </Suspense>
+);
+
+export default Page;

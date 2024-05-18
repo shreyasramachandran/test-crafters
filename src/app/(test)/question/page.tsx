@@ -2,7 +2,7 @@
 import useAuth from "@/app/hooks/useAuth";
 import { Flex, Box, Text, Button, RadioGroup, Dialog, ScrollArea } from "@radix-ui/themes";
 import { useState, useEffect } from 'react';
-import db, { IQuestion } from '@/app/utils/index-db/operations';
+import db, { IQuestion } from '@/app/utils/indexedDbUtils';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react'
 

@@ -4,7 +4,7 @@ import { Flex, Box, Text, ScrollArea } from "@radix-ui/themes";
 import OverviewPerformancePieChart from "@/app/components/visualisations/OverviewPerformancePieChart";
 import React, { useEffect, useState } from 'react';
 import PerformanceTable from "@/app/components/visualisations/PerformanceTable";
-import db from "@/app/utils/index-db/operations";
+import db from "@/app/utils/indexedDbUtils";
 
 interface IPerformanceTable {
     question_number: number;
