@@ -7,10 +7,12 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { randomBytes } from 'crypto';
 import { Suspense } from 'react'
+import dynamic from "next/dynamic";
+import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
 
 const MainComponent = () => {
     // Get isAuthenticated in case you need to use it for future operations
-    const isAuthenticated = useAuth();
+    const { isAuthenticated, loading } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
 
@@ -115,6 +117,9 @@ const MainComponent = () => {
         }
     }
 
+    if (loading) {
+        return <OrigamiAnimation />;
+    }
 
     return (
         <Flex className="bg-[#38B6FF]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
@@ -189,9 +194,12 @@ const MainComponent = () => {
     )
 }
 
+// Dynamically import MainComponent with ssr: false
+const DynamicMainComponent = dynamic(() => Promise.resolve(MainComponent), { ssr: false });
+
 const Page = () => (
     <Suspense fallback={<div>Loading...</div>}>
-        <MainComponent />
+        <DynamicMainComponent />
     </Suspense>
 );
 

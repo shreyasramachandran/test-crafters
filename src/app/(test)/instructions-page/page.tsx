@@ -5,10 +5,12 @@ import { Flex, Box, ScrollArea, Text, Button } from "@radix-ui/themes";
 import { useCallback, useEffect, useState, useRef } from 'react';
 import db from '@/app/utils/indexedDbUtils';
 import { Suspense } from 'react'
+import dynamic from "next/dynamic";
+import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
 
 const MainComponent = () => {
     // Get isAuthenticated in case you need to use it for future operations
-    const isAuthenticated = useAuth();
+    const { isAuthenticated, loading } = useAuth();
     const router = useRouter();
     const searchParams = useSearchParams()
     const hasRun = useRef(false);
@@ -58,6 +60,10 @@ const MainComponent = () => {
             alert('Please check the box to indicate that you have read and understood the instructions.');
         }
     };
+
+    if (loading) {
+        return <OrigamiAnimation />;
+    }
 
     return (
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh' }}>
@@ -133,9 +139,12 @@ const MainComponent = () => {
     )
 }
 
+// Dynamically import MainComponent with ssr: false
+const DynamicMainComponent = dynamic(() => Promise.resolve(MainComponent), { ssr: false });
+
 const Page = () => (
     <Suspense fallback={<div>Loading...</div>}>
-        <MainComponent />
+        <DynamicMainComponent />
     </Suspense>
 );
 

@@ -6,6 +6,8 @@ import React, { Suspense, useEffect, useState } from 'react';
 import PerformanceTable from "@/app/components/visualisations/PerformanceTable";
 import db from "@/app/utils/indexedDbUtils";
 import useAuth from "@/app/hooks/useAuth";
+import dynamic from "next/dynamic";
+import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
 
 interface IPerformanceTable {
     question_number: number;
@@ -15,7 +17,7 @@ interface IPerformanceTable {
 }
 
 const MainComponent = () => {
-    const isAuthenticated = useAuth();
+    const { isAuthenticated, loading } = useAuth();
     const [performanceScores, setPerformanceScores] = useState({ correctAnswers: 0, incorrectAnswers: 0 });
     const [performanceTable, setPerformanceTable] = useState<IPerformanceTable[]>([]);
 
@@ -37,6 +39,9 @@ const MainComponent = () => {
         getPerformanceTable();
     }, []); // Empty dependency array ensures this effect runs only once after the initial render
 
+    if (loading) {
+        return <OrigamiAnimation />;
+    }
 
     return (
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh' }}>
@@ -66,9 +71,12 @@ const MainComponent = () => {
     )
 }
 
+// Dynamically import MainComponent with ssr: false
+const DynamicMainComponent = dynamic(() => Promise.resolve(MainComponent), { ssr: false });
+
 const Page = () => (
     <Suspense fallback={<div>Loading...</div>}>
-        <MainComponent />
+        <DynamicMainComponent />
     </Suspense>
 );
 

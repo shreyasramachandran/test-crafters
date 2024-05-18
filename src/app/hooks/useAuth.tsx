@@ -10,7 +10,7 @@ export default function useAuth() {
     let returnUrl = pathName + '?' + searchParams
 
     const [isAuthenticated, setIsAuthenticated] = useState(false);
-
+    const [loading, setLoading] = useState(true);
 
     async function checkTokenValidity() {
         let accessToken = await getCookie('access_token')
@@ -76,29 +76,47 @@ export default function useAuth() {
 
     useEffect(() => {
         const initAuthCheck = async () => {
-            const isValid = await checkTokenValidity();
-            setIsAuthenticated(isValid);
-            if (isValid) {
-                // Write rules of validity of urls based on previous url
-                if (returnUrl === '/sign-in?' || returnUrl === '/sign-up?' || returnUrl === '/landing-page?') {
-                    returnUrl = '/test-picker'; // Redirect to home if the current page is sign-in
-                }
-                router.push(returnUrl)
-            }
+            setLoading(true);
+            try {
+                const isValid = await checkTokenValidity();
+                setIsAuthenticated(isValid);
 
-            if (!isValid) {
-                // Redirect to the sign-in page and save the current path for redirect after login
-                if (returnUrl === '/sign-in?' || returnUrl === '/sign-up?' || returnUrl === '/landing-page?') {
-                    router.push(returnUrl);
+                if (isValid) {
+                    handleAuthenticatedRedirect(returnUrl);
+                } else {
+                    handleUnauthenticatedRedirect(returnUrl);
                 }
-                else {
-                    router.push('/sign-in');
-                }
+            } catch (error) {
+                console.error('Error during auth check:', error);
+                router.push('/error'); // Redirect to an error page if needed
+            } finally {
+                setLoading(false);
             }
         };
 
         initAuthCheck();
-    }, []);
+    }, [router, returnUrl]);
 
-    return isAuthenticated;
+    const handleAuthenticatedRedirect = (returnUrl: string) => {
+        // Redirect to home if the current page is sign-in, sign-up, or landing page
+        if (returnUrl.includes('/sign-in') || returnUrl.includes('/sign-up') || returnUrl.includes('/landing-page')) {
+            router.push('/test-picker');
+        } else {
+            router.push(returnUrl);
+        }
+    };
+
+    const handleUnauthenticatedRedirect = (returnUrl: string) => {
+        // Save the return URL in local storage or a cookie to redirect after login
+        localStorage.setItem('returnUrl', returnUrl);
+
+        // Redirect to the sign-in page, except when already on sign-in or sign-up pages
+        if (returnUrl.includes('/sign-in') || returnUrl.includes('/sign-up')) {
+            router.push(returnUrl);
+        } else {
+            router.push(`/sign-in?returnUrl=${encodeURIComponent(returnUrl)}`);
+        }
+    };
+
+    return { isAuthenticated, loading };
 }

@@ -5,10 +5,12 @@ import { useState, useEffect } from 'react';
 import db, { IQuestion } from '@/app/utils/indexedDbUtils';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react'
+import dynamic from "next/dynamic";
+import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
 
 const MainComponent = () => {
     // Get isAuthenticated in case you need to use it for future operations
-    const isAuthenticated = useAuth();
+    const { isAuthenticated, loading } = useAuth();
     const searchParams = useSearchParams()
     const maxQuestions = searchParams.get('maxQuestions')
     const minimumRequiredQuestions = searchParams.get('minimumRequiredQuestions')
@@ -282,6 +284,10 @@ const MainComponent = () => {
         router.push('/analysis')
     }
 
+    if (loading) {
+        return <OrigamiAnimation />;
+    }
+
     return (
         <Flex className="bg-[#38B6FF]" direction='column' height={{ md: '100vh' }} width={{ md: '100vw' }}>
             <Box className="bg-[#EAF6FA] bg-opacity-[0.5]" flexGrow='1' style={{ height: '5%', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
@@ -450,9 +456,12 @@ const MainComponent = () => {
     )
 }
 
+// Dynamically import MainComponent with ssr: false
+const DynamicMainComponent = dynamic(() => Promise.resolve(MainComponent), { ssr: false });
+
 const Page = () => (
     <Suspense fallback={<div>Loading...</div>}>
-        <MainComponent />
+        <DynamicMainComponent />
     </Suspense>
 );
 

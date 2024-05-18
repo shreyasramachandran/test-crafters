@@ -3,11 +3,17 @@ import { Flex, Box, ScrollArea, Grid, Text, Button, Card } from "@radix-ui/theme
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import useAuth from "@/app/hooks/useAuth";
-import { Suspense, useEffect } from 'react';
+import { Suspense } from 'react';
+import dynamic from "next/dynamic";
+import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
 
 const MainComponent = () => {
     const router = useRouter();
-    const isAuthenticated = useAuth();
+    const { isAuthenticated, loading } = useAuth();
+
+    if (loading) {
+        return <OrigamiAnimation />;
+    }
 
     return (
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh' }}>
@@ -187,9 +193,12 @@ const MainComponent = () => {
     )
 }
 
+// Dynamically import MainComponent with ssr: false
+const DynamicMainComponent = dynamic(() => Promise.resolve(MainComponent), { ssr: false });
+
 const Page = () => (
     <Suspense fallback={<div>Loading...</div>}>
-        <MainComponent />
+        <DynamicMainComponent />
     </Suspense>
 );
 
