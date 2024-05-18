@@ -2,7 +2,7 @@
 import useAuth from "@/app/hooks/useAuth";
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Flex, Box, Text, DropdownMenu, Button } from "@radix-ui/themes"
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import db from '@/app/utils/index-db/operations';
 import { Suspense } from 'react'
 
@@ -32,7 +32,7 @@ const MainComponent = () => {
     // These need to be populated from metadata
     const subjects = ['Political Science', 'English', 'French', 'Agriculture', 'Chemistry',
         'General Test', 'Physics', 'Sociology', 'Computer Science', 'Home Science', 'Economics', 'Legal Studies', 'Fine Arts',
-        'Anthropolgy']
+        'Anthropolgy', 'Olympiad English']
     const languages = ['English']
 
     const [selectedSubject, setSelectedSubject] = useState("Subject");
