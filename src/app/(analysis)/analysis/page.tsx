@@ -2,9 +2,10 @@
 
 import { Flex, Box, Text, ScrollArea } from "@radix-ui/themes";
 import OverviewPerformancePieChart from "@/app/components/visualisations/OverviewPerformancePieChart";
-import React, { useEffect, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import PerformanceTable from "@/app/components/visualisations/PerformanceTable";
 import db from "@/app/utils/indexedDbUtils";
+import useAuth from "@/app/hooks/useAuth";
 
 interface IPerformanceTable {
     question_number: number;
@@ -13,7 +14,8 @@ interface IPerformanceTable {
     result_status: string;
 }
 
-export default function Page() {
+const MainComponent = () => {
+    const isAuthenticated = useAuth();
     const [performanceScores, setPerformanceScores] = useState({ correctAnswers: 0, incorrectAnswers: 0 });
     const [performanceTable, setPerformanceTable] = useState<IPerformanceTable[]>([]);
 
@@ -63,3 +65,11 @@ export default function Page() {
         </ScrollArea >
     )
 }
+
+const Page = () => (
+    <Suspense fallback={<div>Loading...</div>}>
+        <MainComponent />
+    </Suspense>
+);
+
+export default Page;

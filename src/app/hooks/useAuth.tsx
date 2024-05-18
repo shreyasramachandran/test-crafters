@@ -87,9 +87,8 @@ export default function useAuth() {
             }
 
             if (!isValid) {
-
                 // Redirect to the sign-in page and save the current path for redirect after login
-                if (returnUrl === '/sign-in?' || returnUrl === '/sign-up?') {
+                if (returnUrl === '/sign-in?' || returnUrl === '/sign-up?' || returnUrl === '/landing-page?') {
                     router.push(returnUrl);
                 }
                 else {

@@ -6,7 +6,7 @@ export async function POST(request: Request, context: any) {
         console.log('Validating Token')
 
         // Make the token request to Google's OAuth 2.0 server
-        const googleResponse = await fetch(`https://oauth2.googleapis.com/tokeninfo?access_token=${accessToken}`, {
+        const googleResponse = await fetch(`https://oauth2.googleapis.com/tokeninfo?access_token=${accessToken.value}`, {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'
