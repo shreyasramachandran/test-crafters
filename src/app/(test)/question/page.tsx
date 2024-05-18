@@ -347,7 +347,7 @@ const MainComponent = () => {
                             </Box>
                             {/* Dialog Box */}
                             <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
-                                <Dialog.Content style={{ background: 'white', borderRadius: '5px', padding: '20px', boxShadow: '0px 10px 50px hsla(0, 0%, 0%, 0.1)' }}>
+                                <Dialog.Content style={{ backgroundColor: '#DFF6FA', borderRadius: '5px', padding: '20px', boxShadow: '0px 10px 50px hsla(0, 0%, 0%, 0.1)' }}>
                                     <div>
                                         {!isCompleted ?
                                             <Text trim="both" size="4">
@@ -359,10 +359,10 @@ const MainComponent = () => {
                                                     Do you wish to proceed to submit?</Text>
                                                 <Flex gap='4' className="pl-4" style={{ 'height': '100%', 'width': '100%', 'display': 'flex', 'flexDirection': 'row', 'justifyContent': 'flex-start' }} >
                                                     <Dialog.Close>
-                                                        <Button style={{ borderRadius: '5px' }} size="3" variant='soft' onClick={() => {
+                                                        <Button style={{ borderRadius: '5px', backgroundColor: 'rgba(0, 0, 59, 0.051)', color: '#60646C', }} size="3" variant='soft' onClick={() => {
                                                         }}>Cancel</Button>
                                                     </Dialog.Close>
-                                                    <Button style={{ borderRadius: '5px' }} size="3" variant='solid' onClick={handleTestCompletion}>Proceed</Button>
+                                                    <Button style={{ borderRadius: '5px', backgroundColor: '#120052' }} size="3" variant='solid' onClick={handleTestCompletion}>Proceed</Button>
                                                 </Flex>
                                             </Flex>
                                         }
