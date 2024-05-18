@@ -25,7 +25,7 @@ export async function getCookie(cookieName: string) {
 }
 
 export async function setCookie(cookieName: string, cookieValue: string) {
-    const res = await fetch(`/api/cookies/set-cookie?${cookieName}?value=${cookieValue}`, {
+    const res = await fetch(`/api/cookies/set-cookie?cookieName=${cookieName}&cookieValue=${cookieValue}`, {
         method: "GET",
         headers: {
             "Cache-Control": "no-cache",
