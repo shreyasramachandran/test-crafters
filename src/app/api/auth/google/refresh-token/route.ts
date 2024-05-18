@@ -14,7 +14,7 @@ export async function POST(request: Request, context: any) {
 
         formData.append('client_id', client_id);
         formData.append('client_secret', client_secret);
-        formData.append('refresh_token', refreshToken);
+        formData.append('refresh_token', refreshToken.value);
         formData.append('grant_type', 'refresh_token');
 
         const googleResponse = await fetch(url, {
