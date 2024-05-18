@@ -38,8 +38,8 @@ export default function Page() {
 
     return (
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh' }}>
-            <Flex className="bg-[#F6F7FB] flex-col items-center justify-center gap-8 p-8">
-                <Box className="bg-white px-8" style={{ 'width': '50%', 'display': 'flex', 'flexDirection': 'column', 'justifyContent': 'start', 'alignItems': 'start', 'borderRadius': '5px', 'boxShadow': '2px 2px 10px 2px rgba(0, 0, 0, 0.15)' }}>
+            <Flex className="bg-[#38B6FF] flex-col items-center justify-center gap-8 p-8">
+                <Box className="bg-[#EAF6FA] px-8" style={{ 'width': '50%', 'display': 'flex', 'flexDirection': 'column', 'justifyContent': 'start', 'alignItems': 'start', 'borderRadius': '5px', 'boxShadow': '2px 2px 10px 2px rgba(0, 0, 0, 0.15)' }}>
                     <Flex className="flex-col gap-8 p-14">
                         <Text size='5' weight='bold' wrap='pretty' >Overview of Performance</Text>
                         <Text size='4' weight='light' wrap='pretty' >This section provides a quick glance at your overall test results. The chart visualizes the proportion of correct to incorrect answers, offering you a clear, immediate sense of how you performed.
@@ -49,7 +49,7 @@ export default function Page() {
                         </Box>
                     </Flex >
                 </Box>
-                <Box className="bg-white px-8" style={{ 'width': '50%', 'display': 'flex', 'flexDirection': 'column', 'justifyContent': 'start', 'alignItems': 'start', 'borderRadius': '5px', 'boxShadow': '2px 2px 10px 2px rgba(0, 0, 0, 0.15)' }}>
+                <Box className="bg-[#EAF6FA] px-8" style={{ 'width': '50%', 'display': 'flex', 'flexDirection': 'column', 'justifyContent': 'start', 'alignItems': 'start', 'borderRadius': '5px', 'boxShadow': '2px 2px 10px 2px rgba(0, 0, 0, 0.15)' }}>
                     <Flex className="flex-col gap-8 p-14">
                         <Text size='5' weight='bold' wrap='pretty' >Detailed Question Analysis</Text>
                         <Text size='4' weight='light' wrap='pretty' >Dive into every question you faced with this detailed table. It lists your answers alongside the correct answers, color-coded to distinguish successes from missteps.

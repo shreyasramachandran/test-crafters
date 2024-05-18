@@ -61,15 +61,12 @@ const MainComponent = () => {
 
     return (
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh' }}>
-            <Flex className="bg-[#F6F7FB]" direction='column'>
-                <Box className="bg-[#0144FF] bg-opacity-[0.059]" height='64px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+            <Flex className="bg-[#38B6FF]" direction='column'>
+                <Box className="bg-[#EAF6FA] bg-opacity-[0.5]" height='64px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <Text color='indigo' size='6' weight='bold' wrap='pretty' >CUET Mock Test</Text>
                 </Box>
-                <Box className="bg-[#0249F5] bg-opacity-[0.099]" height='32px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                <Box className="bg-[#EAF6FA] bg-opacity-[0.3]" height='32px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <Text size='5' weight='regular' wrap='pretty' >Instructions</Text>
-                </Box>
-                <Box className="py-8" height='32px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <Text size='6' weight='light' wrap='pretty' >Please read the instructions carefully</Text>
                 </Box>
                 <Box className="pl-6 py-8" height='42px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
                     <Text size='6' weight='regular' wrap='pretty' >General Instructions</Text>
@@ -129,7 +126,7 @@ const MainComponent = () => {
                     </label>
                 </Box>
                 <Box className="p-4" style={{ height: '20%', width: '20%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                    <Button className="w-full h-full" size="3" variant='solid' onClick={handleButtonClick}>I am ready to begin</Button>
+                    <Button className="w-full h-full" style={{ 'backgroundColor': '#120052' }} size="4" variant='solid' onClick={handleButtonClick}>I am ready to begin</Button>
                 </Box>
             </Flex>
         </ScrollArea >

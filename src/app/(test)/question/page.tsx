@@ -171,7 +171,7 @@ const MainComponent = () => {
             default:
                 // For other states, render a default button
                 return (
-                    <div className="w-8 h-8 flex items-center justify-center rounded-lg text-white bg-gradient-to-tr from-stone-500 to-stone-100 text-sm">
+                    <div className="w-8 h-8 flex items-center justify-center rounded-lg text-white bg-gradient-to-tr from-stone-500 to-stone-400 text-sm">
                         {index + 1}
                     </div>
                 );
@@ -283,8 +283,8 @@ const MainComponent = () => {
     }
 
     return (
-        <Flex className="bg-[#F6F7FB]" direction='column' height={{ md: '100vh' }} width={{ md: '100vw' }}>
-            <Box className="bg-[#0144FF] bg-opacity-[0.059]" flexGrow='1' style={{ height: '5%', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <Flex className="bg-[#38B6FF]" direction='column' height={{ md: '100vh' }} width={{ md: '100vw' }}>
+            <Box className="bg-[#EAF6FA] bg-opacity-[0.5]" flexGrow='1' style={{ height: '5%', width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                 <Text color='indigo' size='6' weight='bold' wrap='pretty' >CUET Mock Test</Text>
             </Box>
             <Box style={{ 'height': '85%', 'width': '100%' }}>
@@ -312,9 +312,12 @@ const MainComponent = () => {
                                     </Box>
                                     {/* Options */}
                                     <Box style={{ 'height': '20%', 'width': '100%', 'display': 'flex', 'alignItems': 'center' }}>
-                                        <RadioGroup.Root size='3' name="Options" className="pl-8 pr-8" style={{ fontSize: '1.1rem', width: '100%' }}>
+                                        <RadioGroup.Root size='3' name="Options" className="pl-8 pr-8" highContrast style={{ fontSize: '1.1rem', width: '100%' }}>
                                             {options.map((option, index) => (
                                                 <RadioGroup.Item
+                                                    style={{
+                                                        cursor: 'pointer'
+                                                    }}
                                                     key={index}
                                                     value={option}
                                                     className="flex items-center h-8 w-8 pr-8"
@@ -364,16 +367,16 @@ const MainComponent = () => {
                             {/* Navigation Buttons */}
 
                             <Box className="gap-8" style={{ 'height': '10%', 'width': '100%', 'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center' }}>
-                                <Button style={{ borderRadius: '5px' }} size="3" variant='solid' onClick={() => {
+                                <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052' }} size="3" variant='solid' onClick={() => {
                                     onClickNavigationButtons(QuestionState.Answered)
                                 }}>Save and Next</Button>
-                                <Button style={{ borderRadius: '5px' }} size="3" variant='solid' onClick={() => {
+                                <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052' }} size="3" variant='solid' onClick={() => {
                                     clearResponse()
                                 }}>Clear Response</Button>
-                                <Button style={{ borderRadius: '5px' }} size="3" variant='solid' onClick={() => {
+                                <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052' }} size="3" variant='solid' onClick={() => {
                                     onClickNavigationButtons(QuestionState.AnsweredAndMarkedForReview)
                                 }}>Save and Mark for Review</Button>
-                                <Button style={{ borderRadius: '5px' }} size="3" variant='solid' onClick={() => {
+                                <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052' }} size="3" variant='solid' onClick={() => {
                                     onClickNavigationButtons(QuestionState.MarkedForReview)
                                 }}>Mark for Review and Next</Button>
                             </Box>
@@ -405,7 +408,7 @@ const MainComponent = () => {
                                 alignItems: 'center'
                             }}>
                                 <div className="pl-10 flex flex-row items-center justify-center w-40">
-                                    <div className="w-8 h-8 flex items-center justify-center rounded-lg text-white bg-gradient-to-tr from-stone-500 to-stone-100 text-sm">
+                                    <div className="w-8 h-8 flex items-center justify-center rounded-lg text-white bg-gradient-to-tr from-stone-500 to-stone-400 text-sm">
                                         {legendCounts.notVisited}
                                     </div>
                                     <div className="pl-1">Not Visited</div>
