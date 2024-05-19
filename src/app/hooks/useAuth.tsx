@@ -111,7 +111,7 @@ export default function useAuth() {
         localStorage.setItem('returnUrl', returnUrl);
 
         // Redirect to the sign-in page, except when already on sign-in or sign-up pages
-        if (returnUrl.includes('/sign-in') || returnUrl.includes('/sign-up')) {
+        if (returnUrl.includes('/sign-in') || returnUrl.includes('/sign-up') || returnUrl.includes('/landing-page')) {
             router.push(returnUrl);
         } else {
             router.push(`/sign-in?returnUrl=${encodeURIComponent(returnUrl)}`);
