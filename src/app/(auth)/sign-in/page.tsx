@@ -123,7 +123,7 @@ const MainComponent = () => {
                         </button>
                     </Box>
                     <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                        <Button style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px', 'backgroundColor': '#120052' }} size="3" variant='solid' onClick={handleSignIn}
+                        <Button style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={handleSignIn}
                         >Sign In</Button>
                     </Box>
                     {/* <Box className="pt-4" style={{ 'height': '3%', 'width': '50%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>

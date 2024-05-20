@@ -7,8 +7,8 @@ export default function Page() {
     return (
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh' }}>
             <Flex direction='column'>
-                <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4 py-10">
-                    <div className="bg-white rounded-lg shadow overflow-hidden w-full max-w-3xl p-8">
+                <div style={{ 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }} className="bg-[#38B6FF] flex flex-col items-center justify-center min-h-screen px-4 py-10">
+                    <div className="bg-[#EAF6FA] rounded-lg shadow overflow-hidden w-full max-w-3xl p-8">
                         <h1 className="text-3xl font-bold text-gray-900 mb-6">Terms and Conditions</h1>
                         <p className="text-gray-600 mb-4">Last updated: April 26, 2024</p>
 
@@ -40,7 +40,7 @@ export default function Page() {
                         </ul>
 
                         <p className="mt-6 text-gray-700">
-                            Your use of the website is also subject to the Cuet Test Crafters Privacy Policy. Please review our Privacy Policy, which also governs the site and informs users of our data collection practices.
+                            Your use of the website is also subject to the Test Crafters Privacy Policy. Please review our Privacy Policy, which also governs the site and informs users of our data collection practices.
                         </p>
                     </div>
                 </div>

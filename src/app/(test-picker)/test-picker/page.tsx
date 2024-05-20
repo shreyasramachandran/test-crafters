@@ -156,7 +156,7 @@ const MainComponent = () => {
                     </Flex>
                     <Flex className="h-full" direction='column' justify='center' gap='4'>
                         <Box style={{ 'height': '40%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                            <Button style={{ 'height': '100%', 'width': '100%', borderRadius: '5px', 'backgroundColor': '#120052' }} size="3" variant='solid' onClick={() => {
+                            <Button style={{ 'height': '100%', 'width': '100%', borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
                                 if (selectedSubject !== 'Subject' && duration !== 'Duration') {
                                     const queryString = createQueryString(searchParams, { subject: selectedSubject, language: selectedLanguage, duration: duration, maxQuestions: maxQuestions, minimumRequiredQuestions: minimumRequiredQuestions });
                                     router.push('/instructions-page' + '?' + queryString)

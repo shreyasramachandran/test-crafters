@@ -23,7 +23,7 @@ export default function Page() {
                         <Text size='4' weight='light' wrap='pretty'>We were unable to log you in with the provided credentials. Please try again or contact support if the problem persists.</Text>
                     </Box>
                     <Box style={{ 'height': '15%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                        <Button style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px', 'backgroundColor': '#120052' }} size="3" variant='solid' onClick={handleRetry}>Retry</Button>
+                        <Button style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={handleRetry}>Retry</Button>
                     </Box>
                 </Flex>
             </Box>

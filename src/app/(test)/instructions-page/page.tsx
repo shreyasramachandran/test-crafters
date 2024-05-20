@@ -133,7 +133,7 @@ const MainComponent = () => {
                     </label>
                 </Box>
                 <Box className="p-4" style={{ height: '20%', width: '20%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                    <Button className="w-full h-full" style={{ 'backgroundColor': '#120052' }} size="4" variant='solid' onClick={handleButtonClick}>I am ready to begin</Button>
+                    <Button className="w-full h-full" style={{ 'backgroundColor': '#120052', cursor: 'pointer' }} size="4" variant='solid' onClick={handleButtonClick}>I am ready to begin</Button>
                 </Box>
             </Flex>
         </ScrollArea >
