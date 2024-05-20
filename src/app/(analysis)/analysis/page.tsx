@@ -17,6 +17,7 @@ interface IPerformanceTable {
 }
 
 const MainComponent = () => {
+    console.log('analysis component mounted')
     const { isAuthenticated, loading } = useAuth();
     const [performanceScores, setPerformanceScores] = useState({ correctAnswers: 0, incorrectAnswers: 0 });
     const [performanceTable, setPerformanceTable] = useState<IPerformanceTable[]>([]);
@@ -72,7 +73,7 @@ const MainComponent = () => {
 }
 
 // Dynamically import MainComponent with ssr: false
-const DynamicMainComponent = dynamic(() => Promise.resolve(MainComponent), { ssr: false });
+const DynamicMainComponent = dynamic(() => Promise.resolve(MainComponent));
 
 const Page = () => (
     <Suspense fallback={<div>Loading...</div>}>

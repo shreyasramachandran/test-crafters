@@ -4,6 +4,7 @@ import { Flex, ScrollArea, Button } from "@radix-ui/themes";
 import Link from 'next/link'
 
 export default function Page() {
+    console.log('privacy component mounted')
     return (
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh' }}>
             <Flex direction='column'>

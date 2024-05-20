@@ -1,7 +1,7 @@
 import { Flex, ScrollArea, Button } from "@radix-ui/themes";
-import Link from 'next/link'
 
 export default function ShippingPolicyPage() {
+    console.log('shipping policy component mounted')
     return (
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh' }}>
             <Flex direction='column'>

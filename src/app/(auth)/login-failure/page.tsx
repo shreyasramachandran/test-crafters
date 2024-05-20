@@ -4,6 +4,7 @@ import { Flex, Box, Text, Button } from "@radix-ui/themes";
 import { useRouter } from 'next/navigation';
 
 export default function Page() {
+    console.log('login failure component mounted')
     const router = useRouter();
 
 
