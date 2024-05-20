@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
 
 const MainComponent = () => {
+    console.log('verification component mounted')
     const { isAuthenticated, loading } = useAuth();
     const router = useRouter();
     const [verificationCode, setVerificationCode] = useState('');
@@ -104,7 +105,7 @@ const MainComponent = () => {
 }
 
 // Dynamically import MainComponent with ssr: false
-const DynamicMainComponent = dynamic(() => Promise.resolve(MainComponent), { ssr: false });
+const DynamicMainComponent = dynamic(() => Promise.resolve(MainComponent));
 
 const Page = () => (
     <Suspense fallback={<div>Loading...</div>}>

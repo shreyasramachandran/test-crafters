@@ -1,6 +1,7 @@
 "use client"
 
 export default function Page() {
+    console.log('refunds and cancellations component mounted')
     return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4">
             <div className="bg-white rounded-lg shadow overflow-hidden w-full max-w-3xl p-8">

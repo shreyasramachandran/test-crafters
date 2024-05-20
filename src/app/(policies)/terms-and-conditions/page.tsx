@@ -3,6 +3,7 @@
 import { Flex, ScrollArea } from "@radix-ui/themes";
 
 export default function Page() {
+    console.log('terms and conditions component mounted')
     return (
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh' }}>
             <Flex direction='column'>

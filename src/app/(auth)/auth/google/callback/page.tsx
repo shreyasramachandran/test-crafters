@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation'; // Ensure this is the correct impor
 import { getCookie, setCookie } from '@/app/utils/cookieUtils';
 
 export default function Page() {
+    console.log('auth google callback component mounted')
     const router = useRouter();
     const hasFetchedTokens = useRef(false); // ref to track if tokens have been fetched
 
