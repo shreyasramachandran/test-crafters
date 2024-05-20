@@ -8,8 +8,8 @@ export default function Page() {
     return (
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh' }}>
             <Flex direction='column'>
-                <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50 px-4 py-10">
-                    <div className="bg-white rounded-lg shadow-xl overflow-hidden w-full max-w-3xl p-8">
+                <div className="bg-[#38B6FF] flex flex-col items-center justify-center min-h-screen px-4 py-10">
+                    <div className="bg-[#EAF6FA] rounded-lg shadow-xl overflow-hidden w-full max-w-3xl p-8" style={{ 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
                         <h1 className="text-3xl font-bold text-center text-gray-900 mb-8">Privacy Policy</h1>
 
                         <section className="mb-5">
@@ -56,7 +56,7 @@ export default function Page() {
 
                         <div className="text-center">
                             <Link href="/contact-us">
-                                <Button radius='small' size="3" variant='solid'>Contact Support</Button>
+                                <Button style={{ 'borderRadius': '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="4" variant='solid'>Contact Support</Button>
                             </Link>
                         </div>
                     </div>

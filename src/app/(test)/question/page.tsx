@@ -374,16 +374,16 @@ const MainComponent = () => {
                             {/* Navigation Buttons */}
 
                             <Box className="gap-8" style={{ 'height': '10%', 'width': '100%', 'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center' }}>
-                                <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052' }} size="3" variant='solid' onClick={() => {
+                                <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
                                     onClickNavigationButtons(QuestionState.Answered)
                                 }}>Save and Next</Button>
-                                <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052' }} size="3" variant='solid' onClick={() => {
+                                <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
                                     clearResponse()
                                 }}>Clear Response</Button>
-                                <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052' }} size="3" variant='solid' onClick={() => {
+                                <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
                                     onClickNavigationButtons(QuestionState.AnsweredAndMarkedForReview)
                                 }}>Save and Mark for Review</Button>
-                                <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052' }} size="3" variant='solid' onClick={() => {
+                                <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
                                     onClickNavigationButtons(QuestionState.MarkedForReview)
                                 }}>Mark for Review and Next</Button>
                             </Box>

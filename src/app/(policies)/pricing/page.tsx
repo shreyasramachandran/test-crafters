@@ -3,8 +3,8 @@
 export default function Page() {
     console.log('pricing component mounted')
     return (
-        <div className="flex flex-col items-center justify-center min-h-screen bg-gray-50">
-            <div className="max-w-3xl w-full mx-auto p-8 bg-white shadow-lg rounded-lg">
+        <div className="bg-[#38B6FF] flex flex-col items-center justify-center min-h-screen">
+            <div className="bg-[#EAF6FA] max-w-3xl w-full mx-auto p-8 shadow-lg rounded-lg" style={{ 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
                 <h2 className="text-3xl font-bold text-center text-gray-800 mb-6">Pricing Plans</h2>
                 <p className="text-center text-gray-600 mb-8">Choose a plan that fits your needs:</p>
 
