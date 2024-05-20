@@ -8,6 +8,7 @@ import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
 
 const MainComponent = () => {
+    console.log('landing page mounted')
     const router = useRouter();
     const { isAuthenticated, loading } = useAuth();
 
