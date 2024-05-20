@@ -194,7 +194,7 @@ const MainComponent = () => {
 }
 
 // Dynamically import MainComponent with ssr: false
-const DynamicMainComponent = dynamic(() => Promise.resolve(MainComponent), { ssr: false });
+const DynamicMainComponent = dynamic(() => Promise.resolve(MainComponent));
 
 const Page = () => (
     <Suspense fallback={<div>Loading...</div>}>
