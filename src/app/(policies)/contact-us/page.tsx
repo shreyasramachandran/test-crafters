@@ -13,7 +13,6 @@ export default function Page() {
                         <p className="text-gray-800"><span className="font-medium">Email:</span> <a href="mailto:cuettestcrafters@gmail.com" className="text-blue-500 hover:text-blue-600">cuettestcrafters@gmail.com</a></p>
                         <p className="text-gray-800"><span className="font-medium">Phone:</span> <a href="tel:+918107427069" className="text-blue-500 hover:text-blue-600">+918107427069</a></p>
                     </div>
-
                     <div className="mt-8">
                         <p className="text-gray-600">Our operating hours are all days at all hours. Feel free to reach out at any time.</p>
                     </div>
