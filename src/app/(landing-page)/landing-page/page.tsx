@@ -10,11 +10,11 @@ import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
 const MainComponent = () => {
     console.log('landing page mounted')
     const router = useRouter();
-    // const { isAuthenticated, loading } = useAuth();
+    const { isAuthenticated, loading } = useAuth();
 
-    // if (loading) {
-    //     return <OrigamiAnimation />;
-    // }
+    if (loading) {
+        return <OrigamiAnimation />;
+    }
 
     return (
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh' }}>
