@@ -11,8 +11,10 @@ import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
 
 
 const MainComponent = () => {
+    console.log('sign in component mounted')
     // Get isAuthenticated in case you need to use it for future operations
     const { isAuthenticated, loading } = useAuth();
+
     const router = useRouter();
 
     const [email, setEmail] = useState('');
@@ -140,7 +142,7 @@ const MainComponent = () => {
 }
 
 // Dynamically import MainComponent with ssr: false
-const DynamicMainComponent = dynamic(() => Promise.resolve(MainComponent), { ssr: false });
+const DynamicMainComponent = dynamic(() => Promise.resolve(MainComponent));
 
 const Page = () => (
     <Suspense fallback={<div>Loading...</div>}>

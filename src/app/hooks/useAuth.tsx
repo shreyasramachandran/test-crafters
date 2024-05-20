@@ -1,19 +1,20 @@
 'use client'
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useRouter, usePathname, useSearchParams } from 'next/navigation';
 import { getCookie, setCookie } from '../utils/cookieUtils';
 
 export default function useAuth() {
     const router = useRouter();
     const pathName = usePathname();
-    const searchParams = useSearchParams()
-    let returnUrl = pathName + '?' + searchParams
+    const searchParams = useSearchParams();
+    let returnUrl = pathName + '?' + searchParams;
 
     const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [loading, setLoading] = useState(true);
+    const isRedirecting = useRef(false);
 
     async function checkTokenValidity() {
-        let accessToken = await getCookie('access_token')
+        let accessToken = await getCookie('access_token');
         if (!accessToken) return false;
 
         // Check the current access token's validity
@@ -29,7 +30,7 @@ export default function useAuth() {
         if (!accessToken) return false;  // Refresh failed, return false
 
         // Set the validity to true
-        isValid = true
+        isValid = true;
         return isValid;  // Return true if the new token is valid, otherwise false
     }
 
@@ -38,10 +39,10 @@ export default function useAuth() {
             const response = await fetch('/api/auth/google/validate-token', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ accessToken }),
-                cache: 'no-store'
+                cache: 'no-store',
             });
             return response.ok;  // True if token is valid, false otherwise
         } catch (error) {
@@ -55,14 +56,14 @@ export default function useAuth() {
             const response = await fetch('/api/auth/google/refresh-token', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({ refreshToken }),
-                cache: 'no-store'
+                cache: 'no-store',
             });
             const data = await response.json();
             if (response.ok) {
-                setCookie('access_token', data.access_token)
+                setCookie('access_token', data.access_token);
                 // Update the access token in storage
                 return data.accessToken;  // Return the new access token
             }
@@ -73,14 +74,11 @@ export default function useAuth() {
         }
     }
 
-
     useEffect(() => {
         const initAuthCheck = async () => {
-            setLoading(true);
             try {
                 const isValid = await checkTokenValidity();
                 setIsAuthenticated(isValid);
-
                 if (isValid) {
                     handleAuthenticatedRedirect(returnUrl);
                 } else {
@@ -88,33 +86,44 @@ export default function useAuth() {
                 }
             } catch (error) {
                 console.error('Error during auth check:', error);
-                router.push('/error'); // Redirect to an error page if needed
+                router.push('/login-failure'); // Redirect to an error page if needed
             } finally {
-                setLoading(false);
+                if (!isRedirecting.current) {
+                    setLoading(false);
+                }
             }
         };
 
         initAuthCheck();
-    }, [router, returnUrl]);
+
+    }, []); // Empty dependency array ensures useEffect runs only once
 
     const handleAuthenticatedRedirect = (returnUrl: string) => {
-        // Redirect to home if the current page is sign-in, sign-up, or landing page
-        if (returnUrl.includes('/sign-in') || returnUrl.includes('/sign-up') || returnUrl.includes('/landing-page')) {
-            router.push('/test-picker');
-        } else {
-            router.push(returnUrl);
+        isRedirecting.current = true;
+        try {
+            if (returnUrl.includes('/sign-in') || returnUrl.includes('/sign-up') || returnUrl.includes('/landing-page')) {
+                router.push('/test-picker');
+            } else {
+                router.push(returnUrl);
+            }
+        } finally {
+            isRedirecting.current = false;
+            setLoading(false);
         }
     };
 
     const handleUnauthenticatedRedirect = (returnUrl: string) => {
-        // Save the return URL in local storage or a cookie to redirect after login
-        localStorage.setItem('returnUrl', returnUrl);
-
-        // Redirect to the sign-in page, except when already on sign-in or sign-up pages
-        if (returnUrl.includes('/sign-in') || returnUrl.includes('/sign-up') || returnUrl.includes('/landing-page')) {
-            router.push(returnUrl);
-        } else {
-            router.push(`/sign-in?returnUrl=${encodeURIComponent(returnUrl)}`);
+        isRedirecting.current = true;
+        try {
+            localStorage.setItem('returnUrl', returnUrl);
+            if (!returnUrl.includes('/sign-in') && !returnUrl.includes('/sign-up') && !returnUrl.includes('/landing-page')) {
+                router.push(`/sign-in?returnUrl=${encodeURIComponent(returnUrl)}`);
+            } else {
+                router.push(returnUrl);
+            }
+        } finally {
+            isRedirecting.current = false;
+            setLoading(false);
         }
     };
 

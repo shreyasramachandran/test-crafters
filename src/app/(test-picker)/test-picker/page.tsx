@@ -10,6 +10,7 @@ import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
 
 const MainComponent = () => {
     // Get isAuthenticated in case you need to use it for future operations
+    console.log('test picker component mounted')
     const router = useRouter();
     const searchParams = useSearchParams()
     const { isAuthenticated, loading } = useAuth();
@@ -98,6 +99,10 @@ const MainComponent = () => {
         return <OrigamiAnimation />;
     }
 
+    if (!isAuthenticated) {
+        return <OrigamiAnimation />;
+    }
+
     return (
         <Flex className="bg-[#38B6FF]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
             <Box className="bg-[#EAF6FA]" style={{ 'height': '60%', 'width': '30%', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
@@ -167,10 +172,10 @@ const MainComponent = () => {
 }
 
 // Dynamically import MainComponent with ssr: false
-const DynamicMainComponent = dynamic(() => Promise.resolve(MainComponent), { ssr: false });
+const DynamicMainComponent = dynamic(() => Promise.resolve(MainComponent));
 
 const Page = () => (
-    <Suspense fallback={<div>Loading...</div>}>
+    <Suspense fallback={<OrigamiAnimation />}>
         <DynamicMainComponent />
     </Suspense>
 );
