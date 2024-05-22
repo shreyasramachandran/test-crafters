@@ -14,6 +14,14 @@ export default function useAuth() {
     const isRedirecting = useRef(false);
 
     async function checkTokenValidity() {
+        // Check if user cookie is present
+        let userId = await getCookie('userId');
+        if (userId) return true;
+
+        // Check if userId is there in session storage
+        userId = localStorage.getItem('userId')
+        if (userId) return true;
+
         let accessToken = await getCookie('access_token');
         if (!accessToken) return false;
 

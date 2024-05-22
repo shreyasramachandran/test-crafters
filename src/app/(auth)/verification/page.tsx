@@ -29,7 +29,6 @@ const MainComponent = () => {
     }, []);
 
     async function createUser(email: string, password: string) {
-
         try {
             const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
             const body = {
@@ -48,17 +47,17 @@ const MainComponent = () => {
             // Ensure proper error handling
             if (!res.ok) {
                 // Handle errors, e.g., return an error response
-                return new Response(JSON.stringify({ error: "Error creating user" }), {
-                    status: res.status,
-                    headers: { "Content-Type": "application/json" },
-                });
+                throw new Error(`Error creating new user, status = ${res.status}`);
             }
             const responseData = await res.json();
+            // Store the userId as part of local storage
+            localStorage.setItem('userId', responseData.id)
             return responseData
         }
         catch (error) {
             // Handle other errors
             console.error("Error creating user", error);
+            throw error;
         }
     }
 
