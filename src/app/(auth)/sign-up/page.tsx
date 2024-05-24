@@ -16,6 +16,7 @@ const MainComponent = () => {
     const { isAuthenticated, loading } = useAuth();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [name, setName] = useState('');
 
     const router = useRouter();
 
@@ -24,6 +25,7 @@ const MainComponent = () => {
         sessionStorage.setItem('verification_code', verificationCode);
         sessionStorage.setItem('other_email', email);
         sessionStorage.setItem('other_password', password);
+        sessionStorage.setItem('other_name', name)
 
         try {
             const res = await fetch(`/api/send-email`, {
@@ -73,7 +75,7 @@ const MainComponent = () => {
                 });
             }
             const responseData = await res.json();
-            const userExists = responseData.exists
+            const userExists = responseData.data.exists
             return userExists
         }
         catch (error) {
@@ -107,7 +109,7 @@ const MainComponent = () => {
             // Show a toast message
         }
         else {
-            const userExists = checkUserExists()
+            const userExists = await checkUserExists()
             if (!userExists) {
                 sendVerificationEmail()
                 router.push('/verification');
@@ -124,7 +126,7 @@ const MainComponent = () => {
 
     return (
         <Flex className="bg-[#38B6FF]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
-            <Box className="bg-[#EAF6FA]" style={{ 'height': '80%', 'width': '30%', 'borderRadius': '10px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
+            <Box className="bg-[#EAF6FA]" style={{ 'height': '83%', 'width': '30%', 'borderRadius': '10px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
                 <Flex className="h-full" direction='column' justify='start' gap='2' pt='6'>
                     <Box style={{ 'height': '10%', 'width': '40%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <Text size='6' weight='bold' wrap='pretty'>Sign Up</Text>
@@ -138,6 +140,16 @@ const MainComponent = () => {
                             <span className="flex-shrink mx-4 text-black">or</span>
                             <div className="flex-grow border-t border-black"></div>
                         </div>
+                    </Box>
+                    <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'end', alignItems: 'center', alignSelf: 'center' }}>
+                        <input
+                            type="text"
+                            className="border border-solid border-[#79747E] bg-[#EAF6FA] h-10 px-5  text-sm focus:outline-none"
+                            placeholder="Name"
+                            value={name}
+                            onChange={(e) => setName(e.target.value)}
+                            style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px' }}
+                        />
                     </Box>
                     <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'end', alignItems: 'center', alignSelf: 'center' }}>
                         <input

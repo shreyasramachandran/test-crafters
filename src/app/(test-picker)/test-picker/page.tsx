@@ -1,12 +1,13 @@
 'use client'
 import useAuth from "@/app/hooks/useAuth";
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Flex, Box, Text, DropdownMenu, Button } from "@radix-ui/themes"
-import { useState, useCallback, useEffect } from 'react';
+import { Flex, Box, Text, DropdownMenu, Button, IconButton, Avatar } from "@radix-ui/themes"
+import { useState, useCallback, useEffect, useRef } from 'react';
 import db from '@/app/utils/indexedDbUtils';
 import { Suspense } from 'react'
 import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
+import SignOut from "@/app/components/SignOut";
 
 const MainComponent = () => {
     // Get isAuthenticated in case you need to use it for future operations
@@ -14,6 +15,11 @@ const MainComponent = () => {
     const router = useRouter();
     const searchParams = useSearchParams()
     const { isAuthenticated, loading } = useAuth();
+    const [showSignOut, setShowSignOut] = useState(false);
+
+    const avatarRef = useRef<HTMLDivElement>(null);
+    const signOutRef = useRef<HTMLDivElement>(null);
+    const [userInfo, setUserInfo] = useState({ userName: 'User Name', userEmail: 'User Email' });
 
     // Get a new searchParams string by merging the current
     // searchParams with a provided key/value pair
@@ -81,6 +87,7 @@ const MainComponent = () => {
             otherEmail: localStorage.getItem('other_email') || '',
             otherPassword: localStorage.getItem('other_password') || ''
         }
+
         db.addRecord('user', record).then(() => {
             console.log("User record added.");
         }).catch(error => {
@@ -95,6 +102,34 @@ const MainComponent = () => {
         }
     }, [selectedSubject])
 
+    const handleClickOutside = (event: MouseEvent) => {
+        if (avatarRef.current && !avatarRef.current.contains(event.target as Node) && signOutRef.current && !signOutRef.current.contains(event.target as Node)) {
+            setShowSignOut(false);
+        }
+    };
+
+    useEffect(() => {
+        if (showSignOut) {
+            document.addEventListener('click', handleClickOutside, true);
+        } else {
+            document.removeEventListener('click', handleClickOutside, true);
+        }
+        return () => {
+            document.removeEventListener('click', handleClickOutside, true);
+        };
+    }, [showSignOut]);
+
+    useEffect(() => {
+        const userName = localStorage.getItem('google_user_name') || localStorage.getItem('other_name') || 'User Name';
+        const userEmail = localStorage.getItem('google_user_email') || localStorage.getItem('other_email') || 'User Email';
+        setUserInfo({ userName, userEmail });
+    }, []);
+
+    const toggleSignOut = () => {
+        setShowSignOut(!showSignOut);
+    };
+
+
     if (loading) {
         return <OrigamiAnimation />;
     }
@@ -104,7 +139,42 @@ const MainComponent = () => {
     }
 
     return (
-        <Flex className="bg-[#38B6FF]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
+        <Flex direction='column' gap='5' className="bg-[#38B6FF]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
+            <Box className="bg-[#38B6FF]" style={{
+                height: '5%', width: '100%',
+                position: 'absolute', top: 40, zIndex: 10
+            }}>
+                <Flex className="h-full px-10" justify='between' align='center'>
+                    <IconButton size='3' style={{
+                        backgroundColor: '#1DACFF', boxShadow: '2px 2px 10px 3px rgba(0, 0, 0, 0.15)', cursor: 'pointer'
+                    }}>
+                        <img src="images/back_button.svg" alt="Back Button" className="w-4 h-4" />
+                    </IconButton>
+                    <Flex justify="center" align="center">
+                        <Box ref={avatarRef} onClick={toggleSignOut} style={{ cursor: 'pointer' }}>
+                            <Avatar
+                                size="3"
+                                radius="medium"
+                                fallback={userInfo.userName.charAt(0).toUpperCase()}
+                                highContrast
+                            />
+                        </Box>
+                        {showSignOut && (
+                            <Box ref={signOutRef} style={{
+                                position: 'absolute',
+                                top: '100%', // Position it just below the avatar
+                                right: '0',
+                                zIndex: 10,
+                                marginTop: '8px',
+                                marginRight: '42px',
+                                pointerEvents: 'auto'
+                            }}>
+                                <SignOut name={userInfo.userName} email={userInfo.userEmail} onClose={() => { setShowSignOut(false) }} />
+                            </Box>
+                        )}
+                    </Flex>
+                </Flex>
+            </Box>
             <Box className="bg-[#EAF6FA]" style={{ 'height': '60%', 'width': '30%', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
                 <Flex className="h-full" direction='column' py='9' gap='6'>
                     <Box style={{ 'height': '10%', 'width': '47%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>

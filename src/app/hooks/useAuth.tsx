@@ -85,6 +85,13 @@ export default function useAuth() {
     useEffect(() => {
         const initAuthCheck = async () => {
             try {
+                // Check if the use is coming to verification via sign up
+                const verificationCode = sessionStorage.getItem('verification_code');
+                if (verificationCode) {
+                    setIsAuthenticated(true)
+                    setLoading(false)
+                    return { isAuthenticated, loading }
+                }
                 const isValid = await checkTokenValidity();
                 setIsAuthenticated(isValid);
                 if (isValid) {

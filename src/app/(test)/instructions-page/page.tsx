@@ -1,12 +1,13 @@
 'use client'
 import useAuth from "@/app/hooks/useAuth";
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Flex, Box, ScrollArea, Text, Button } from "@radix-ui/themes";
+import { Flex, Box, ScrollArea, Text, Button, IconButton, Avatar } from "@radix-ui/themes";
 import { useCallback, useEffect, useState, useRef } from 'react';
 import db from '@/app/utils/indexedDbUtils';
 import { Suspense } from 'react'
 import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
+import SignOut from "@/app/components/SignOut";
 
 const MainComponent = () => {
     console.log('instructions page component mounted')
@@ -22,6 +23,11 @@ const MainComponent = () => {
     const duration = searchParams.get('duration')
     const maxQuestions = searchParams.get('maxQuestions')
     const minimumRequiredQuestions = searchParams.get('minimumRequiredQuestions')
+    const [showSignOut, setShowSignOut] = useState(false);
+
+    const avatarRef = useRef<HTMLDivElement>(null);
+    const signOutRef = useRef<HTMLDivElement>(null);
+    const [userInfo, setUserInfo] = useState({ userName: 'User Name', userEmail: 'User Email' });
 
     // Get a new searchParams string by merging the current
     // searchParams with a provided key/value pair
@@ -62,15 +68,70 @@ const MainComponent = () => {
         }
     };
 
+    const handleClickOutside = (event: MouseEvent) => {
+        if (avatarRef.current && !avatarRef.current.contains(event.target as Node) && signOutRef.current && !signOutRef.current.contains(event.target as Node)) {
+            setShowSignOut(false);
+        }
+    };
+
+    useEffect(() => {
+        if (showSignOut) {
+            document.addEventListener('click', handleClickOutside, true);
+        } else {
+            document.removeEventListener('click', handleClickOutside, true);
+        }
+        return () => {
+            document.removeEventListener('click', handleClickOutside, true);
+        };
+    }, [showSignOut]);
+
+    useEffect(() => {
+        const userName = localStorage.getItem('google_user_name') || localStorage.getItem('other_name') || 'User Name';
+        const userEmail = localStorage.getItem('google_user_email') || localStorage.getItem('other_email') || 'User Email';
+        setUserInfo({ userName, userEmail });
+    }, []);
+
+    const toggleSignOut = () => {
+        setShowSignOut(!showSignOut);
+    };
+
     if (loading) {
         return <OrigamiAnimation />;
     }
 
     return (
-        <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh' }}>
-            <Flex className="bg-[#38B6FF]" direction='column'>
-                <Box className="bg-[#EAF6FA] bg-opacity-[0.5]" height='64px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+        <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh', position: 'absolute' }}>
+            <Flex className="bg-[#38B6FF]" direction='column' style={{ position: 'relative' }}>
+                <Box className="bg-[#EAF6FA] bg-opacity-[0.5] px-10" height='64px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
+                    <IconButton size='3' style={{
+                        backgroundColor: '#1DACFF', boxShadow: '2px 2px 10px 3px rgba(0, 0, 0, 0.15)', cursor: 'pointer'
+                    }}>
+                        <img src="images/back_button.svg" alt="Back Button" className="w-4 h-4" />
+                    </IconButton>
                     <Text color='indigo' size='6' weight='bold' wrap='pretty' >CUET Mock Test</Text>
+                    <Flex justify="center" align="center">
+                        <Box ref={avatarRef} onClick={toggleSignOut} style={{ cursor: 'pointer' }}>
+                            <Avatar
+                                size="3"
+                                radius="medium"
+                                fallback={userInfo.userName.charAt(0).toUpperCase()}
+                                highContrast
+                            />
+                        </Box>
+                        {showSignOut && (
+                            <Box ref={signOutRef} style={{
+                                position: 'absolute',
+                                top: '100%', // Position it just below the avatar
+                                right: '0',
+                                zIndex: 10,
+                                marginTop: '8px',
+                                marginRight: '42px',
+                                pointerEvents: 'auto'
+                            }}>
+                                <SignOut name={userInfo.userName} email={userInfo.userEmail} onClose={() => { setShowSignOut(false) }} />
+                            </Box>
+                        )}
+                    </Flex>
                 </Box>
                 <Box className="bg-[#EAF6FA] bg-opacity-[0.3]" height='32px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                     <Text size='5' weight='regular' wrap='pretty' >Instructions</Text>

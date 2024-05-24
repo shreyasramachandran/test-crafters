@@ -7,16 +7,15 @@ export async function GET(request: NextRequest) {
         const searchParams = request.nextUrl.searchParams
         const cookieName = searchParams.get('cookieName') as string
         if (cookieName) {
-            const cookie = cookies().get(cookieName)
-            return new Response(JSON.stringify({ 'cookie': cookie }), { status: 200 });
+            cookies().delete(cookieName)
+            return new Response(JSON.stringify({ message: `cookie ${cookieName} delete successfully` }), { status: 200 });
         }
         else {
             return new Response(JSON.stringify({ 'Error': 'No params found' }), { status: 500 });
         }
-
     } catch (error) {
-        console.error("Error retrieving cookie", error);
-        return new Response(JSON.stringify({ 'error': "Error retrieving cookie" }), {
+        console.error("Error deleting cookie", error);
+        return new Response(JSON.stringify({ 'error': "Error deleting cookie" }), {
             status: 500,
             headers: { "Content-Type": "application/json" },
         });

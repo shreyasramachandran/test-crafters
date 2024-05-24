@@ -20,8 +20,8 @@ export async function GET(request: NextRequest) {
         return new Response(JSON.stringify({ message: `Cookie ${cookieName} has been set` }), { status: 200 });
     }
     catch (error) {
-        console.error("Error initiating session", error);
-        return new Response(JSON.stringify({ error: "Error initiating session" }), {
+        console.error("Error setting cookie", error);
+        return new Response(JSON.stringify({ error: "Error setting cookie" }), {
             status: 500,
             headers: { "Content-Type": "application/json" },
         });
