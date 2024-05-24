@@ -40,3 +40,20 @@ export async function setCookie(cookieName: string, cookieValue: string) {
         });
     }
 }
+
+export async function deleteCookie(cookieName: string) {
+    const res = await fetch(`/api/cookies/delete-cookie?cookieName=${cookieName}`, {
+        method: "GET",
+        headers: {
+            "Cache-Control": "no-cache",
+        }
+    });
+    // Ensure proper error handling
+    if (!res.ok) {
+        // Handle errors, e.g., return an error response
+        return new Response(JSON.stringify({ error: "Error setting cookie" }), {
+            status: res.status,
+            headers: { "Content-Type": "application/json" },
+        });
+    }
+}

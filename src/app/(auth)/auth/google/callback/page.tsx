@@ -108,6 +108,11 @@ export default function Page() {
                 }
                 setCookie('access_token', responseData.access_token)
                 setCookie('refresh_token', responseData.access_token)
+                localStorage.setItem('google_user_email', userData.googleEmail)
+                localStorage.setItem('google_user_name', userData.googleName)
+                localStorage.setItem('access_token', userData.accessToken)
+                localStorage.setItem('refresh_token', userData.refreshToken)
+                localStorage.setItem('expires_in', userData.expiresIn)
                 createUser(userData)
             }
 

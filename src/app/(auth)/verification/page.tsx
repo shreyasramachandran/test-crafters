@@ -64,14 +64,21 @@ const MainComponent = () => {
     const handleVarification = async () => {
         if (typedVerificationCode.current?.value === verificationCode) {
             const otherEmail = sessionStorage.getItem('other_email') as string
+            const otherName = sessionStorage.getItem('other_name') as string
             const otherPassword = sessionStorage.getItem('other_password') as string
-            createUser(otherEmail, otherPassword)
             // Create a new user and store his otherEmail and otherPassword
+            createUser(otherEmail, otherPassword)
+            localStorage.setItem('other_email', otherEmail)
+            localStorage.setItem('other_name', otherName)
             router.push('/test-picker');
         }
     };
 
     if (loading) {
+        return <OrigamiAnimation />;
+    }
+
+    if (!isAuthenticated) {
         return <OrigamiAnimation />;
     }
 
