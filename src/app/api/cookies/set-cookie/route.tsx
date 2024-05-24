@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
             value: cookieValue,
             path: '/',
             // httpOnly: true,
-            // domain: 'localhost',
+            domain: '.cuet.net.in',
             // secure: true, // Set to true if using HTTPS
             // sameSite: 'none', // Recommended for most use cases
             maxAge: 630720000
