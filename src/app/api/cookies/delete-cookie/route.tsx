@@ -4,6 +4,7 @@ import { type NextRequest } from 'next/server'
 
 export async function GET(request: NextRequest) {
     try {
+        const domain = process.env.NEXT_PUBLIC_DOMAIN
         const searchParams = request.nextUrl.searchParams
         const cookieName = searchParams.get('cookieName') as string
         if (cookieName) {
@@ -13,7 +14,7 @@ export async function GET(request: NextRequest) {
             cookie.set(cookieName, '', {
                 maxAge: -1,
                 path: '/',
-                domain: '.cuet.net.in',
+                domain: domain,
                 httpOnly: true,
                 secure: true,
                 sameSite: 'none'
