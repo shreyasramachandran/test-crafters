@@ -7,7 +7,17 @@ export async function GET(request: NextRequest) {
         const searchParams = request.nextUrl.searchParams
         const cookieName = searchParams.get('cookieName') as string
         if (cookieName) {
-            cookies().delete(cookieName)
+            // Create a new cookie instance
+            const cookie = cookies()
+            // Delete the cookie by setting its expiration to a past date
+            cookie.set(cookieName, '', {
+                maxAge: -1,
+                path: '/',
+                domain: '.cuet.net.in',
+                httpOnly: true,
+                secure: true,
+                sameSite: 'none'
+            })
             return new Response(JSON.stringify({ message: `cookie ${cookieName} delete successfully` }), { status: 200 });
         }
         else {
