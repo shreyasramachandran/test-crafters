@@ -8,7 +8,8 @@ import db from "@/app/utils/indexedDbUtils";
 import useAuth from "@/app/hooks/useAuth";
 import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
-import SignOut from "@/app/components/SignOut";
+import SignOut from "@/app/components/header/Settings";
+
 
 interface IPerformanceTable {
     question_number: number;
@@ -116,7 +117,10 @@ const MainComponent = () => {
                 </Box>
                 <Box className="bg-[#EAF6FA] px-8" style={{ 'width': '50%', 'display': 'flex', 'flexDirection': 'column', 'justifyContent': 'start', 'alignItems': 'start', 'borderRadius': '5px', 'boxShadow': '2px 2px 10px 2px rgba(0, 0, 0, 0.15)' }}>
                     <Flex className="flex-col gap-8 p-14">
-                        <Text size='5' weight='bold' wrap='pretty' >Overview of Performance</Text>
+                        <Flex direction='row' gap='3' style={{ alignContent: 'center' }}>
+                            <img src="images/performance_overview.svg" alt="Performance Overview" className="w-10 h-10" />
+                            <Text size='8' wrap='pretty' >Overview of Performance</Text>
+                        </Flex>
                         <Text size='4' weight='light' wrap='pretty' >This section provides a quick glance at your overall test results. The chart visualizes the proportion of correct to incorrect answers, offering you a clear, immediate sense of how you performed.
                             Below, a concise summary highlights your total correct answers, giving you a foundational snapshot of your performance.</Text>
                         <Box style={{ "alignSelf": 'center' }}>
@@ -126,7 +130,10 @@ const MainComponent = () => {
                 </Box>
                 <Box className="bg-[#EAF6FA] px-8" style={{ 'width': '50%', 'display': 'flex', 'flexDirection': 'column', 'justifyContent': 'start', 'alignItems': 'start', 'borderRadius': '5px', 'boxShadow': '2px 2px 10px 2px rgba(0, 0, 0, 0.15)' }}>
                     <Flex className="flex-col gap-8 p-14">
-                        <Text size='5' weight='bold' wrap='pretty' >Detailed Question Analysis</Text>
+                        <Flex direction='row' align='start' gap='3' style={{ alignContent: 'center' }}>
+                            <img src="images/detailed_analysis.svg" alt="Performance Overview" className="w-10 h-10" />
+                            <Text size='8' wrap='pretty' >Detailed Question Analysis</Text>
+                        </Flex>
                         <Text size='4' weight='light' wrap='pretty' >Dive into every question you faced with this detailed table. It lists your answers alongside the correct answers, color-coded to distinguish successes from missteps.
                             This tool is perfect for reviewing specific areas where you excelled or need improvement, making it easier to target your studies effectively.</Text>
                         <Box style={{ "alignSelf": 'center' }}>

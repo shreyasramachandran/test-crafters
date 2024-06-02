@@ -14,7 +14,6 @@ export default function Page() {
         try {
             const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
             console.log(userData)
-
             const res = await fetch(`${baseUrl}/create-user`, {
                 method: "POST",
                 headers: {

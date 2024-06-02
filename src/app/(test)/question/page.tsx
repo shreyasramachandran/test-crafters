@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react'
 import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
-import SignOut from "@/app/components/SignOut";
+import SignOut from "@/app/components/header/Settings";
 
 const MainComponent = () => {
     console.log('questions page component mounted')

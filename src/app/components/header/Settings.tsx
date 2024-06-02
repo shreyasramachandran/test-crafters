@@ -2,15 +2,15 @@
 
 import { Avatar, Box, Card, Flex, Text } from "@radix-ui/themes"
 import { useRouter } from 'next/navigation';
-import { deleteCookie } from "../utils/cookieUtils";
+import { deleteCookie } from "../../utils/cookieUtils";
 
-interface SignOutProps {
+interface SettingsProps {
     name: string;
     email: string;
     onClose: () => void;
 }
 
-export default function SignOut({ name, email, onClose }: SignOutProps) {
+export default function Settings({ name, email, onClose }: SettingsProps) {
     console.log('Log out component called')
 
     const clearCookies = async () => {
@@ -54,6 +54,14 @@ export default function SignOut({ name, email, onClose }: SignOutProps) {
         onClose();
     }
 
+    const refer = async () => {
+    }
+
+    const redirectEWallet = async () => {
+        // Redirect to e-wallet
+        router.push('/e-wallet');
+    }
+
     const fallback = name.charAt(0).toUpperCase()
 
     return (
@@ -75,6 +83,14 @@ export default function SignOut({ name, email, onClose }: SignOutProps) {
                         <div className="flex items-center justify-center w-full p-2">
                             <div className="flex-grow border-t border-[#01012E] opacity-25"></div>
                         </div>
+                        <Flex gap="4" align="center" className="ml-3" onClick={redirectEWallet} style={{ cursor: 'pointer' }}>
+                            <img src="images/wallet.svg" alt="Wallet" className="w-5 h-5 ml-4" />
+                            <Text as="div" size="4" color="gray" className="ml-3">Wallet</Text>
+                        </Flex>
+                        <Flex gap="4" align="center" className="ml-3" onClick={refer} style={{ cursor: 'pointer' }}>
+                            <img src="images/refer.svg" alt="Refer" className="w-5 h-5 ml-4" />
+                            <Text as="div" size="4" color="gray" className="ml-3">Refer</Text>
+                        </Flex>
                         <Flex gap="4" align="center" className="ml-3" onClick={signOut} style={{ cursor: 'pointer' }}>
                             <img src="images/log_out.svg" alt="Sign Out" className="w-5 h-5 ml-4" />
                             <Text as="div" size="4" color="gray" className="ml-3">Sign Out</Text>

@@ -7,7 +7,8 @@ import db from '@/app/utils/indexedDbUtils';
 import { Suspense } from 'react'
 import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
-import SignOut from "@/app/components/SignOut";
+import SignOut from "@/app/components/header/Settings";
+
 
 const MainComponent = () => {
     // Get isAuthenticated in case you need to use it for future operations
