@@ -7,7 +7,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react'
 import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
-import SignOut from "@/app/components/header/Settings";
+import Header from "@/app/components/header/Header";
 
 const MainComponent = () => {
     console.log('questions page component mounted')
@@ -17,13 +17,6 @@ const MainComponent = () => {
     const maxQuestions = searchParams.get('maxQuestions')
     const minimumRequiredQuestions = searchParams.get('minimumRequiredQuestions')
     const router = useRouter();
-
-    const [showSignOut, setShowSignOut] = useState(false);
-
-    const avatarRef = useRef<HTMLDivElement>(null);
-    const signOutRef = useRef<HTMLDivElement>(null);
-    const [userInfo, setUserInfo] = useState({ userName: 'User Name', userEmail: 'User Email' });
-
 
     // Define currentQuestionNumber
     const [currentQuestionNumber, setCurrentQuestionNumber] = useState(1);
@@ -293,71 +286,14 @@ const MainComponent = () => {
         router.push('/analysis')
     }
 
-    const handleClickOutside = (event: MouseEvent) => {
-        if (avatarRef.current && !avatarRef.current.contains(event.target as Node) && signOutRef.current && !signOutRef.current.contains(event.target as Node)) {
-            setShowSignOut(false);
-        }
-    };
-
-    useEffect(() => {
-        if (showSignOut) {
-            document.addEventListener('click', handleClickOutside, true);
-        } else {
-            document.removeEventListener('click', handleClickOutside, true);
-        }
-        return () => {
-            document.removeEventListener('click', handleClickOutside, true);
-        };
-    }, [showSignOut]);
-
-    useEffect(() => {
-        const userName = localStorage.getItem('google_user_name') || localStorage.getItem('other_name') || 'User Name';
-        const userEmail = localStorage.getItem('google_user_email') || localStorage.getItem('other_email') || 'User Email';
-        setUserInfo({ userName, userEmail });
-    }, []);
-
-    const toggleSignOut = () => {
-        setShowSignOut(!showSignOut);
-    };
-
     if (loading) {
         return <OrigamiAnimation />;
     }
 
     return (
-        <Flex className="bg-[#38B6FF]" direction='column' height={{ md: '100vh' }} width={{ md: '100vw' }} style={{ position: 'absolute' }}>
-            <Box className="bg-[#EAF6FA] bg-opacity-[0.5] px-10" height='64px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
-                <IconButton size='3' style={{
-                    backgroundColor: '#1DACFF', boxShadow: '2px 2px 10px 3px rgba(0, 0, 0, 0.15)', cursor: 'pointer'
-                }}>
-                    <img src="images/back_button.svg" alt="Back Button" className="w-4 h-4" />
-                </IconButton>
-                <Text color='indigo' size='6' weight='bold' wrap='pretty' >CUET Mock Test</Text>
-                <Flex justify="center" align="center">
-                    <Box ref={avatarRef} onClick={toggleSignOut} style={{ cursor: 'pointer' }}>
-                        <Avatar
-                            size="3"
-                            radius="medium"
-                            fallback={userInfo.userName.charAt(0).toUpperCase()}
-                            highContrast
-                        />
-                    </Box>
-                    {showSignOut && (
-                        <Box ref={signOutRef} style={{
-                            position: 'absolute',
-                            top: '100%', // Position it just below the avatar
-                            right: '0',
-                            zIndex: 10,
-                            marginTop: '8px',
-                            marginRight: '42px',
-                            pointerEvents: 'auto'
-                        }}>
-                            <SignOut name={userInfo.userName} email={userInfo.userEmail} onClose={() => { setShowSignOut(false) }} />
-                        </Box>
-                    )}
-                </Flex>
-            </Box>
-            <Box style={{ 'height': '85%', 'width': '100%' }}>
+        <Flex className="bg-[#38B6FF] p-8" direction='column' height={{ md: '100vh' }} width={{ md: '100vw' }} style={{ position: 'absolute' }}>
+            <Header></Header>
+            <Box className="pl-4" style={{ 'height': '85%', 'width': '100%' }}>
                 <Flex style={{ height: '100%', width: '100%' }} gap='4'>
                     <Box style={{ 'height': '100%', 'width': '70%' }}>
                         <Flex direction='column' style={{ height: '100%', width: '100%' }} gap='4'>

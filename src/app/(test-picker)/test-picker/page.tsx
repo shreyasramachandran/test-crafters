@@ -7,7 +7,7 @@ import db from '@/app/utils/indexedDbUtils';
 import { Suspense } from 'react'
 import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
-import SignOut from "@/app/components/header/Settings";
+import Header from "@/app/components/header/Header";
 
 
 const MainComponent = () => {
@@ -16,11 +16,6 @@ const MainComponent = () => {
     const router = useRouter();
     const searchParams = useSearchParams()
     const { isAuthenticated, loading } = useAuth();
-    const [showSignOut, setShowSignOut] = useState(false);
-
-    const avatarRef = useRef<HTMLDivElement>(null);
-    const signOutRef = useRef<HTMLDivElement>(null);
-    const [userInfo, setUserInfo] = useState({ userName: 'User Name', userEmail: 'User Email' });
 
     // Get a new searchParams string by merging the current
     // searchParams with a provided key/value pair
@@ -103,34 +98,6 @@ const MainComponent = () => {
         }
     }, [selectedSubject])
 
-    const handleClickOutside = (event: MouseEvent) => {
-        if (avatarRef.current && !avatarRef.current.contains(event.target as Node) && signOutRef.current && !signOutRef.current.contains(event.target as Node)) {
-            setShowSignOut(false);
-        }
-    };
-
-    useEffect(() => {
-        if (showSignOut) {
-            document.addEventListener('click', handleClickOutside, true);
-        } else {
-            document.removeEventListener('click', handleClickOutside, true);
-        }
-        return () => {
-            document.removeEventListener('click', handleClickOutside, true);
-        };
-    }, [showSignOut]);
-
-    useEffect(() => {
-        const userName = localStorage.getItem('google_user_name') || localStorage.getItem('other_name') || 'User Name';
-        const userEmail = localStorage.getItem('google_user_email') || localStorage.getItem('other_email') || 'User Email';
-        setUserInfo({ userName, userEmail });
-    }, []);
-
-    const toggleSignOut = () => {
-        setShowSignOut(!showSignOut);
-    };
-
-
     if (loading) {
         return <OrigamiAnimation />;
     }
@@ -140,104 +107,72 @@ const MainComponent = () => {
     }
 
     return (
-        <Flex direction='column' gap='5' className="bg-[#38B6FF]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
-            <Box className="bg-[#38B6FF]" style={{
-                height: '5%', width: '100%',
-                position: 'absolute', top: 40, zIndex: 10
-            }}>
-                <Flex className="h-full px-10" justify='between' align='center'>
-                    <IconButton size='3' style={{
-                        backgroundColor: '#1DACFF', boxShadow: '2px 2px 10px 3px rgba(0, 0, 0, 0.15)', cursor: 'pointer'
-                    }}>
-                        <img src="images/back_button.svg" alt="Back Button" className="w-4 h-4" />
-                    </IconButton>
-                    <Flex justify="center" align="center">
-                        <Box ref={avatarRef} onClick={toggleSignOut} style={{ cursor: 'pointer' }}>
-                            <Avatar
-                                size="3"
-                                radius="medium"
-                                fallback={userInfo.userName.charAt(0).toUpperCase()}
-                                highContrast
-                            />
+        <Flex direction='column' className="bg-[#38B6FF] p-8" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center' style={{ position: 'absolute' }}>
+            <Flex direction='column' style={{ 'height': '100%', 'width': '100%' }}>
+                <Header></Header>
+                <Box className="bg-[#EAF6FA] m-24" style={{ 'height': '64%', 'width': '30%', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)', alignSelf: 'center', justifySelf: 'center' }}>
+                    <Flex className="h-full" direction='column' py='9' gap='6'>
+                        <Box style={{ 'height': '10%', 'width': '47%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
+                            <Text size='6' weight='bold' wrap='pretty'>Pick a test</Text>
                         </Box>
-                        {showSignOut && (
-                            <Box ref={signOutRef} style={{
-                                position: 'absolute',
-                                top: '100%', // Position it just below the avatar
-                                right: '0',
-                                zIndex: 10,
-                                marginTop: '8px',
-                                marginRight: '42px',
-                                pointerEvents: 'auto'
-                            }}>
-                                <SignOut name={userInfo.userName} email={userInfo.userEmail} onClose={() => { setShowSignOut(false) }} />
+                        <Flex className="h-full" direction='column' justify='center' gap='5'>
+                            <Box style={{ height: '42%', width: '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                                <DropdownMenu.Root>
+                                    <DropdownMenu.Trigger>
+                                        <button className="flex justify-between items-center px-4 py-2 bg-skyblue-200 border border-solid border-[#79747E] rounded-lg text-gray-700 shadow-sm w-full h-full">
+                                            {selectedSubject}
+                                            <span className="ml-2">
+                                                <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                            </span>
+                                        </button>
+                                    </DropdownMenu.Trigger>
+                                    <DropdownMenu.Content style={{ 'backgroundColor': '#EAF6FA' }} className="bg-white shadow-lg rounded-md py-1 mt-1">
+                                        {subjects.map((subject) => (
+                                            <DropdownMenu.Item key={subject} onSelect={() => handleSubjectChange(subject)} className="px-4 py-2 text-sm text-gray-700 hover:bg-[#120052]">
+                                                {subject}
+                                            </DropdownMenu.Item>
+                                        ))}
+                                    </DropdownMenu.Content>
+                                </DropdownMenu.Root>
                             </Box>
-                        )}
+                            <Box style={{ height: '42%', width: '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                                <DropdownMenu.Root>
+                                    <DropdownMenu.Trigger>
+                                        <button className="flex justify-between items-center px-4 py-2 bg-skyblue-200 border border-solid border-[#79747E] rounded-lg text-gray-700 shadow-sm w-full h-full">
+                                            {selectedLanguage}
+                                            <span className="ml-2">
+                                                <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                            </span>
+                                        </button>
+                                    </DropdownMenu.Trigger>
+                                    <DropdownMenu.Content style={{ 'backgroundColor': '#EAF6FA' }} className="bg-white shadow-lg rounded-md py-1 mt-1">
+                                        {languages.map((language) => (
+                                            <DropdownMenu.Item key={language} onSelect={() => handleLanguageChange(language)} className="px-4 py-2 text-sm text-gray-700 hover:bg-[#120052]">
+                                                {language}
+                                            </DropdownMenu.Item>
+                                        ))}
+                                    </DropdownMenu.Content>
+                                </DropdownMenu.Root>
+                            </Box>
+                        </Flex>
+                        <Flex className="h-full" direction='column' justify='center' gap='4'>
+                            <Box style={{ 'height': '40%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                                <Button style={{ 'height': '100%', 'width': '100%', borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
+                                    if (selectedSubject !== 'Subject' && duration !== 'Duration') {
+                                        const queryString = createQueryString(searchParams, { subject: selectedSubject, language: selectedLanguage, duration: duration, maxQuestions: maxQuestions, minimumRequiredQuestions: minimumRequiredQuestions });
+                                        router.push('/instructions-page' + '?' + queryString)
+                                    }
+                                }}>Start Mock Test
+                                </Button>
+                            </Box>
+                        </Flex>
                     </Flex>
-                </Flex>
-            </Box>
-            <Box className="bg-[#EAF6FA]" style={{ 'height': '60%', 'width': '30%', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
-                <Flex className="h-full" direction='column' py='9' gap='6'>
-                    <Box style={{ 'height': '10%', 'width': '47%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <Text size='6' weight='bold' wrap='pretty'>Pick a test</Text>
-                    </Box>
-                    <Flex className="h-full" direction='column' justify='center' gap='5'>
-                        <Box style={{ height: '42%', width: '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                            <DropdownMenu.Root>
-                                <DropdownMenu.Trigger>
-                                    <button className="flex justify-between items-center px-4 py-2 bg-skyblue-200 border border-solid border-[#79747E] rounded-lg text-gray-700 shadow-sm w-full h-full">
-                                        {selectedSubject}
-                                        <span className="ml-2">
-                                            <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                                            </svg>
-                                        </span>
-                                    </button>
-                                </DropdownMenu.Trigger>
-                                <DropdownMenu.Content style={{ 'backgroundColor': '#EAF6FA' }} className="bg-white shadow-lg rounded-md py-1 mt-1">
-                                    {subjects.map((subject) => (
-                                        <DropdownMenu.Item key={subject} onSelect={() => handleSubjectChange(subject)} className="px-4 py-2 text-sm text-gray-700 hover:bg-[#120052]">
-                                            {subject}
-                                        </DropdownMenu.Item>
-                                    ))}
-                                </DropdownMenu.Content>
-                            </DropdownMenu.Root>
-                        </Box>
-                        <Box style={{ height: '42%', width: '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                            <DropdownMenu.Root>
-                                <DropdownMenu.Trigger>
-                                    <button className="flex justify-between items-center px-4 py-2 bg-skyblue-200 border border-solid border-[#79747E] rounded-lg text-gray-700 shadow-sm w-full h-full">
-                                        {selectedLanguage}
-                                        <span className="ml-2">
-                                            <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
-                                            </svg>
-                                        </span>
-                                    </button>
-                                </DropdownMenu.Trigger>
-                                <DropdownMenu.Content style={{ 'backgroundColor': '#EAF6FA' }} className="bg-white shadow-lg rounded-md py-1 mt-1">
-                                    {languages.map((language) => (
-                                        <DropdownMenu.Item key={language} onSelect={() => handleLanguageChange(language)} className="px-4 py-2 text-sm text-gray-700 hover:bg-[#120052]">
-                                            {language}
-                                        </DropdownMenu.Item>
-                                    ))}
-                                </DropdownMenu.Content>
-                            </DropdownMenu.Root>
-                        </Box>
-                    </Flex>
-                    <Flex className="h-full" direction='column' justify='center' gap='4'>
-                        <Box style={{ 'height': '40%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                            <Button style={{ 'height': '100%', 'width': '100%', borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
-                                if (selectedSubject !== 'Subject' && duration !== 'Duration') {
-                                    const queryString = createQueryString(searchParams, { subject: selectedSubject, language: selectedLanguage, duration: duration, maxQuestions: maxQuestions, minimumRequiredQuestions: minimumRequiredQuestions });
-                                    router.push('/instructions-page' + '?' + queryString)
-                                }
-                            }}>Start Mock Test
-                            </Button>
-                        </Box>
-                    </Flex>
-                </Flex>
-            </Box >
+                </Box >
+            </Flex>
         </Flex >
     )
 }

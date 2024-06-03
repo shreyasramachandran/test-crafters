@@ -1,14 +1,14 @@
 'use client'
 
-import { Flex, Box, Text, ScrollArea, IconButton, Avatar } from "@radix-ui/themes";
+import { Flex, Box, Text, ScrollArea } from "@radix-ui/themes";
 import OverviewPerformancePieChart from "@/app/components/visualisations/OverviewPerformancePieChart";
-import React, { Suspense, useEffect, useRef, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import PerformanceTable from "@/app/components/visualisations/PerformanceTable";
 import db from "@/app/utils/indexedDbUtils";
 import useAuth from "@/app/hooks/useAuth";
 import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
-import SignOut from "@/app/components/header/Settings";
+import Header from "@/app/components/header/Header";
 
 
 interface IPerformanceTable {
@@ -23,11 +23,6 @@ const MainComponent = () => {
     const { isAuthenticated, loading } = useAuth();
     const [performanceScores, setPerformanceScores] = useState({ correctAnswers: 0, incorrectAnswers: 0 });
     const [performanceTable, setPerformanceTable] = useState<IPerformanceTable[]>([]);
-    const [showSignOut, setShowSignOut] = useState(false);
-
-    const avatarRef = useRef<HTMLDivElement>(null);
-    const signOutRef = useRef<HTMLDivElement>(null);
-    const [userInfo, setUserInfo] = useState({ userName: 'User Name', userEmail: 'User Email' });
 
     // Function to fetch performance scores
     async function getPerformanceScores() {
@@ -47,33 +42,6 @@ const MainComponent = () => {
         getPerformanceTable();
     }, []); // Empty dependency array ensures this effect runs only once after the initial render
 
-    const handleClickOutside = (event: MouseEvent) => {
-        if (avatarRef.current && !avatarRef.current.contains(event.target as Node) && signOutRef.current && !signOutRef.current.contains(event.target as Node)) {
-            setShowSignOut(false);
-        }
-    };
-
-    useEffect(() => {
-        if (showSignOut) {
-            document.addEventListener('click', handleClickOutside, true);
-        } else {
-            document.removeEventListener('click', handleClickOutside, true);
-        }
-        return () => {
-            document.removeEventListener('click', handleClickOutside, true);
-        };
-    }, [showSignOut]);
-
-    useEffect(() => {
-        const userName = localStorage.getItem('google_user_name') || localStorage.getItem('other_name') || 'User Name';
-        const userEmail = localStorage.getItem('google_user_email') || localStorage.getItem('other_email') || 'User Email';
-        setUserInfo({ userName, userEmail });
-    }, []);
-
-    const toggleSignOut = () => {
-        setShowSignOut(!showSignOut);
-    };
-
     if (loading) {
         return <OrigamiAnimation />;
     }
@@ -81,40 +49,7 @@ const MainComponent = () => {
     return (
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh', position: 'absolute' }}>
             <Flex direction='column' className="bg-[#38B6FF] flex-col items-center justify-center gap-8 p-8" style={{ position: 'relative' }}>
-                <Box className="bg-[#38B6FF]" style={{
-                    height: '5%', width: '100%', position: 'relative'
-                }}>
-                    <Flex className="h-full px-10" justify='between' align='center'>
-                        <IconButton size='3' style={{
-                            backgroundColor: '#1DACFF', boxShadow: '2px 2px 10px 3px rgba(0, 0, 0, 0.15)', cursor: 'pointer'
-                        }}>
-                            <img src="images/back_button.svg" alt="Back Button" className="w-4 h-4" />
-                        </IconButton>
-                        <Flex justify="center" align="center">
-                            <Box ref={avatarRef} onClick={toggleSignOut} style={{ cursor: 'pointer' }}>
-                                <Avatar
-                                    size="3"
-                                    radius="medium"
-                                    fallback={userInfo.userName.charAt(0).toUpperCase()}
-                                    highContrast
-                                />
-                            </Box>
-                            {showSignOut && (
-                                <Box ref={signOutRef} style={{
-                                    position: 'absolute',
-                                    top: '100%', // Position it just below the avatar
-                                    right: '0',
-                                    zIndex: 10,
-                                    marginTop: '8px',
-                                    marginRight: '42px',
-                                    pointerEvents: 'auto'
-                                }}>
-                                    <SignOut name={userInfo.userName} email={userInfo.userEmail} onClose={() => { setShowSignOut(false) }} />
-                                </Box>
-                            )}
-                        </Flex>
-                    </Flex>
-                </Box>
+                <Header></Header>
                 <Box className="bg-[#EAF6FA] px-8" style={{ 'width': '50%', 'display': 'flex', 'flexDirection': 'column', 'justifyContent': 'start', 'alignItems': 'start', 'borderRadius': '5px', 'boxShadow': '2px 2px 10px 2px rgba(0, 0, 0, 0.15)' }}>
                     <Flex className="flex-col gap-8 p-14">
                         <Flex direction='row' gap='3' style={{ alignContent: 'center' }}>
