@@ -1,8 +1,8 @@
 'use client'
 import useAuth from "@/app/hooks/useAuth";
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Flex, Box, Text, DropdownMenu, Button, IconButton, Avatar } from "@radix-ui/themes"
-import { useState, useCallback, useEffect, useRef } from 'react';
+import { ScrollArea, Flex, Box, Text, DropdownMenu, Button } from "@radix-ui/themes"
+import { useState, useCallback, useEffect } from 'react';
 import db from '@/app/utils/indexedDbUtils';
 import { Suspense } from 'react'
 import dynamic from "next/dynamic";

@@ -1,7 +1,7 @@
 'use client'
 import useAuth from "@/app/hooks/useAuth";
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Flex, Box, ScrollArea, Text, Button, IconButton, Avatar } from "@radix-ui/themes";
+import { Flex, Box, ScrollArea, Text, Button } from "@radix-ui/themes";
 import { useCallback, useEffect, useState, useRef } from 'react';
 import db from '@/app/utils/indexedDbUtils';
 import { Suspense } from 'react'

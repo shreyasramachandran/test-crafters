@@ -2,7 +2,7 @@
 
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
 import useAuth from "@/app/hooks/useAuth";
-import { Suspense, useEffect, useRef, useState } from "react";
+import { Suspense } from "react";
 import dynamic from "next/dynamic";
 import { Table, Text, Box, Flex, ScrollArea, Strong, Button } from "@radix-ui/themes";
 import Header from "@/app/components/header/Header";

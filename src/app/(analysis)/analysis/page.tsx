@@ -48,7 +48,7 @@ const MainComponent = () => {
 
     return (
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh', position: 'absolute' }}>
-            <Flex direction='column' className="bg-[#38B6FF] flex-col items-center justify-center gap-8 p-8" style={{ position: 'relative' }}>
+            <Flex direction='column' className="bg-[#38B6FF] flex-col items-center justify-center gap-8 p-8" style={{ position: 'relative', height: '100%' }}>
                 <Header></Header>
                 <Box className="bg-[#EAF6FA] px-8" style={{ 'width': '50%', 'display': 'flex', 'flexDirection': 'column', 'justifyContent': 'start', 'alignItems': 'start', 'borderRadius': '5px', 'boxShadow': '2px 2px 10px 2px rgba(0, 0, 0, 0.15)' }}>
                     <Flex className="flex-col gap-8 p-14">
