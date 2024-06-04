@@ -53,6 +53,9 @@ const MainComponent = () => {
 
     const [questionPalette, setQuestionPalette] = useState<QuestionPaletteItem[]>([]);
 
+    const [lastQuestionUpdated, setLastQuestionUpdated] = useState(false)
+    const [firstQuestionUpdated, setFirstQuestionUpdated] = useState(false)
+
     useEffect(() => {
         const fetchQuestions = async () => {
             try {
@@ -184,6 +187,7 @@ const MainComponent = () => {
 
 
     const onCickQuestionPalette = (index: number) => {
+        if (currentQuestionNumber - 1 == index) { return; }
         // Update questionPalette immutably
         setQuestionPalette(prevPalette => {
             const newPalette = [...prevPalette];
@@ -208,53 +212,151 @@ const MainComponent = () => {
 
 
 
-    const onClickNavigationButtons = (state: QuestionState) => {
-        if (selectedOption !== -1) {
+    const onClickNavigationButtons = (
+        state: QuestionState,
+        operator: string,
+        overrideSelectedOption: boolean
+    ) => {
+        if (overrideSelectedOption) {
+            // Gets the index of the current question number and the state of the current question.
             const currentIndex = currentQuestionNumber - 1;
             const oldState = questionPalette[currentIndex].state;
+            console.log('Current Index', currentIndex)
+            console.log('Old State', oldState)
+
             // Update legend counts accordingly using the mapping
-            setLegendCounts(prevCounts => ({
-                ...prevCounts,
-                [stateToLegendAction[oldState]]: prevCounts[stateToLegendAction[oldState] as LegendAction] - 1,  // Decrement the count of the old state
-                [stateToLegendAction[state]]: prevCounts[stateToLegendAction[state] as LegendAction] + 1  // Increment the count of the new state
-            }));
+            if (oldState === QuestionState.NotVisited) {
+                if ((currentQuestionNumber === Number(maxQuestions) && operator === 'increment')) {
+                    if (!lastQuestionUpdated) {
+                        setLegendCounts(prevCounts => ({
+                            ...prevCounts,
+                            [stateToLegendAction[oldState]]: prevCounts[stateToLegendAction[oldState] as LegendAction] - 1,  // Decrement the count of the old state
+                            [stateToLegendAction[state]]: prevCounts[stateToLegendAction[state] as LegendAction] + 1  // Increment the count of the new state
+                        }));
+                        setLastQuestionUpdated(true)
+                    }
+                }
+                else if (currentQuestionNumber === 1 && operator === 'decrement') {
+                    if (!firstQuestionUpdated) {
+                        setLegendCounts(prevCounts => ({
+                            ...prevCounts,
+                            [stateToLegendAction[oldState]]: prevCounts[stateToLegendAction[oldState] as LegendAction] - 1,  // Decrement the count of the old state
+                            [stateToLegendAction[state]]: prevCounts[stateToLegendAction[state] as LegendAction] + 1  // Increment the count of the new state
+                        }));
+                        setFirstQuestionUpdated(true)
+                    }
+                }
+                else {
+                    setLegendCounts(prevCounts => ({
+                        ...prevCounts,
+                        [stateToLegendAction[oldState]]: prevCounts[stateToLegendAction[oldState] as LegendAction] - 1,  // Decrement the count of the old state
+                        [stateToLegendAction[state]]: prevCounts[stateToLegendAction[state] as LegendAction] + 1  // Increment the count of the new state
+                    }));
+                }
+            }
+
+
 
             // Correctly update questionPalette with immutability
-            setQuestionPalette(prevPalette => {
-                const newPalette = [...prevPalette];
-
-                // Ensure you are modifying the correct item by checking within bounds
-                if (currentQuestionNumber - 1 < newPalette.length) {
-                    newPalette[currentQuestionNumber - 1].state = state;
-                }
-
-                return newPalette;
-            });
+            if (oldState === QuestionState.NotVisited) {
+                setQuestionPalette(prevPalette => {
+                    const newPalette = [...prevPalette];
+                    if (currentIndex < newPalette.length) {
+                        newPalette[currentIndex].state = state;
+                    }
+                    return newPalette;
+                });
+            }
 
             // Increment the current question number correctly and handle selectedOption. 
-            // Make sure you are not incrementing out of bounds.
-            if (currentQuestionNumber !== Number(maxQuestions)) {
+            if (currentQuestionNumber === Number(maxQuestions) && operator === 'increment') { return; }
+            else {
+                if (currentQuestionNumber === 1 && operator === 'decrement') { return; }
                 setCurrentQuestionNumber(prevCurrent => {
-                    const newCurrent = prevCurrent + 1;
-                    // Make sure you're not accessing out of bounds
+                    const newCurrent = operator === 'increment' ? prevCurrent + 1 : prevCurrent - 1;
                     if (newCurrent - 1 < questionPalette.length) {
                         setSelectedOption(questionPalette[newCurrent - 1].selectedAnswer);
                     } else {
-                        // Handle case where there is no next question
                         setSelectedOption(-1);
                     }
                     return newCurrent;
                 });
             }
+            // Break out of the loop
+            return;
         }
+
+        if (selectedOption === -1) {
+            return;
+        }
+
+        // Gets the index of the current question number and the state of the current question.
+        const currentIndex = currentQuestionNumber - 1;
+        const oldState = questionPalette[currentIndex].state;
+
+        // Update legend counts accordingly using the mapping
+        if ((currentQuestionNumber === Number(maxQuestions) && operator === 'increment')) {
+            if (!lastQuestionUpdated) {
+                setLegendCounts(prevCounts => ({
+                    ...prevCounts,
+                    [stateToLegendAction[oldState]]: prevCounts[stateToLegendAction[oldState] as LegendAction] - 1,  // Decrement the count of the old state
+                    [stateToLegendAction[state]]: prevCounts[stateToLegendAction[state] as LegendAction] + 1  // Increment the count of the new state
+                }));
+                setLastQuestionUpdated(true)
+            }
+        }
+        else if (currentQuestionNumber === 1 && operator === 'decrement') {
+            if (!firstQuestionUpdated) {
+                setLegendCounts(prevCounts => ({
+                    ...prevCounts,
+                    [stateToLegendAction[oldState]]: prevCounts[stateToLegendAction[oldState] as LegendAction] - 1,  // Decrement the count of the old state
+                    [stateToLegendAction[state]]: prevCounts[stateToLegendAction[state] as LegendAction] + 1  // Increment the count of the new state
+                }));
+                setFirstQuestionUpdated(true)
+            }
+        }
+        else {
+            setLegendCounts(prevCounts => ({
+                ...prevCounts,
+                [stateToLegendAction[oldState]]: prevCounts[stateToLegendAction[oldState] as LegendAction] - 1,  // Decrement the count of the old state
+                [stateToLegendAction[state]]: prevCounts[stateToLegendAction[state] as LegendAction] + 1  // Increment the count of the new state
+            }));
+        }
+
+
+        // Correctly update questionPalette with immutability
+        setQuestionPalette(prevPalette => {
+            const newPalette = [...prevPalette];
+            if (currentIndex < newPalette.length) {
+                newPalette[currentIndex].state = state;
+            }
+            return newPalette;
+        });
+
+        // Increment the current question number correctly and handle selectedOption. 
+        if (currentQuestionNumber !== Number(maxQuestions) && currentQuestionNumber !== 0) {
+            setCurrentQuestionNumber(prevCurrent => {
+                const newCurrent = operator === 'increment' ? prevCurrent + 1 : prevCurrent - 1;
+                if (newCurrent - 1 < questionPalette.length) {
+                    setSelectedOption(questionPalette[newCurrent - 1].selectedAnswer);
+                } else {
+                    setSelectedOption(-1);
+                }
+                return newCurrent;
+            });
+        }
+    }
+
+
+    const submit = () => {
         // Check if its the last question and minimum number of questions have been answered.
         const minimumAnsweredQuestions = legendCounts.answered + legendCounts.answeredAndMarkedForReview + 1
-        if (currentQuestionNumber === Number(maxQuestions) && minimumAnsweredQuestions >= Number(minimumRequiredQuestions)) {
+        if (minimumAnsweredQuestions >= Number(minimumRequiredQuestions)) {
             setDialogOpen(true);
             setIsCompleted(true);
         }
         else {
-            if (currentQuestionNumber === Number(maxQuestions) && minimumAnsweredQuestions < Number(minimumRequiredQuestions)) {
+            if (minimumAnsweredQuestions < Number(minimumRequiredQuestions)) {
                 setDialogOpen(true);
                 setIsCompleted(false);
             }
@@ -371,20 +473,30 @@ const MainComponent = () => {
                             </Dialog.Root>
 
                             {/* Navigation Buttons */}
-
-                            <Box className="gap-8" style={{ 'height': '10%', 'width': '100%', 'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center' }}>
-                                <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
-                                    onClickNavigationButtons(QuestionState.Answered)
-                                }}>Save and Next</Button>
-                                <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
-                                    clearResponse()
-                                }}>Clear Response</Button>
-                                <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
-                                    onClickNavigationButtons(QuestionState.AnsweredAndMarkedForReview)
-                                }}>Save and Mark for Review</Button>
-                                <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
-                                    onClickNavigationButtons(QuestionState.MarkedForReview)
-                                }}>Mark for Review and Next</Button>
+                            <Box className="gap-4" style={{ 'height': '20%', 'width': '100%', 'display': 'flex', 'flexDirection': 'column', 'alignItems': 'center', 'justifyContent': 'start' }}>
+                                <Box className="gap-8" style={{ 'height': '50%', 'width': '80%', 'display': 'flex', 'flexDirection': 'row', 'alignItems': 'center', 'justifyContent': 'start' }}>
+                                    <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
+                                        onClickNavigationButtons(QuestionState.Answered, 'increment', false)
+                                    }}>Save and Next</Button>
+                                    <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
+                                        clearResponse()
+                                    }}>Clear Response</Button>
+                                    <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
+                                        onClickNavigationButtons(QuestionState.AnsweredAndMarkedForReview, 'increment', false)
+                                    }}>Save and Mark for Review</Button>
+                                    <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
+                                        onClickNavigationButtons(QuestionState.MarkedForReview, 'increment', false)
+                                    }}>Mark for Review and Next</Button>
+                                </Box>
+                                <Box className="gap-8" style={{ 'height': '50%', 'width': '85%', 'display': 'flex', 'flexDirection': 'row', 'alignItems': 'center', 'justifyContent': 'space-between' }}>
+                                    <Box className="gap-8 ml-6" style={{ 'height': '50%', 'display': 'flex', 'flexDirection': 'row', 'alignItems': 'center' }}>
+                                        <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => { onClickNavigationButtons(QuestionState.NotAnswered, 'decrement', true) }}>Previous</Button>
+                                        <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => { onClickNavigationButtons(QuestionState.NotAnswered, 'increment', true) }}>Next</Button>
+                                    </Box>
+                                    <Box style={{ 'height': '50%', 'display': 'flex', 'flexDirection': 'row', 'alignItems': 'center', justifySelf: 'end' }}>
+                                        <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={submit}>Submit</Button>
+                                    </Box>
+                                </Box>
                             </Box>
                         </Flex>
                     </Box>
