@@ -71,8 +71,9 @@ const MainComponent = () => {
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh', position: 'absolute' }}>
             <Flex className="bg-[#38B6FF] flex-col items-center justify-center gap-2 p-8" direction='column' style={{ position: 'relative', height: '100%' }}>
                 <Header></Header>
-                <Box className="pl-12 pt-8" height='42px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
-                    <Text size='6' weight='regular' wrap='pretty' >General Instructions</Text>
+                <Box className="pl-12 pt-8 pb-4" height='42px' flexGrow='1' style={{ width: '100%', display: 'flex', 'flexDirection': 'row', justifyContent: 'left', alignItems: 'center' }}>
+                    <img src="images/guide.svg" alt="Guide" className="w-7 h-7" />
+                    <Text size='6' className="ml-3" weight='regular' wrap='pretty' >General Instructions</Text>
                 </Box>
                 <Box className="pl-5" flexGrow='1' style={{ width: '95%', display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
                     <div style={{ padding: '1rem' }}>
@@ -129,7 +130,7 @@ const MainComponent = () => {
                     </label>
                 </Box>
                 <Box className="p-4" style={{ height: '20%', width: '20%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                    <Button className="w-full h-full" style={{ 'backgroundColor': '#120052', cursor: 'pointer' }} size="4" variant='solid' onClick={handleButtonClick}>I am ready to begin</Button>
+                    <Button className="w-full h-full" style={{ 'backgroundColor': '#120052', cursor: 'pointer', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }} size="4" variant='solid' onClick={handleButtonClick}>I am ready to begin</Button>
                 </Box>
             </Flex>
         </ScrollArea >

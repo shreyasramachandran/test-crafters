@@ -3,15 +3,17 @@
 import { Avatar, Box, Card, Flex, Text } from "@radix-ui/themes"
 import { useRouter } from 'next/navigation';
 import { deleteCookie } from "../../utils/cookieUtils";
+import { UseRowStateCellProps } from "react-table";
 
 interface SettingsProps {
     name: string;
     email: string;
+    dialogState: any;
     onClose: () => void;
 }
 
-export default function Settings({ name, email, onClose }: SettingsProps) {
-    console.log('Log out component called')
+export default function Settings({ name, email, dialogState, onClose }: SettingsProps) {
+    console.log('Settings component called')
 
     const clearCookies = async () => {
         deleteCookie('userId')
@@ -55,6 +57,7 @@ export default function Settings({ name, email, onClose }: SettingsProps) {
     }
 
     const refer = async () => {
+        dialogState(true)
     }
 
     const redirectEWallet = async () => {

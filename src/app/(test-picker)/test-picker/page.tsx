@@ -112,8 +112,9 @@ const MainComponent = () => {
                 <Header></Header>
                 <Box className="bg-[#EAF6FA] m-24" style={{ 'height': '64%', 'width': '30%', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)', alignSelf: 'center', justifySelf: 'center' }}>
                     <Flex className="h-full" direction='column' py='9' gap='6'>
-                        <Box style={{ 'height': '10%', 'width': '47%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                            <Text size='6' weight='bold' wrap='pretty'>Pick a test</Text>
+                        <Box style={{ 'height': '10%', 'width': '47%', display: 'flex', 'flexDirection': 'row', justifyContent: 'center', alignItems: 'center' }}>
+                            <img src="images/filter.svg" alt="Filter" className="w-7 h-7 ml-8" />
+                            <Text size='6' className="ml-3" weight='bold' wrap='pretty'>Pick a test</Text>
                         </Box>
                         <Flex className="h-full" direction='column' justify='center' gap='5'>
                             <Box style={{ height: '42%', width: '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
@@ -161,7 +162,7 @@ const MainComponent = () => {
                         </Flex>
                         <Flex className="h-full" direction='column' justify='center' gap='4'>
                             <Box style={{ 'height': '40%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                                <Button style={{ 'height': '100%', 'width': '100%', borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
+                                <Button style={{ 'height': '100%', 'width': '100%', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
                                     if (selectedSubject !== 'Subject' && duration !== 'Duration') {
                                         const queryString = createQueryString(searchParams, { subject: selectedSubject, language: selectedLanguage, duration: duration, maxQuestions: maxQuestions, minimumRequiredQuestions: minimumRequiredQuestions });
                                         router.push('/instructions-page' + '?' + queryString)

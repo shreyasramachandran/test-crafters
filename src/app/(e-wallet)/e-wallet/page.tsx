@@ -7,6 +7,7 @@ import dynamic from "next/dynamic";
 import { Table, Text, Box, Flex, ScrollArea, Strong, Button } from "@radix-ui/themes";
 import Header from "@/app/components/header/Header";
 import WeeklyFinancesChart from "@/app/components/visualisations/WeeklyFinances";
+import RazorpayPayButton from "@/app/components/RazorpayPayButton";
 
 const MainComponent = () => {
     console.log('e-wallet component mounted')
@@ -31,7 +32,9 @@ const MainComponent = () => {
                             <Text as="div" size="7" className="ml-3">Available Balance</Text>
                         </Box>
                         <Text as="div" style={{ fontSize: '46px', alignSelf: 'center' }}>₹ 500.00</Text>
-                        <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer', 'width': '40%', 'alignSelf': 'center' }} size="4" variant='solid'>Add Funds</Button>
+                        <Box style={{ alignSelf: 'center', width: '50%' }}>
+                            <RazorpayPayButton name={"Add Funds"} />
+                        </Box>
                     </Box>
                     <Box style={{ gap: '15px', 'display': 'flex', 'flexDirection': 'column', 'height': '100%', 'width': '100%' }}>
                         <Box p='5' className="bg-[#EAF6FA]" style={{ 'justifyContent': 'space-between', 'display': 'flex', 'flexDirection': 'column', 'height': '50%', 'width': '100%', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>

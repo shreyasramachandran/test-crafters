@@ -1,8 +1,9 @@
 'use client'
 
-import { Avatar, Box, Flex, IconButton } from "@radix-ui/themes"
+import { Avatar, Box, Dialog, Flex, IconButton } from "@radix-ui/themes"
 import { useEffect, useRef, useState } from "react";
 import Settings from "./Settings";
+import Refer from "../Refer";
 
 export default function Header() {
     const avatarRef = useRef<HTMLDivElement>(null);
@@ -11,8 +12,11 @@ export default function Header() {
     const signOutRef = useRef<HTMLDivElement>(null);
     const [userInfo, setUserInfo] = useState({ userName: 'User Name', userEmail: 'User Email' });
 
+    const [dialogOpen, setDialogOpen] = useState(false);
+
     const handleClickOutside = (event: MouseEvent) => {
-        if (avatarRef.current && !avatarRef.current.contains(event.target as Node) && signOutRef.current && !signOutRef.current.contains(event.target as Node)) {
+        if (avatarRef.current && !avatarRef.current.contains(event.target as Node)
+            && signOutRef.current && !signOutRef.current.contains(event.target as Node)) {
             setSettings(false);
         }
     };
@@ -67,9 +71,15 @@ export default function Header() {
                             marginRight: '42px',
                             pointerEvents: 'auto'
                         }}>
-                            <Settings name={userInfo.userName} email={userInfo.userEmail} onClose={() => { setSettings(false) }} />
+                            <Settings name={userInfo.userName} email={userInfo.userEmail} dialogState={setDialogOpen} onClose={() => { setSettings(false) }} />
                         </Box>
                     )}
+                    {/* Dialog Box */}
+                    <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
+                        <Dialog.Content style={{ padding: '0px' }}>
+                            <Refer code="shreyas" />
+                        </Dialog.Content>
+                    </Dialog.Root>
                 </Flex>
             </Flex>
         </Box>
