@@ -221,8 +221,6 @@ const MainComponent = () => {
             // Gets the index of the current question number and the state of the current question.
             const currentIndex = currentQuestionNumber - 1;
             const oldState = questionPalette[currentIndex].state;
-            console.log('Current Index', currentIndex)
-            console.log('Old State', oldState)
 
             // Update legend counts accordingly using the mapping
             if (oldState === QuestionState.NotVisited) {
