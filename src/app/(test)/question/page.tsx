@@ -53,6 +53,7 @@ const MainComponent = () => {
 
     const [questionPalette, setQuestionPalette] = useState<QuestionPaletteItem[]>([]);
 
+    // Required to handle edge cases while updating question palette
     const [lastQuestionUpdated, setLastQuestionUpdated] = useState(false)
     const [firstQuestionUpdated, setFirstQuestionUpdated] = useState(false)
 
@@ -217,133 +218,72 @@ const MainComponent = () => {
         operator: string,
         overrideSelectedOption: boolean
     ) => {
-        if (overrideSelectedOption) {
-            // Gets the index of the current question number and the state of the current question.
-            const currentIndex = currentQuestionNumber - 1;
-            const oldState = questionPalette[currentIndex].state;
-
-            // Update legend counts accordingly using the mapping
-            if (oldState === QuestionState.NotVisited) {
-                if ((currentQuestionNumber === Number(maxQuestions) && operator === 'increment')) {
-                    if (!lastQuestionUpdated) {
-                        setLegendCounts(prevCounts => ({
-                            ...prevCounts,
-                            [stateToLegendAction[oldState]]: prevCounts[stateToLegendAction[oldState] as LegendAction] - 1,  // Decrement the count of the old state
-                            [stateToLegendAction[state]]: prevCounts[stateToLegendAction[state] as LegendAction] + 1  // Increment the count of the new state
-                        }));
-                        setLastQuestionUpdated(true)
-                    }
-                }
-                else if (currentQuestionNumber === 1 && operator === 'decrement') {
-                    if (!firstQuestionUpdated) {
-                        setLegendCounts(prevCounts => ({
-                            ...prevCounts,
-                            [stateToLegendAction[oldState]]: prevCounts[stateToLegendAction[oldState] as LegendAction] - 1,  // Decrement the count of the old state
-                            [stateToLegendAction[state]]: prevCounts[stateToLegendAction[state] as LegendAction] + 1  // Increment the count of the new state
-                        }));
-                        setFirstQuestionUpdated(true)
-                    }
-                }
-                else {
-                    setLegendCounts(prevCounts => ({
-                        ...prevCounts,
-                        [stateToLegendAction[oldState]]: prevCounts[stateToLegendAction[oldState] as LegendAction] - 1,  // Decrement the count of the old state
-                        [stateToLegendAction[state]]: prevCounts[stateToLegendAction[state] as LegendAction] + 1  // Increment the count of the new state
-                    }));
-                }
-            }
-
-
-
-            // Correctly update questionPalette with immutability
-            if (oldState === QuestionState.NotVisited) {
-                setQuestionPalette(prevPalette => {
-                    const newPalette = [...prevPalette];
-                    if (currentIndex < newPalette.length) {
-                        newPalette[currentIndex].state = state;
-                    }
-                    return newPalette;
-                });
-            }
-
-            // Increment the current question number correctly and handle selectedOption. 
-            if (currentQuestionNumber === Number(maxQuestions) && operator === 'increment') { return; }
-            else {
-                if (currentQuestionNumber === 1 && operator === 'decrement') { return; }
-                setCurrentQuestionNumber(prevCurrent => {
-                    const newCurrent = operator === 'increment' ? prevCurrent + 1 : prevCurrent - 1;
-                    if (newCurrent - 1 < questionPalette.length) {
-                        setSelectedOption(questionPalette[newCurrent - 1].selectedAnswer);
-                    } else {
-                        setSelectedOption(-1);
-                    }
-                    return newCurrent;
-                });
-            }
-            // Break out of the loop
-            return;
-        }
-
-        if (selectedOption === -1) {
-            return;
-        }
-
-        // Gets the index of the current question number and the state of the current question.
         const currentIndex = currentQuestionNumber - 1;
         const oldState = questionPalette[currentIndex].state;
+        const isLastQuestion = currentQuestionNumber === Number(maxQuestions) && operator === 'increment';
+        const isFirstQuestion = currentQuestionNumber === 1 && operator === 'decrement';
 
-        // Update legend counts accordingly using the mapping
-        if ((currentQuestionNumber === Number(maxQuestions) && operator === 'increment')) {
-            if (!lastQuestionUpdated) {
+        const updateLegendCounts = (oldState: QuestionState, newState: QuestionState) => {
+            if (oldState !== newState) {
                 setLegendCounts(prevCounts => ({
                     ...prevCounts,
-                    [stateToLegendAction[oldState]]: prevCounts[stateToLegendAction[oldState] as LegendAction] - 1,  // Decrement the count of the old state
-                    [stateToLegendAction[state]]: prevCounts[stateToLegendAction[state] as LegendAction] + 1  // Increment the count of the new state
+                    [stateToLegendAction[oldState]]: prevCounts[stateToLegendAction[oldState] as LegendAction] - 1,
+                    [stateToLegendAction[newState]]: prevCounts[stateToLegendAction[newState] as LegendAction] + 1
                 }));
-                setLastQuestionUpdated(true)
             }
-        }
-        else if (currentQuestionNumber === 1 && operator === 'decrement') {
-            if (!firstQuestionUpdated) {
-                setLegendCounts(prevCounts => ({
-                    ...prevCounts,
-                    [stateToLegendAction[oldState]]: prevCounts[stateToLegendAction[oldState] as LegendAction] - 1,  // Decrement the count of the old state
-                    [stateToLegendAction[state]]: prevCounts[stateToLegendAction[state] as LegendAction] + 1  // Increment the count of the new state
-                }));
-                setFirstQuestionUpdated(true)
-            }
-        }
-        else {
-            setLegendCounts(prevCounts => ({
-                ...prevCounts,
-                [stateToLegendAction[oldState]]: prevCounts[stateToLegendAction[oldState] as LegendAction] - 1,  // Decrement the count of the old state
-                [stateToLegendAction[state]]: prevCounts[stateToLegendAction[state] as LegendAction] + 1  // Increment the count of the new state
-            }));
-        }
+        };
 
+        const updateQuestionPalette = (index: number, newState: QuestionState) => {
+            setQuestionPalette(prevPalette => {
+                const newPalette = [...prevPalette];
+                if (index < newPalette.length) {
+                    newPalette[index].state = newState;
+                }
+                return newPalette;
+            });
+        };
 
-        // Correctly update questionPalette with immutability
-        setQuestionPalette(prevPalette => {
-            const newPalette = [...prevPalette];
-            if (currentIndex < newPalette.length) {
-                newPalette[currentIndex].state = state;
-            }
-            return newPalette;
-        });
-
-        // Increment the current question number correctly and handle selectedOption. 
-        if (currentQuestionNumber !== Number(maxQuestions) && currentQuestionNumber !== 0) {
+        const updateCurrentQuestionNumber = (operator: string) => {
             setCurrentQuestionNumber(prevCurrent => {
                 const newCurrent = operator === 'increment' ? prevCurrent + 1 : prevCurrent - 1;
-                if (newCurrent - 1 < questionPalette.length) {
-                    setSelectedOption(questionPalette[newCurrent - 1].selectedAnswer);
-                } else {
-                    setSelectedOption(-1);
-                }
+                setSelectedOption(newCurrent - 1 < questionPalette.length ? questionPalette[newCurrent - 1].selectedAnswer : -1);
                 return newCurrent;
             });
+        };
+
+        if (overrideSelectedOption) {
+            if (oldState === QuestionState.NotVisited) {
+                if (isLastQuestion && !lastQuestionUpdated) {
+                    updateLegendCounts(oldState, state);
+                    setLastQuestionUpdated(true);
+                } else if (isFirstQuestion && !firstQuestionUpdated) {
+                    updateLegendCounts(oldState, state);
+                    setFirstQuestionUpdated(true);
+                } else if (!isLastQuestion && !isFirstQuestion) {
+                    updateLegendCounts(oldState, state);
+                }
+                updateQuestionPalette(currentIndex, state);
+            }
+            if (!(isLastQuestion || isFirstQuestion)) {
+                updateCurrentQuestionNumber(operator);
+            }
+        } else if (selectedOption !== -1) {
+            if (isLastQuestion && !lastQuestionUpdated) {
+                updateLegendCounts(oldState, state);
+                setLastQuestionUpdated(true);
+            } else if (isFirstQuestion && !firstQuestionUpdated) {
+                updateLegendCounts(oldState, state);
+                setFirstQuestionUpdated(true);
+            } else {
+                updateLegendCounts(oldState, state);
+            }
+            updateQuestionPalette(currentIndex, state);
+            if (currentQuestionNumber !== Number(maxQuestions) && currentQuestionNumber !== 0) {
+                updateCurrentQuestionNumber(operator);
+            }
         }
-    }
+    };
+
 
 
     const submit = () => {
