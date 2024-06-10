@@ -48,7 +48,7 @@ const MainComponent = () => {
         index: number;
         state: QuestionState;
         selectedAnswer: number;
-        uniqueIdentification: string;
+        questionId: string;
     };
 
     const [questionPalette, setQuestionPalette] = useState<QuestionPaletteItem[]>([]);
@@ -64,7 +64,7 @@ const MainComponent = () => {
 
                 const initialPalette: QuestionPaletteItem[] = questions.map((question, index) => ({
                     index: index,
-                    uniqueIdentification: question.uniqueIdentification || 'N/A', // Fallback to 0 if undefined
+                    questionId: question.questionId || 'N/A', // Fallback to 0 if undefined
                     state: QuestionState.NotVisited,
                     selectedAnswer: -1
                 }));
@@ -306,12 +306,35 @@ const MainComponent = () => {
         setSelectedOption(-1); // Clear the selected option when "Clear Response" button is clicked
     };
 
+    async function storeQuestionPalette(items: QuestionPaletteItem[]) {
+        try {
+            const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
+            const res = await fetch(`${baseUrl}/create-or-update-answers`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache"
+                },
+                body: JSON.stringify(items),
+                credentials: 'include'
+            });
+            if (!res.ok) {
+                throw new Error(`Error storing question palette, status = ${res.status}`);
+            }
+        } catch (error) {
+            console.error("Error storing question palette:", error);
+            throw error;
+        }
+    }
+
     // Function to populate question palette state
     async function populateQuestionPalette(items: QuestionPaletteItem[]) {
         // Clear any existing records in the questionPalette object store
         await db.questionPalette.clear();
         // Add the initial state to the questionPalette object store
         await db.questionPalette.bulkPut(items);
+        // Function used to store questionPalette(user's answers)
+        storeQuestionPalette(items)
     }
 
     useEffect(() => {

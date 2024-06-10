@@ -1,7 +1,18 @@
 'use client'
 
 import { IconButton, TextField, Text, Box, Button, Dialog, Flex } from "@radix-ui/themes"
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
+
+interface CreateTransactionParams {
+    amount: number;
+    currency: string;
+    description: string;
+    razorpayOrderId: string;
+    razorpayPaymentId: string;
+    razorpaySignature: string;
+    status: boolean;
+}
+
 
 declare global {
     interface Window {
@@ -29,8 +40,6 @@ export interface RazorpayErrorResponse {
     };
 }
 
-type Width<T> = T;
-
 interface RazorpayPayButtonProps {
     name: string;
 }
@@ -38,9 +47,13 @@ interface RazorpayPayButtonProps {
 export default function RazorpayPayButton({ name }: RazorpayPayButtonProps) {
     const [dialogOpen, setDialogOpen] = useState(false);
     const [amount, setAmount] = useState('');
+    const [razorpayOrderId, setRazorpayOrderId] = useState('');
+    const [razorpayPaymentId, setRazorpayPaymentId] = useState('');
+    const [razorpaySignature, setRazorpaySignature] = useState('');
+    const [transactionStatus, setTransactionStatus] = useState(true);
 
     const addFunds = async () => {
-        setDialogOpen(true)
+        setDialogOpen(true);
     }
 
     async function createOrder() {
@@ -50,8 +63,36 @@ export default function RazorpayPayButton({ name }: RazorpayPayButtonProps) {
                 orderAmount: Number(amount),
                 orderCurrency: "INR",
                 paritalPayment: false
-            }
+            };
             const res = await fetch(`${baseUrl}/create-order`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache"
+                },
+                body: JSON.stringify(body),
+                credentials: 'include'
+            });
+            if (!res.ok) {
+                throw new Error(`Error in creating an order`);
+            }
+            const responseData = await res.json();
+            return responseData.data.order_response.id;
+        } catch (error) {
+            console.error("Error creating order:", error);
+        }
+    }
+
+    async function verifySignature(orderId: string, paymentId: string, signature: string, amount: Number) {
+        try {
+            const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
+            const body = {
+                razorpayOrderId: orderId,
+                razorpayPaymentId: paymentId,
+                razorpaySignature: signature,
+                amount: amount
+            };
+            const res = await fetch(`${baseUrl}/verify-signature`, {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -59,44 +100,80 @@ export default function RazorpayPayButton({ name }: RazorpayPayButtonProps) {
                 },
                 body: JSON.stringify(body)
             });
-            // Ensure proper error handling
+
             if (!res.ok) {
-                // Handle errors, e.g., return an error response
-                return new Response(JSON.stringify({ error: "Error in creating an order" }), {
-                    status: res.status,
-                    headers: { "Content-Type": "application/json" },
-                });
+                throw new Error(`Error verifying signature, status = ${res.status}`);
             }
             const responseData = await res.json();
-            const orderId = responseData.id
-            return orderId
+
+            setTransactionStatus(responseData.data.is_valid);
+            return responseData.data.is_valid;
+        } catch (error) {
+            console.error("Error verifying signature:", error);
+            throw error;
         }
-        catch (error) {
-            // Handle other errors
-            console.error("Error checking if user exists", error);
+    }
+
+    async function createTransaction() {
+        try {
+            const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
+            const body: CreateTransactionParams = {
+                amount: Number(amount),
+                currency: "INR",
+                description: `Adding Funds`,
+                razorpayOrderId: razorpayOrderId,
+                razorpayPaymentId: razorpayPaymentId,
+                razorpaySignature: razorpaySignature,
+                status: transactionStatus
+            };
+            const res = await fetch(`${baseUrl}/create-transaction`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache"
+                },
+                body: JSON.stringify(body),
+                credentials: 'include'
+            });
+            if (!res.ok) {
+                throw new Error(`Error creating transaction, status = ${res.status}`);
+            }
+        } catch (error) {
+            console.error("Error creating transaction:", error);
+            throw error;
         }
     }
 
     const checkout = async () => {
-        setDialogOpen(false)
-        const orderId = await createOrder()
-        console.log(orderId)
-        var options = {
-            "key_id": "rzp_test_B9h0zDfA107vBR", // Enter the Key ID generated from the Dashboard
-            "amount": Number(amount) * 100, // Amount has to be in currency subunits, therefore multiply by 100. Default currency is INR. Hence, 50000 refers to 50000 paise. 
+        setDialogOpen(false);
+        const orderId = await createOrder();
+        if (!orderId) {
+            return;
+        }
+
+        const options = {
+            "key_id": "rzp_test_B9h0zDfA107vBR",
+            "amount": Number(amount) * 100,
             "currency": "INR",
-            "name": "Test Crafters", // your business name
-            "description": "Test Transaction",
-            "order_id": orderId, // This is a sample Order ID. Pass the `id` obtained in the response of Step 1
-            "handler": function (response: RazorpayResponse) {
-                alert(response.razorpay_payment_id);
-                alert(response.razorpay_order_id);
-                alert(response.razorpay_signature);
-            },
-            "prefill": { // We recommend using the prefill parameter to auto-fill customer's contact information especially their phone number
-                "name": "Shreyas Ramachandran", // your customer's name
-                "email": "shreyasramachandran@gmail.com",
-                "contact": "8107427069" // Provide the customer's phone number for better conversion rates 
+            "name": "Test Crafters",
+            "description": "Adding Funds",
+            "order_id": orderId,
+            "handler": async function (response: RazorpayResponse) {
+                setRazorpayOrderId(orderId);
+                setRazorpayPaymentId(response.razorpay_payment_id);
+                setRazorpaySignature(response.razorpay_signature);
+                const isValid = await verifySignature(
+                    orderId,
+                    response.razorpay_payment_id,
+                    response.razorpay_signature,
+                    Number(amount) * 100
+                );
+                if (isValid) {
+                    await createTransaction();
+                    window.location.reload()
+                } else {
+                    alert("Payment verification failed.");
+                }
             },
             "theme": {
                 "color": "#120052"

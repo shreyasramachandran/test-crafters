@@ -4,8 +4,10 @@ import { Avatar, Box, Dialog, Flex, IconButton } from "@radix-ui/themes"
 import { useEffect, useRef, useState } from "react";
 import Settings from "./Settings";
 import Refer from "../Refer";
+import { useRouter } from 'next/navigation';
 
 export default function Header() {
+    const router = useRouter();
     const avatarRef = useRef<HTMLDivElement>(null);
 
     const [showSettings, setSettings] = useState(false);
@@ -42,6 +44,13 @@ export default function Header() {
         setSettings(!showSettings);
     };
 
+    const handleBackClick = () => {
+        if (window.history.length > 1) {
+            router.back();
+        }
+    };
+
+
     return (
         <Box className="bg-[#38B6FF]" style={{
             height: '5%', width: '100%', position: 'relative'
@@ -49,7 +58,7 @@ export default function Header() {
             <Flex className="h-full px-10" justify='between' align='center'>
                 <IconButton size='3' style={{
                     backgroundColor: '#1DACFF', boxShadow: '2px 2px 10px 3px rgba(0, 0, 0, 0.15)', cursor: 'pointer'
-                }}>
+                }} onClick={handleBackClick}>
                     <img src="images/back_button.svg" alt="Back Button" className="w-4 h-4" />
                 </IconButton>
                 <Flex justify="center" align="center">

@@ -1,17 +1,40 @@
-// components/BarChart.js
+// components/BarChart.tsx
 import React from 'react';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend, ChartOptions } from 'chart.js';
 
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const WeeklyFinancesChart = () => {
+type WeeklyExpenses = {
+    mon: number;
+    tue: number;
+    wed: number;
+    thu: number;
+    fri: number;
+    sat: number;
+    sun: number;
+};
+
+
+type WeeklyFinancesChartProps = {
+    weeklyExpenses: WeeklyExpenses;
+};
+
+const WeeklyFinancesChart: React.FC<WeeklyFinancesChartProps> = ({ weeklyExpenses }) => {
     const data = {
-        labels: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
+        labels: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'],
         datasets: [
             {
                 label: 'Amount Spent',
-                data: [30, 80, 40, 50, 70, 70, 50], // Example data
+                data: [
+                    weeklyExpenses.mon,
+                    weeklyExpenses.tue,
+                    weeklyExpenses.wed,
+                    weeklyExpenses.thu,
+                    weeklyExpenses.fri,
+                    weeklyExpenses.sat,
+                    weeklyExpenses.sun,
+                ],
                 borderRadius: 10,
                 backgroundColor: '#9957B3',
             },
@@ -19,16 +42,16 @@ const WeeklyFinancesChart = () => {
     };
 
     const options: ChartOptions<'bar'> = {
-        indexAxis: 'x' as const, // Shift the label to the left side
+        indexAxis: 'x' as const,
         responsive: true,
-        aspectRatio: 1, // Make the chart square
+        aspectRatio: 1,
         plugins: {
             legend: {
                 position: 'top',
                 align: 'start',
                 labels: {
-                    usePointStyle: true, // Use point style for legend
-                    pointStyle: 'rectRounded', // Change point style to rounded square
+                    usePointStyle: true,
+                    pointStyle: 'rectRounded',
                 },
             },
         },
@@ -36,17 +59,17 @@ const WeeklyFinancesChart = () => {
             x: {
                 beginAtZero: true,
                 grid: {
-                    drawOnChartArea: true, // Correct property to use
+                    drawOnChartArea: true,
                     drawTicks: false,
                 },
             },
             y: {
                 grid: {
-                    drawOnChartArea: true, // Correct property to use
+                    drawOnChartArea: true,
                     drawTicks: false,
                 },
                 ticks: {
-                    stepSize: 10, // Set the interval for ticks
+                    stepSize: 10,
                 },
             },
         },

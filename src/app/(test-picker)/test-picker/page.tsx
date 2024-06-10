@@ -1,7 +1,7 @@
 'use client'
 import useAuth from "@/app/hooks/useAuth";
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ScrollArea, Flex, Box, Text, DropdownMenu, Button } from "@radix-ui/themes"
+import { ScrollArea, Flex, Box, Text, DropdownMenu, Button, Dialog } from "@radix-ui/themes"
 import { useState, useCallback, useEffect } from 'react';
 import db from '@/app/utils/indexedDbUtils';
 import { Suspense } from 'react'
@@ -9,6 +9,16 @@ import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
 import Header from "@/app/components/header/Header";
 
+type UserWallet = {
+    balance: number;
+}
+
+interface CreateTransactionParams {
+    amount: number;
+    currency: string;
+    description: string;
+    status: boolean;
+}
 
 const MainComponent = () => {
     // Get isAuthenticated in case you need to use it for future operations
@@ -16,6 +26,9 @@ const MainComponent = () => {
     const router = useRouter();
     const searchParams = useSearchParams()
     const { isAuthenticated, loading } = useAuth();
+    const [userWallet, setUserWallet] = useState<UserWallet | null>(null);
+    const [alertOpen, setAlertOpen] = useState(false);
+
 
     // Get a new searchParams string by merging the current
     // searchParams with a provided key/value pair
@@ -98,11 +111,104 @@ const MainComponent = () => {
         }
     }, [selectedSubject])
 
+    async function fetchEWalletBalance() {
+        try {
+            const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
+            const res = await fetch(`${baseUrl}/get-wallet-balance`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache",
+                },
+                credentials: 'include'
+            });
+            if (!res.ok) {
+                throw new Error(`Error in ewalletdata response`);
+            }
+            const data = await res.json();
+            setUserWallet(data.data.userWallet);
+        } catch (error) {
+            console.error(`Error fetching ewalletdata:`, error);
+        }
+    }
+
+    useEffect(() => {
+        fetchEWalletBalance();
+    }, []);
+
+    async function createTransaction() {
+        try {
+            const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
+            const body: CreateTransactionParams = {
+                amount: -5,
+                currency: "INR",
+                description: `Taking Test`,
+                status: true
+            };
+            const res = await fetch(`${baseUrl}/create-transaction`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache"
+                },
+                body: JSON.stringify(body),
+                credentials: 'include'
+            });
+            if (!res.ok) {
+                throw new Error(`Error creating transaction, status = ${res.status}`);
+            }
+        } catch (error) {
+            console.error("Error creating transaction:", error);
+            throw error;
+        }
+    }
+
+    async function createTest() {
+        try {
+            const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
+            const res = await fetch(`${baseUrl}/create-test`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache"
+                },
+                credentials: 'include'
+            });
+            if (!res.ok) {
+                throw new Error(`Error creating test, status = ${res.status}`);
+            }
+        } catch (error) {
+            console.error("Error creating test:", error);
+            throw error;
+        }
+    }
+
+    const handleStartMockTest = async () => {
+        if (selectedSubject !== 'Subject' && duration !== 'Duration') {
+            if (userWallet && userWallet.balance >= 5) {
+                setUserWallet({ ...userWallet, balance: userWallet.balance - 5 });
+                await createTransaction();
+                await createTest();
+                const queryString = createQueryString(searchParams, { subject: selectedSubject, language: selectedLanguage, duration: duration, maxQuestions: maxQuestions, minimumRequiredQuestions: minimumRequiredQuestions });
+                router.push('/instructions-page' + '?' + queryString);
+            } else {
+                setAlertOpen(true);
+                setTimeout(() => {
+                    setAlertOpen(false);
+                }, 3000);
+            }
+        }
+    }
+
     if (loading) {
         return <OrigamiAnimation />;
     }
 
     if (!isAuthenticated) {
+        return <OrigamiAnimation />;
+    }
+
+    if (!userWallet) {
         return <OrigamiAnimation />;
     }
 
@@ -162,18 +268,22 @@ const MainComponent = () => {
                         </Flex>
                         <Flex className="h-full" direction='column' justify='center' gap='4'>
                             <Box style={{ 'height': '40%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                                <Button style={{ 'height': '100%', 'width': '100%', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
-                                    if (selectedSubject !== 'Subject' && duration !== 'Duration') {
-                                        const queryString = createQueryString(searchParams, { subject: selectedSubject, language: selectedLanguage, duration: duration, maxQuestions: maxQuestions, minimumRequiredQuestions: minimumRequiredQuestions });
-                                        router.push('/instructions-page' + '?' + queryString)
-                                    }
-                                }}>Start Mock Test
+                                <Button style={{ 'height': '100%', 'width': '100%', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={handleStartMockTest}>Start Mock Test
                                 </Button>
                             </Box>
                         </Flex>
                     </Flex>
                 </Box >
             </Flex>
+            {/* Alert Dialog */}
+            <Dialog.Root open={alertOpen} onOpenChange={setAlertOpen}>
+                <Dialog.Content className="bg-[#EAF6FA]" style={{ 'display': 'flex', 'flexDirection': 'column', 'padding': '20px', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)', 'alignSelf': 'center', 'justifySelf': 'center', zIndex: 9999 }}>
+                    <Dialog.Title size='5' >Insufficient Balance</Dialog.Title>
+                    <Dialog.Description size="4">
+                        Your balance is insufficient to start a mock test. Please add funds.
+                    </Dialog.Description>
+                </Dialog.Content>
+            </Dialog.Root>
         </Flex >
     )
 }
