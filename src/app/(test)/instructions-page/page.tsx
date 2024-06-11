@@ -42,8 +42,8 @@ const MainComponent = () => {
     // Get a new searchParams string by merging the current
     // searchParams with a provided key/value pair
     const createQueryString = useCallback(
-        (searchParams: URLSearchParams, queryParams: Record<string, any>) => {
-            const params = new URLSearchParams(searchParams.toString())
+        (queryParams: Record<string, any>) => {
+            const params = new URLSearchParams()
             // Add each query parameter to the URLSearchParams object
             Object.entries(queryParams).forEach(([name, value]) => {
                 params.set(name, value);
@@ -71,7 +71,7 @@ const MainComponent = () => {
 
     const handleButtonClick = () => {
         if (isChecked) {
-            const queryString = createQueryString(searchParams, { questionNumber: 1 });
+            const queryString = createQueryString({ subject: subject, language: language, duration: duration, maxQuestions: maxQuestions, minimumRequiredQuestions: minimumRequiredQuestions });
             router.push('/question' + '?' + queryString);
         } else {
             alert('Please check the box to indicate that you have read and understood the instructions.');

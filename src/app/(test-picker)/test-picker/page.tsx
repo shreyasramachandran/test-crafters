@@ -1,6 +1,6 @@
 'use client'
 import useAuth from "@/app/hooks/useAuth";
-import { useRouter, useSearchParams } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import { Flex, Box, Text, DropdownMenu, Button, Dialog } from "@radix-ui/themes"
 import { useState, useCallback, useEffect } from 'react';
 import db from '@/app/utils/indexedDbUtils';
@@ -25,7 +25,6 @@ const MainComponent = () => {
     // Get isAuthenticated in case you need to use it for future operations
     console.log('test picker component mounted')
     const router = useRouter();
-    const searchParams = useSearchParams()
     const { isAuthenticated, loading } = useAuth();
     const [userWallet, setUserWallet] = useState<UserWallet | null>(null);
     const [alertOpen, setAlertOpen] = useState(false);
@@ -34,8 +33,8 @@ const MainComponent = () => {
     // Get a new searchParams string by merging the current
     // searchParams with a provided key/value pair
     const createQueryString = useCallback(
-        (searchParams: URLSearchParams, queryParams: Record<string, string>) => {
-            const params = new URLSearchParams(searchParams.toString())
+        (queryParams: Record<string, string>) => {
+            const params = new URLSearchParams()
             // Add each query parameter to the URLSearchParams object
             Object.entries(queryParams).forEach(([name, value]) => {
                 params.set(name, value);
@@ -188,7 +187,7 @@ const MainComponent = () => {
                 setUserWallet({ ...userWallet, balance: userWallet.balance - 5 });
                 await createTransaction();
                 await createTest();
-                const queryString = createQueryString(searchParams, { subject: selectedSubject, language: selectedLanguage, duration: duration, maxQuestions: maxQuestions, minimumRequiredQuestions: minimumRequiredQuestions });
+                const queryString = createQueryString({ subject: selectedSubject, language: selectedLanguage, duration: duration, maxQuestions: maxQuestions, minimumRequiredQuestions: minimumRequiredQuestions });
                 router.push('/instructions-page' + '?' + queryString);
             } else {
                 setAlertOpen(true);

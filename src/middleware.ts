@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from 'next/server'
-import { incrementCounter, getCounterValue } from "./app/utils/counter";
 
 export async function middleware(request: NextRequest) {
     const domain = process.env.NEXT_PUBLIC_DOMAIN
