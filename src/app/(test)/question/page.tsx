@@ -383,7 +383,7 @@ const MainComponent = () => {
     useEffect(() => {
         // Define the interval for running your function periodically
         populateQuestionPalette(questionPalette);
-    }, []);
+    }, [questionPalette]);
 
     const [dialogOpen, setDialogOpen] = useState(false);
     const [isCompleted, setIsCompleted] = useState(false);
