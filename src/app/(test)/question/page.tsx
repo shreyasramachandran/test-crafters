@@ -8,14 +8,29 @@ import { Suspense } from 'react'
 import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
 import Header from "@/app/components/header/Header";
+import { decryptParams, Params } from "@/app/utils/paramUtils";
 
 const MainComponent = () => {
     console.log('questions page component mounted')
     // Get isAuthenticated in case you need to use it for future operations
     const { isAuthenticated, loading } = useAuth();
     const searchParams = useSearchParams()
-    const maxQuestions = searchParams.get('maxQuestions')
-    const minimumRequiredQuestions = searchParams.get('minimumRequiredQuestions')
+    // Decode the params
+    const encodedParams = searchParams.get('params');
+    let decodedParams: Params = {}; // Ensure decodedParams is always of type Params
+
+    if (encodedParams) {
+        const decoded = decryptParams(encodedParams);
+        if (decoded !== null) {
+            decodedParams = decoded;
+        } else {
+            // Handle the case when decoding fails, if needed
+            console.error('Failed to decode parameters');
+        }
+    }
+
+    const maxQuestions = decodedParams.maxQuestions;
+    const minimumRequiredQuestions = decodedParams.minimumRequiredQuestions;
     const router = useRouter();
 
     // Define currentQuestionNumber
@@ -350,6 +365,10 @@ const MainComponent = () => {
     }
 
     if (loading) {
+        return <OrigamiAnimation />;
+    }
+
+    if (!isAuthenticated) {
         return <OrigamiAnimation />;
     }
 

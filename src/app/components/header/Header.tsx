@@ -46,7 +46,7 @@ export default function Header() {
 
     const handleBackClick = () => {
         if (window.history.length > 1) {
-            router.back();
+            router.back()
         }
     };
 

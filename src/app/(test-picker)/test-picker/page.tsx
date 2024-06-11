@@ -1,13 +1,14 @@
 'use client'
 import useAuth from "@/app/hooks/useAuth";
 import { useRouter, useSearchParams } from 'next/navigation';
-import { ScrollArea, Flex, Box, Text, DropdownMenu, Button, Dialog } from "@radix-ui/themes"
+import { Flex, Box, Text, DropdownMenu, Button, Dialog } from "@radix-ui/themes"
 import { useState, useCallback, useEffect } from 'react';
 import db from '@/app/utils/indexedDbUtils';
 import { Suspense } from 'react'
 import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
 import Header from "@/app/components/header/Header";
+import { encryptParams } from "@/app/utils/paramUtils";
 
 type UserWallet = {
     balance: number;
@@ -35,14 +36,12 @@ const MainComponent = () => {
     const createQueryString = useCallback(
         (searchParams: URLSearchParams, queryParams: Record<string, string>) => {
             const params = new URLSearchParams(searchParams.toString())
-
-
             // Add each query parameter to the URLSearchParams object
             Object.entries(queryParams).forEach(([name, value]) => {
                 params.set(name, value);
             });
-
-            return params.toString();
+            const encodedParams = encryptParams(Object.fromEntries(params));
+            return `params=${encodedParams}`;
         },
         []
     );

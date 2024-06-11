@@ -46,6 +46,10 @@ const MainComponent = () => {
         return <OrigamiAnimation />;
     }
 
+    if (!isAuthenticated) {
+        return <OrigamiAnimation />;
+    }
+
     return (
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh', position: 'absolute' }}>
             <Flex direction='column' className="bg-[#38B6FF] flex-col items-center justify-center gap-8 p-8" style={{ position: 'relative', height: '100%' }}>

@@ -1,8 +1,10 @@
 import { NextResponse } from "next/server";
 import type { NextRequest } from 'next/server'
+import { incrementCounter, getCounterValue } from "./app/utils/counter";
 
 export async function middleware(request: NextRequest) {
     const domain = process.env.NEXT_PUBLIC_DOMAIN
+
     async function createSession() {
         try {
             const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;

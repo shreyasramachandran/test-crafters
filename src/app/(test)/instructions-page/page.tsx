@@ -8,6 +8,7 @@ import { Suspense } from 'react'
 import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
 import Header from "@/app/components/header/Header";
+import { encryptParams, decryptParams, Params } from "@/app/utils/paramUtils";
 
 const MainComponent = () => {
     console.log('instructions page component mounted')
@@ -17,12 +18,26 @@ const MainComponent = () => {
     const searchParams = useSearchParams()
     const hasRun = useRef(false);
 
-    const subject = searchParams.get('subject') as string
-    const language = searchParams.get('language')
-    // duration later populated via indexDB
-    const duration = searchParams.get('duration')
-    const maxQuestions = searchParams.get('maxQuestions')
-    const minimumRequiredQuestions = searchParams.get('minimumRequiredQuestions')
+    // Decode the params
+    const encodedParams = searchParams.get('params');
+    let decodedParams: Params = {}; // Ensure decodedParams is always of type Params
+
+    if (encodedParams) {
+        const decoded = decryptParams(encodedParams);
+        if (decoded !== null) {
+            decodedParams = decoded;
+        } else {
+            // Handle the case when decoding fails, if needed
+            console.error('Failed to decode parameters');
+        }
+    }
+
+    const subject = decodedParams.subject;
+    const language = decodedParams.language;
+    const duration = decodedParams.duration;
+    const maxQuestions = decodedParams.maxQuestions;
+    const minimumRequiredQuestions = decodedParams.minimumRequiredQuestions;
+
 
     // Get a new searchParams string by merging the current
     // searchParams with a provided key/value pair
@@ -33,8 +48,8 @@ const MainComponent = () => {
             Object.entries(queryParams).forEach(([name, value]) => {
                 params.set(name, value);
             });
-
-            return params.toString();
+            const encodedParams = encryptParams(Object.fromEntries(params));
+            return `params=${encodedParams}`;
         },
         []
     );
@@ -64,6 +79,10 @@ const MainComponent = () => {
     };
 
     if (loading) {
+        return <OrigamiAnimation />;
+    }
+
+    if (!isAuthenticated) {
         return <OrigamiAnimation />;
     }
 
