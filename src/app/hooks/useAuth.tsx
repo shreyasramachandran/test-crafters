@@ -120,8 +120,6 @@ export default function useAuth() {
         try {
             if (returnUrl.includes('/sign-in') || returnUrl.includes('/sign-up') || returnUrl.includes('/landing-page')) {
                 router.push('/test-picker');
-            } else {
-                router.replace(returnUrl);
             }
         } finally {
             isRedirecting.current = false;

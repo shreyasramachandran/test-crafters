@@ -149,7 +149,7 @@ const MainComponent = () => {
     }, [currentQuestionNumber]);
 
     useEffect(() => {
-        if (questionPalette.length > 0) {
+        if (questionPalette.length > 0 && selectedOption !== -1) {
             // Ensure the index is valid to avoid accessing undefined
             const currentSelection = questionPalette[currentQuestionNumber - 1]?.selectedAnswer;
             setSelectedOption(currentSelection);
@@ -318,7 +318,35 @@ const MainComponent = () => {
 
 
     const clearResponse = () => {
-        setSelectedOption(-1); // Clear the selected option when "Clear Response" button is clicked
+        if (selectedOption !== -1) {
+            const currentIndex = currentQuestionNumber - 1;
+            const oldState = questionPalette[currentIndex].state;
+            // Update the legend counts
+            const updateLegendCounts = (oldState: QuestionState, newState: QuestionState) => {
+                if (oldState !== newState) {
+                    setLegendCounts(prevCounts => ({
+                        ...prevCounts,
+                        [stateToLegendAction[oldState]]: prevCounts[stateToLegendAction[oldState] as LegendAction] - 1,
+                        [stateToLegendAction[newState]]: prevCounts[stateToLegendAction[newState] as LegendAction] + 1
+                    }));
+                }
+            };
+            // Update the question palette
+            const updateQuestionPalette = (index: number, newState: QuestionState) => {
+                setQuestionPalette(prevPalette => {
+                    const newPalette = [...prevPalette];
+                    if (index < newPalette.length) {
+                        newPalette[index].state = newState;
+                        console.log("Updated Palette:", newPalette);
+                    }
+                    return newPalette;
+                });
+            };
+
+            updateLegendCounts(oldState, QuestionState.NotVisited)
+            updateQuestionPalette(currentIndex, QuestionState.NotVisited)
+            setSelectedOption(-1); // Clear the selected option when "Clear Response" button is clicked
+        }
     };
 
     async function storeQuestionPalette(items: QuestionPaletteItem[]) {
@@ -355,7 +383,7 @@ const MainComponent = () => {
     useEffect(() => {
         // Define the interval for running your function periodically
         populateQuestionPalette(questionPalette);
-    }, [questionPalette]);
+    }, []);
 
     const [dialogOpen, setDialogOpen] = useState(false);
     const [isCompleted, setIsCompleted] = useState(false);
