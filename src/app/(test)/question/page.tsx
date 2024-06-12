@@ -1,6 +1,6 @@
 "use client"
 import useAuth from "@/app/hooks/useAuth";
-import { Flex, Box, Text, Button, RadioGroup, Dialog, ScrollArea } from "@radix-ui/themes";
+import { Flex, Box, Text, Button, RadioGroup, Dialog, ScrollArea, Grid } from "@radix-ui/themes";
 import { useState, useEffect } from 'react';
 import db, { IQuestion } from '@/app/utils/indexedDbUtils';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -14,6 +14,7 @@ const MainComponent = () => {
     console.log('questions page component mounted')
     // Get isAuthenticated in case you need to use it for future operations
     const { isAuthenticated, loading } = useAuth();
+    const router = useRouter();
     const searchParams = useSearchParams()
     // Decode the params
     const encodedParams = searchParams.get('params');
@@ -31,7 +32,28 @@ const MainComponent = () => {
 
     const maxQuestions = decodedParams.maxQuestions;
     const minimumRequiredQuestions = decodedParams.minimumRequiredQuestions;
-    const router = useRouter();
+
+    // Snippet for showing time left to the user
+    const formatTime = (seconds: number) => {
+        const hrs = Math.floor(seconds / 3600);
+        const mins = Math.floor((seconds % 3600) / 60);
+        const secs = seconds % 60;
+        return `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    const duration = decodedParams.duration;
+    const totalTimeInSeconds = parseInt(duration.split(" ")[0]) * 60;
+    const [timeLeft, setTimeLeft] = useState(totalTimeInSeconds);
+    const initialFormattedTime = formatTime(totalTimeInSeconds);
+
+    useEffect(() => {
+        if (timeLeft > 0) {
+            const timerId = setInterval(() => {
+                setTimeLeft(prevTime => prevTime - 1);
+            }, 1000);
+            return () => clearInterval(timerId);
+        }
+    }, [timeLeft]);
 
     // Define currentQuestionNumber
     const [currentQuestionNumber, setCurrentQuestionNumber] = useState(1);
@@ -508,32 +530,42 @@ const MainComponent = () => {
                             </Box>
                         </Flex>
                     </Box>
-                    <Box style={{ 'height': '100%', 'width': '30%' }}>
-                        <Flex direction='column' style={{ height: '100%', width: '90%' }}>
-                            <Box style={{ 'height': '11%', 'width': '90%', 'display': 'flex', 'alignItems': 'center' }}>
-                                <Text className="pl-8 pt-5" size='4' weight='bold' wrap='pretty' >Question Palette</Text>
+                    <Box className="my-4" style={{ 'height': '100%', 'width': '30%' }}>
+                        <Flex gapY='4' direction='column' style={{ height: '100%', width: '90%', alignItems: 'center' }}>
+                            {/* Timer */}
+                            <Box p='6' style={{ 'width': '100%', alignItems: 'center', justifyItems: 'center', justifyContent: 'space-between', display: 'flex', flexDirection: 'column', borderRadius: '5px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                                <Flex gapX='2' style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', height: '10%', width: '100%' }}>
+                                    <img src="images/timer.svg" alt="Wallet" className="w-6 h-6" />
+                                    <Text size='4' weight='medium' wrap='pretty'>Time Remaining</Text>
+                                </Flex>
+                                <Text>{formatTime(timeLeft)} / {initialFormattedTime}</Text>
                             </Box>
+                            <Flex gapX='2' style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'left', height: '10%', width: '100%' }}>
+                                <img src="images/question_palette.svg" alt="Wallet" className="w-6 h-6" />
+                                <Text size='4' weight='medium' wrap='pretty'>Question Palette</Text>
+                            </Flex>
                             {/* Questions List */}
-                            <Box className="pl-8" style={{ 'height': '50%', 'width': '100%', 'display': 'grid', 'gridTemplateColumns': 'repeat(8, 1fr)', 'alignItems': 'center', 'justifyItems': 'center' }}>
+                            <Grid gapY='1' style={{ 'height': '100%', 'width': '100%', 'gridTemplateColumns': 'repeat(8, 1fr)', alignItems: 'center', justifyItems: 'center' }}>
                                 {questionPalette.map((state, index) => (
-                                    <div key={index} className="flex flex-col items-center justify-center">
+                                    <div key={index}>
                                         <button onClick={() => {
                                             // Here index is the index of the question that is clicked
                                             onCickQuestionPalette(index)
                                         }}>{getComponentForState(state)}</button>
                                     </div>
                                 ))}
-                            </Box>
-                            <Box style={{ 'height': '7%', 'width': '90%', 'display': 'flex', 'alignItems': 'center' }}>
-                                <Text className="pl-8" size='4' weight='bold' wrap='pretty' >Legend</Text>
-                            </Box>
+                            </Grid>
+                            <Flex gapX='2' style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'left', height: '10%', width: '100%' }}>
+                                <img src="images/legend.svg" alt="Wallet" className="w-6 h-6" />
+                                <Text size='4' weight='medium' wrap='pretty'>Legend</Text>
+                            </Flex>
                             {/* Legend */}
-                            <Box style={{
+                            <Grid gapX='9' pl='2' style={{
                                 'height': '25%', 'width': '100%', 'display': 'grid', gridTemplateRows: 'repeat(3, 2fr)',
                                 gridTemplateColumns: 'min-content auto', // This will allow for natural width of the icons and the rest for text
-                                alignItems: 'center'
+                                alignItems: 'center', justifyItems: 'left'
                             }}>
-                                <div className="pl-10 flex flex-row items-center justify-center w-40">
+                                <div className="flex flex-row items-center justify-center">
                                     <div className="w-8 h-8 flex items-center justify-center rounded-lg text-white bg-gradient-to-tr from-stone-500 to-stone-400 text-sm">
                                         {legendCounts.notVisited}
                                     </div>
@@ -546,28 +578,28 @@ const MainComponent = () => {
                                     </div>
                                     <div className="pl-1 whitespace-nowrap">Not Answered</div>
                                 </div>
-                                <div className="pl-8 flex flex-row items-center justify-center">
+                                <div className="flex flex-row items-center justify-center">
                                     <div className="w-8 h-8 relative inline-block">
                                         <img src="images/answered.svg" alt="Custom Vector" className="block w-full h-auto" />
                                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{legendCounts.answered}</span>
                                     </div>
                                     <div className="pl-1">Answered</div>
                                 </div>
-                                <div className="pl-8 flex flex-row items-center justify-center">
+                                <div className="flex flex-row items-center justify-center">
                                     <div className="w-8 h-8 relative inline-block">
                                         <img src="images/marked_for_review.svg" alt="Custom Vector" className="block w-full h-auto" />
                                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{legendCounts.markedForReview}</span>
                                     </div>
                                     <div className="pl-1">Marked for Review</div>
                                 </div>
-                                <div className="pl-11 flex flex-row items-center justify-center" style={{ 'gridColumn': '1 / span 2', 'gridRow': '3 / 4' }}>
+                                <div className="flex flex-row items-center justify-center" style={{ 'gridColumn': '1 / span 2', 'gridRow': '3 / 4' }}>
                                     <div className="relative inline-block">
                                         <img src="images/marked_for_review_other.svg" alt="Custom Vector" className="block w-12 h-12" />
                                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{legendCounts.answeredAndMarkedForReview}</span>
                                     </div>
                                     <div className="pl-1">Answered & Marked for Review (will be considered for evaluation)</div>
                                 </div>
-                            </Box>
+                            </Grid>
                         </Flex>
                     </Box>
                 </Flex >
