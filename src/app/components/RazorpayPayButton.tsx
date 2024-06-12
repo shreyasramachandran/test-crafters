@@ -152,7 +152,7 @@ export default function RazorpayPayButton({ name }: RazorpayPayButtonProps) {
         }
 
         const options = {
-            "key_id": "rzp_test_B9h0zDfA107vBR",
+            "key_id": process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
             "amount": Number(amount) * 100,
             "currency": "INR",
             "name": "Test Crafters",

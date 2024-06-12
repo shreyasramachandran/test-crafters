@@ -44,6 +44,7 @@ const MainComponent = () => {
     const duration = decodedParams.duration;
     const totalTimeInSeconds = parseInt(duration.split(" ")[0]) * 60;
     const [timeLeft, setTimeLeft] = useState(totalTimeInSeconds);
+    const [testCompletionDialogOpen, setTestCompletionDialogOpen] = useState(false);
     const initialFormattedTime = formatTime(totalTimeInSeconds);
 
     useEffect(() => {
@@ -52,8 +53,13 @@ const MainComponent = () => {
                 setTimeLeft(prevTime => prevTime - 1);
             }, 1000);
             return () => clearInterval(timerId);
+        } else {
+            setTestCompletionDialogOpen(true)
+            setTimeout(() => {
+                router.push('/analysis'); // Redirect to the analysis page
+            }, 3000);
         }
-    }, [timeLeft]);
+    }, [timeLeft, router]);
 
     // Define currentQuestionNumber
     const [currentQuestionNumber, setCurrentQuestionNumber] = useState(1);
@@ -540,6 +546,12 @@ const MainComponent = () => {
                                 </Flex>
                                 <Text>{formatTime(timeLeft)} / {initialFormattedTime}</Text>
                             </Box>
+                            {/* Test completion dialog */}
+                            <Dialog.Root open={testCompletionDialogOpen}>
+                                <Dialog.Content style={{ backgroundColor: '#DFF6FA', borderRadius: '5px', padding: '20px', boxShadow: '0px 10px 50px hsla(0, 0%, 0%, 0.1)' }}>
+                                    <Text>The test has ended. Please wait while we redirect you to the analysis page.</Text>
+                                </Dialog.Content>
+                            </Dialog.Root>
                             <Flex gapX='2' style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'left', height: '10%', width: '100%' }}>
                                 <img src="images/question_palette.svg" alt="Wallet" className="w-6 h-6" />
                                 <Text size='4' weight='medium' wrap='pretty'>Question Palette</Text>
