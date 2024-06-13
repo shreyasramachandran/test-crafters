@@ -39,11 +39,5 @@ next-env.d.ts
 /src/app/(playground)
 /src/app/api/playground
 
-# globalUtils
-/src/app/utils/counter.ts
-
-# cherry blossom
-/public/cherry-blossom.avif
-
 # Keys
 /keys

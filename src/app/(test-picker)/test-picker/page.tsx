@@ -81,25 +81,25 @@ const MainComponent = () => {
     }
 
     useEffect(() => {
-        db.initializeDatabase().then(() => {
-            console.log("Database initialized in Some Component.");
-        }).catch(error => {
-            console.error("Error initializing database in Some Component:", error);
-        });
-        // Store the user record for future use if any
-        const record = {
-            googleUserEmail: localStorage.getItem('google_user_email') || '',
-            googleUserName: localStorage.getItem('google_user_name') || '',
-            googleUserPicture: localStorage.getItem('google_user_picture') || '',
-            otherEmail: localStorage.getItem('other_email') || '',
-            otherPassword: localStorage.getItem('other_password') || ''
-        }
-
-        db.addRecord('user', record).then(() => {
-            console.log("User record added.");
-        }).catch(error => {
-            console.error("Error adding user record:", error);
-        });
+        db.initializeDatabase()
+            .then(() => {
+                console.log("Database initialized in Some Component.");
+                // After the database is initialized, store the user record
+                const record = {
+                    googleUserEmail: localStorage.getItem('google_user_email') || '',
+                    googleUserName: localStorage.getItem('google_user_name') || '',
+                    googleUserPicture: localStorage.getItem('google_user_picture') || '',
+                    otherEmail: localStorage.getItem('other_email') || '',
+                    otherPassword: localStorage.getItem('other_password') || ''
+                };
+                return db.addRecord('user', record);
+            })
+            .then(() => {
+                console.log("User record added.");
+            })
+            .catch(error => {
+                console.error("Error initializing database or adding user record in Some Component:", error);
+            });
     }, []);
 
 

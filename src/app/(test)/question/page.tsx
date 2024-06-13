@@ -66,7 +66,7 @@ const MainComponent = () => {
     const [selectedOption, setSelectedOption] = useState(-1);
     // Define legendCounts
     const [legendCounts, setLegendCounts] = useState({
-        notVisited: 50, // Assuming 50 questions initially
+        notVisited: Number(maxQuestions), // Assuming 50 questions initially
         notAnswered: 0,
         answered: 0,
         markedForReview: 0,
@@ -436,9 +436,9 @@ const MainComponent = () => {
     // Function to populate question palette state
     async function populateQuestionPalette(items: QuestionPaletteItem[]) {
         // Clear any existing records in the questionPalette object store
-        await db.questionPalette.clear();
+        db.questionPalette.clear();
         // Add the initial state to the questionPalette object store
-        await db.questionPalette.bulkPut(items);
+        db.questionPalette.bulkPut(items);
         // Function used to store questionPalette(user's answers)
         storeQuestionPalette(items)
     }

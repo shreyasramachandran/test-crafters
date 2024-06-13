@@ -92,12 +92,17 @@ class QuestionsDB extends Dexie {
         // Check if the database already exists
         const exists = await Dexie.exists(database);
         if (exists) {
+            // Close any open connections
+            await this.close();
+            console.log("Database connection closed.");
+            // Wait a bit to ensure all connections are fully closed
+            await new Promise(resolve => setTimeout(resolve, 100));
             // If it exists, delete it
             await Dexie.delete(database);
             console.log("Existing database deleted.");
         }
 
-        // Open the database to initialize it
+        // Re-open the database to initialize it
         await this.open();
         console.log("Database initialized.");
 
@@ -113,10 +118,10 @@ class QuestionsDB extends Dexie {
         }).catch(err => {
             console.error("Error during database initialization:", err);
             throw err;  // Rethrow to ensure the caller handles the initialization error.
-        })
+        });
 
-        await this.storeMetadata()
-        console.log('Stored metadata')
+        await this.storeMetadata();
+        console.log('Stored metadata');
     }
 
     async checkTableExists(table: string) {
@@ -233,7 +238,7 @@ class QuestionsDB extends Dexie {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
                 },
-
+                credentials: 'include'
             });
             // Ensure proper error handling
             if (!res.ok) {
