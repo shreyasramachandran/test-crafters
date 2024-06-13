@@ -1,10 +1,10 @@
 import { Line } from 'react-chartjs-2';
 import { ChartData, ChartOptions, CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend, Chart, Title } from 'chart.js';
 import zoomPlugin from 'chartjs-plugin-zoom';
-import React from 'react';
+import React, { useEffect } from 'react';
 
 // Register required components
-Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend, Title, zoomPlugin);
+Chart.register(CategoryScale, LinearScale, PointElement, LineElement, Tooltip, Legend, Title);
 
 // TypeScript Interfaces for Data
 interface LineChartData {
@@ -124,6 +124,13 @@ function TimeTakenPerQuestion({ data }: LineChartProps) {
             },
         },
     };
+
+    useEffect(() => {
+        if (typeof window !== "undefined")
+            import("chartjs-plugin-zoom").then((plugin) => {
+                Chart.register(plugin.default);
+            });
+    }, []);
 
     return <Line data={chartData} options={options} />;
 }
