@@ -58,10 +58,11 @@ type IQuestionPaletteItem = {
     state: QuestionState;
     selectedAnswer: number;
     questionId: string;
+    timeTaken: number;
 };
 
 // This has been named as Question Palette but is used to store state of answers 
-const QuestionPaletteItemSchema = '++id, state, selectedAnswer, questionId'
+const QuestionPaletteItemSchema = '++id, state, selectedAnswer, questionId, timeTaken'
 
 // Class to handle the IndexedDB operations
 class QuestionsDB extends Dexie {
@@ -329,6 +330,14 @@ class QuestionsDB extends Dexie {
         });
 
         return analysisTable;
+    }
+
+    async getTimeTakenPerQuestion(): Promise<Array<{ question: string, timeTaken: number }>> {
+        const allAnswers: IQuestionPaletteItem[] = await this.getRecords('questionPalette')
+        const timeTakenPerQuestion = allAnswers.map(answer => {
+            return { question: `Q${answer.index + 1}`, timeTaken: answer.timeTaken };
+        });
+        return timeTakenPerQuestion;
     }
 }
 

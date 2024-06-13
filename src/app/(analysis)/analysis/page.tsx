@@ -9,6 +9,7 @@ import useAuth from "@/app/hooks/useAuth";
 import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
 import Header from "@/app/components/header/Header";
+import TimeTakenPerQuestion from "@/app/components/visualisations/TimeTakenPerQuestion";
 
 
 interface IPerformanceTable {
@@ -18,11 +19,17 @@ interface IPerformanceTable {
     result_status: string;
 }
 
+interface ITimeTakenPerQuestion {
+    'question': string;
+    'timeTaken': number
+}
+
 const MainComponent = () => {
     console.log('analysis component mounted')
     const { isAuthenticated, loading } = useAuth();
     const [performanceScores, setPerformanceScores] = useState({ correctAnswers: 0, incorrectAnswers: 0 });
     const [performanceTable, setPerformanceTable] = useState<IPerformanceTable[]>([]);
+    const [timeTakenPerQuestion, setTimeTakenPerQuestion] = useState<ITimeTakenPerQuestion[]>([]);
 
     // Function to fetch performance scores
     async function getPerformanceScores() {
@@ -36,10 +43,17 @@ const MainComponent = () => {
         setPerformanceTable(performanceTable); // Update state with fetched data
     }
 
+    // Function to fetch question analysis table
+    async function getTimeSpentPerQuestion() {
+        const timeTakenPerQuestion = await db.getTimeTakenPerQuestion(); // Assume this returns an array of analysis data
+        setTimeTakenPerQuestion(timeTakenPerQuestion); // Update state with fetched data
+    }
+
     // Effect to run once on component mount
     useEffect(() => {
         getPerformanceScores();
         getPerformanceTable();
+        getTimeSpentPerQuestion();
     }, []); // Empty dependency array ensures this effect runs only once after the initial render
 
     if (loading) {
@@ -54,7 +68,7 @@ const MainComponent = () => {
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh', position: 'absolute' }}>
             <Flex direction='column' className="bg-[#38B6FF] flex-col items-center justify-center gap-8 p-8" style={{ position: 'relative', height: '100%' }}>
                 <Header></Header>
-                <Box className="bg-[#EAF6FA] px-8" style={{ 'width': '50%', 'display': 'flex', 'flexDirection': 'column', 'justifyContent': 'start', 'alignItems': 'start', 'borderRadius': '5px', 'boxShadow': '2px 2px 10px 2px rgba(0, 0, 0, 0.15)' }}>
+                <Box className="bg-[#EAF6FA] px-8" style={{ 'width': '70%', 'display': 'flex', 'flexDirection': 'column', 'justifyContent': 'start', 'alignItems': 'start', 'borderRadius': '5px', 'boxShadow': '2px 2px 10px 2px rgba(0, 0, 0, 0.15)' }}>
                     <Flex className="flex-col gap-8 p-14">
                         <Flex direction='row' gap='3' style={{ alignContent: 'center' }}>
                             <img src="images/performance_overview.svg" alt="Performance Overview" className="w-10 h-10" />
@@ -67,7 +81,7 @@ const MainComponent = () => {
                         </Box>
                     </Flex >
                 </Box>
-                <Box className="bg-[#EAF6FA] px-8" style={{ 'width': '50%', 'display': 'flex', 'flexDirection': 'column', 'justifyContent': 'start', 'alignItems': 'start', 'borderRadius': '5px', 'boxShadow': '2px 2px 10px 2px rgba(0, 0, 0, 0.15)' }}>
+                <Box className="bg-[#EAF6FA] px-8" style={{ 'width': '70%', 'display': 'flex', 'flexDirection': 'column', 'justifyContent': 'start', 'alignItems': 'start', 'borderRadius': '5px', 'boxShadow': '2px 2px 10px 2px rgba(0, 0, 0, 0.15)' }}>
                     <Flex className="flex-col gap-8 p-14">
                         <Flex direction='row' align='start' gap='3' style={{ alignContent: 'center' }}>
                             <img src="images/detailed_analysis.svg" alt="Performance Overview" className="w-10 h-10" />
@@ -77,6 +91,20 @@ const MainComponent = () => {
                             This tool is perfect for reviewing specific areas where you excelled or need improvement, making it easier to target your studies effectively.</Text>
                         <Box style={{ "alignSelf": 'center' }}>
                             <PerformanceTable data={performanceTable} />
+                        </Box>
+                    </Flex >
+                </Box>
+                <Box className="bg-[#EAF6FA] px-8" style={{ 'width': '70%', 'display': 'flex', 'flexDirection': 'column', 'justifyContent': 'start', 'alignItems': 'start', 'borderRadius': '5px', 'boxShadow': '2px 2px 10px 2px rgba(0, 0, 0, 0.15)' }}>
+                    <Flex className="flex-col gap-8 p-14">
+                        <Flex direction='row' align='start' gap='3' style={{ alignContent: 'center' }}>
+                            <img src="images/time_spent_per_question.svg" alt="Performance Overview" className="w-10 h-10" />
+                            <Text size='8' wrap='pretty' >Time Taken Per Question</Text>
+                        </Flex>
+                        <Text size='4' weight='light' wrap='pretty' >This chart displays the duration taken to answer each question in a sequence.
+                            Each point on the chart represents the time spent on a specific question, with the line connecting these points to illustrate the overall trend.
+                            You can zoom in to see the points better.</Text>
+                        <Box style={{ "alignSelf": 'center', height: '100%', width: '100%' }}>
+                            <TimeTakenPerQuestion data={timeTakenPerQuestion} />
                         </Box>
                     </Flex >
                 </Box>

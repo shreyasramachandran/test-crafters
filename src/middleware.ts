@@ -4,21 +4,21 @@ import type { NextRequest } from 'next/server'
 export async function middleware(request: NextRequest) {
     const domain = process.env.NEXT_PUBLIC_DOMAIN
 
-    const referer = request.headers.get('referer') || '';
-    const protectedPaths = ['/instructions-page', '/question', '/analysis'];
-    const allowedReferers = {
-        '/instructions-page': '/test-picker',
-        '/question': '/instructions-page',
-        '/analysis': '/question',
-    };
+    // const referer = request.headers.get('referer') || '';
+    // const protectedPaths = ['/instructions-page', '/question', '/analysis'];
+    // const allowedReferers = {
+    //     '/instructions-page': '/test-picker',
+    //     '/question': '/instructions-page',
+    //     '/analysis': '/question',
+    // };
 
-    const currentPath = request.nextUrl.pathname;
-    const expectedReferer = allowedReferers[currentPath as keyof typeof allowedReferers];
+    // const currentPath = request.nextUrl.pathname;
+    // const expectedReferer = allowedReferers[currentPath as keyof typeof allowedReferers];
 
-    if (protectedPaths.includes(currentPath) && !referer.includes(expectedReferer)) {
-        const url = new URL('/test-picker', request.url);
-        return NextResponse.redirect(url);
-    }
+    // if (protectedPaths.includes(currentPath) && !referer.includes(expectedReferer)) {
+    //     const url = new URL('/test-picker', request.url);
+    //     return NextResponse.redirect(url);
+    // }
 
     async function createSession() {
         try {
