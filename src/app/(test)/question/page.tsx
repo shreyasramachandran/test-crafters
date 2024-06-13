@@ -11,7 +11,6 @@ import Header from "@/app/components/header/Header";
 import { decryptParams, Params } from "@/app/utils/paramUtils";
 
 const MainComponent = () => {
-    console.log('questions page component mounted')
     // Get isAuthenticated in case you need to use it for future operations
     const { isAuthenticated, loading } = useAuth();
     const router = useRouter();
@@ -74,6 +73,9 @@ const MainComponent = () => {
         answeredAndMarkedForReview: 0
     });
 
+    // Track the time when the user starts viewing a question
+    const [questionStartTime, setQuestionStartTime] = useState(Date.now())
+
     type LegendAction = keyof typeof legendCounts;
 
     // Define questionPalette
@@ -92,6 +94,7 @@ const MainComponent = () => {
         state: QuestionState;
         selectedAnswer: number;
         questionId: string;
+        timeTaken: number;
     };
 
     const [questionPalette, setQuestionPalette] = useState<QuestionPaletteItem[]>([]);
@@ -109,7 +112,8 @@ const MainComponent = () => {
                     index: index,
                     questionId: question.questionId || 'N/A', // Fallback to 0 if undefined
                     state: QuestionState.NotVisited,
-                    selectedAnswer: -1
+                    selectedAnswer: -1,
+                    timeTaken: 0 // In seconds
                 }));
                 setQuestionPalette(initialPalette);
             } catch (error) {
@@ -230,8 +234,19 @@ const MainComponent = () => {
     };
 
 
-    const onCickQuestionPalette = (index: number) => {
+    const onClickQuestionPalette = (index: number) => {
         if (currentQuestionNumber - 1 == index) { return; }
+        // Calculate time spent on the current question
+        const timeSpent = Math.floor((Date.now() - questionStartTime) / 1000);
+
+        const updateTimeSpentPerQuestion = () => {
+            setQuestionPalette(prevPalette => {
+                const newPalette = [...prevPalette];
+                newPalette[currentQuestionNumber - 1].timeTaken += timeSpent / 2;
+                return newPalette;
+            });
+        }
+
         // Update questionPalette immutably
         setQuestionPalette(prevPalette => {
             const newPalette = [...prevPalette];
@@ -248,10 +263,13 @@ const MainComponent = () => {
             return newPalette;
         });
 
+        updateTimeSpentPerQuestion();
         // Update the current question number
         setCurrentQuestionNumber(index + 1);
         // Ensure selectedOption is updated for the new current question
         setSelectedOption(prev => questionPalette[index].selectedAnswer);
+        // Reset the question start time
+        setQuestionStartTime(Date.now());
     };
 
 
@@ -265,6 +283,9 @@ const MainComponent = () => {
         const oldState = questionPalette[currentIndex].state;
         const isLastQuestion = currentQuestionNumber === Number(maxQuestions) && operator === 'increment';
         const isFirstQuestion = currentQuestionNumber === 1 && operator === 'decrement';
+
+        // Calculate time spent on the current question
+        const timeSpent = Math.floor((Date.now() - questionStartTime) / 1000);
 
         const updateLegendCounts = (oldState: QuestionState, newState: QuestionState) => {
             if (oldState !== newState) {
@@ -286,6 +307,15 @@ const MainComponent = () => {
             });
         };
 
+        const updateTimeSpentPerQuestion = () => {
+            setQuestionPalette(prevPalette => {
+                const newPalette = [...prevPalette];
+                newPalette[currentQuestionNumber - 1].timeTaken += timeSpent / 2;
+                return newPalette;
+            });
+        }
+
+
         const updateCurrentQuestionNumber = (operator: string) => {
             setCurrentQuestionNumber(prevCurrent => {
                 const newCurrent = operator === 'increment' ? prevCurrent + 1 : prevCurrent - 1;
@@ -293,6 +323,8 @@ const MainComponent = () => {
                 return newCurrent;
             });
         };
+
+        updateTimeSpentPerQuestion()
 
         if (overrideSelectedOption) {
             if (oldState === QuestionState.NotVisited) {
@@ -325,6 +357,9 @@ const MainComponent = () => {
                 updateCurrentQuestionNumber(operator);
             }
         }
+
+        // Reset the question start time
+        setQuestionStartTime(Date.now());
     };
 
 
@@ -562,7 +597,7 @@ const MainComponent = () => {
                                     <div key={index}>
                                         <button onClick={() => {
                                             // Here index is the index of the question that is clicked
-                                            onCickQuestionPalette(index)
+                                            onClickQuestionPalette(index)
                                         }}>{getComponentForState(state)}</button>
                                     </div>
                                 ))}
