@@ -1,6 +1,7 @@
 "use client"
 import { useRouter } from 'next/navigation';
 import useAuth from "@/app/hooks/useAuth";
+import Image from 'next/image';
 
 
 export default function ContinueWithGoogle() {
@@ -31,7 +32,13 @@ export default function ContinueWithGoogle() {
     return <button
         onClick={initiateGoogleSignIn}
         className="inline-flex items-center justify-center px-4 py-2 border border-solid border-[#79747E] shadow-sm text-sm font-medium rounded-md text-[#120052] bg-[#EAF6FA] hover:bg-[#FAF6FA] w-full">
-        <img src="images/google_icon.svg" alt="Google Sign-In" className="w-5 h-6 mr-2" />
+        <Image
+            src="/images/google_icon.svg"
+            alt="Google Sign-In"
+            width={20}
+            height={24}
+            className="mr-2"
+        />
         Continue with Google
     </button>
 }

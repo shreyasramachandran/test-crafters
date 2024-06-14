@@ -13,7 +13,7 @@ export interface IMetadata {
 
 export interface IQuestion {
     id?: number;
-    uniqueIdentification?: string;
+    questionId?: string;
     questionPreText?: string;
     questionText?: string;
     questionType?: string;
@@ -39,7 +39,7 @@ export interface ISession {
 }
 
 // The schema string should only have valid field names from ISubject
-const QuestionsSchema = '++id, uniqueIdentification, questionPreText, questionText, questionType, optionsText, answerHuman';
+const QuestionsSchema = '++id, questionId, questionPreText, questionText, questionType, optionsText, answerHuman';
 const MetadataSchema = '++id, subject, duration, maxQuestions, minimumRequiredQuestions, category, markingScheme, mediumOfExamination';
 const UserSchema = '++id, googleUserEmail, googleUserName, googleUserPicture, otherEmail, otherPassword';
 const SessionSchema = '++id, start, end, userId, questionPaletteId';
@@ -57,11 +57,12 @@ type IQuestionPaletteItem = {
     index: number;
     state: QuestionState;
     selectedAnswer: number;
-    uniqueIdentification: string;
+    questionId: string;
+    timeTaken: number;
 };
 
 // This has been named as Question Palette but is used to store state of answers 
-const QuestionPaletteItemSchema = '++id, state, selectedAnswer, uniqueIdentification'
+const QuestionPaletteItemSchema = '++id, state, selectedAnswer, questionId, timeTaken'
 
 // Class to handle the IndexedDB operations
 class QuestionsDB extends Dexie {
@@ -91,12 +92,17 @@ class QuestionsDB extends Dexie {
         // Check if the database already exists
         const exists = await Dexie.exists(database);
         if (exists) {
+            // Close any open connections
+            await this.close();
+            console.log("Database connection closed.");
+            // Wait a bit to ensure all connections are fully closed
+            await new Promise(resolve => setTimeout(resolve, 100));
             // If it exists, delete it
             await Dexie.delete(database);
             console.log("Existing database deleted.");
         }
 
-        // Open the database to initialize it
+        // Re-open the database to initialize it
         await this.open();
         console.log("Database initialized.");
 
@@ -112,10 +118,10 @@ class QuestionsDB extends Dexie {
         }).catch(err => {
             console.error("Error during database initialization:", err);
             throw err;  // Rethrow to ensure the caller handles the initialization error.
-        })
+        });
 
-        await this.storeMetadata()
-        console.log('Stored metadata')
+        await this.storeMetadata();
+        console.log('Stored metadata');
     }
 
     async checkTableExists(table: string) {
@@ -224,7 +230,6 @@ class QuestionsDB extends Dexie {
     async storeQuestionsData(subject: string, maxQuestions: number) {
         try {
             const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
-            const database = process.env.NEXT_PUBLIC_SQL_SERVER_DATABASE_NAME
             const indexDBTableName = 'questions'
             const tableName = 'questions'
             const res = await fetch(`${baseUrl}/get-subject-data?subject=${subject}&table=${tableName}`, {
@@ -233,7 +238,7 @@ class QuestionsDB extends Dexie {
                     "Content-Type": "application/json",
                     "Cache-Control": "no-cache",
                 },
-
+                credentials: 'include'
             });
             // Ensure proper error handling
             if (!res.ok) {
@@ -272,15 +277,15 @@ class QuestionsDB extends Dexie {
         let correctAnswers = 0
         let incorrectAnswers = 0
 
-        // Map questions by their uniqueIdentification for quick lookup
+        // Map questions by their questionId for quick lookup
         const questionMap = new Map();
         allQuestions.forEach(question => {
-            questionMap.set(question.uniqueIdentification, question);
+            questionMap.set(question.questionId, question);
         });
 
         // Iterate over all answers to compare with questions
         allAnswers.forEach(answer => {
-            const correspondingQuestion = questionMap.get(answer.uniqueIdentification);
+            const correspondingQuestion = questionMap.get(answer.questionId);
             if (correspondingQuestion) {
                 // Assuming answerSelected gives the index of the selected option
                 // and answerHuman contains the correct answer
@@ -302,11 +307,11 @@ class QuestionsDB extends Dexie {
 
         const questionMap = new Map<string, IQuestion>();
         allQuestions.forEach(question => {
-            questionMap.set(question.uniqueIdentification!, question);
+            questionMap.set(question.questionId!, question);
         });
 
         const analysisTable = allAnswers.map(answer => {
-            const correspondingQuestion = questionMap.get(answer.uniqueIdentification);
+            const correspondingQuestion = questionMap.get(answer.questionId);
             if (correspondingQuestion) {
                 const userAnswerText = correspondingQuestion.optionsText![answer.selectedAnswer];
                 const correctAnswerText = correspondingQuestion.answerHuman;
@@ -330,6 +335,14 @@ class QuestionsDB extends Dexie {
         });
 
         return analysisTable;
+    }
+
+    async getTimeTakenPerQuestion(): Promise<Array<{ question: string, timeTaken: number }>> {
+        const allAnswers: IQuestionPaletteItem[] = await this.getRecords('questionPalette')
+        const timeTakenPerQuestion = allAnswers.map(answer => {
+            return { question: `Q${answer.index + 1}`, timeTaken: answer.timeTaken };
+        });
+        return timeTakenPerQuestion;
     }
 }
 

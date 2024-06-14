@@ -14,7 +14,6 @@ export default function Page() {
         try {
             const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
             console.log(userData)
-
             const res = await fetch(`${baseUrl}/create-user`, {
                 method: "POST",
                 headers: {
@@ -27,10 +26,9 @@ export default function Page() {
             // Ensure proper error handling
             if (!res.ok) {
                 // Handle errors, e.g., return an error response
-                throw new Error(`Error creating new user, status = ${res.status}`);;
+                throw new Error(`Error creating new user, status = ${res.status}`);
             }
             const responseData = await res.json();
-            console.log('response data', responseData)
             // Store the userId as part of local storage
             localStorage.setItem('userId', responseData.data.id)
             return responseData

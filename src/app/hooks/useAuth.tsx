@@ -83,6 +83,7 @@ export default function useAuth() {
     }
 
     useEffect(() => {
+        console.log('use auth called')
         const initAuthCheck = async () => {
             try {
                 // Check if the use is coming to verification via sign up
@@ -111,15 +112,14 @@ export default function useAuth() {
 
         initAuthCheck();
 
-    }, []); // Empty dependency array ensures useEffect runs only once
+    }, []);
+
 
     const handleAuthenticatedRedirect = (returnUrl: string) => {
         isRedirecting.current = true;
         try {
             if (returnUrl.includes('/sign-in') || returnUrl.includes('/sign-up') || returnUrl.includes('/landing-page')) {
                 router.push('/test-picker');
-            } else {
-                router.push(returnUrl);
             }
         } finally {
             isRedirecting.current = false;
@@ -134,7 +134,7 @@ export default function useAuth() {
             if (!returnUrl.includes('/sign-in') && !returnUrl.includes('/sign-up') && !returnUrl.includes('/landing-page')) {
                 router.push(`/sign-in?returnUrl=${encodeURIComponent(returnUrl)}`);
             } else {
-                router.push(returnUrl);
+                router.replace(returnUrl);
             }
         } finally {
             isRedirecting.current = false;

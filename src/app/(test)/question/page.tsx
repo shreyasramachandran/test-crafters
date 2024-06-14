@@ -1,29 +1,65 @@
 "use client"
 import useAuth from "@/app/hooks/useAuth";
-import { Flex, Box, Text, Button, RadioGroup, Dialog, ScrollArea, Avatar, IconButton } from "@radix-ui/themes";
-import { useState, useEffect, useRef } from 'react';
+import { Flex, Box, Text, Button, RadioGroup, Dialog, ScrollArea, Grid } from "@radix-ui/themes";
+import { useState, useEffect } from 'react';
 import db, { IQuestion } from '@/app/utils/indexedDbUtils';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense } from 'react'
 import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
-import SignOut from "@/app/components/SignOut";
+import Header from "@/app/components/header/Header";
+import { decryptParams, Params } from "@/app/utils/paramUtils";
+import Image from 'next/image';
 
 const MainComponent = () => {
-    console.log('questions page component mounted')
     // Get isAuthenticated in case you need to use it for future operations
     const { isAuthenticated, loading } = useAuth();
-    const searchParams = useSearchParams()
-    const maxQuestions = searchParams.get('maxQuestions')
-    const minimumRequiredQuestions = searchParams.get('minimumRequiredQuestions')
     const router = useRouter();
+    const searchParams = useSearchParams()
+    // Decode the params
+    const encodedParams = searchParams.get('params');
+    let decodedParams: Params = {}; // Ensure decodedParams is always of type Params
 
-    const [showSignOut, setShowSignOut] = useState(false);
+    if (encodedParams) {
+        const decoded = decryptParams(encodedParams);
+        if (decoded !== null) {
+            decodedParams = decoded;
+        } else {
+            // Handle the case when decoding fails, if needed
+            console.error('Failed to decode parameters');
+        }
+    }
 
-    const avatarRef = useRef<HTMLDivElement>(null);
-    const signOutRef = useRef<HTMLDivElement>(null);
-    const [userInfo, setUserInfo] = useState({ userName: 'User Name', userEmail: 'User Email' });
+    const maxQuestions = decodedParams.maxQuestions;
+    const minimumRequiredQuestions = decodedParams.minimumRequiredQuestions;
 
+    // Snippet for showing time left to the user
+    const formatTime = (seconds: number) => {
+        const hrs = Math.floor(seconds / 3600);
+        const mins = Math.floor((seconds % 3600) / 60);
+        const secs = seconds % 60;
+        return `${hrs}:${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+    };
+
+    const duration = decodedParams.duration;
+    const totalTimeInSeconds = parseInt(duration.split(" ")[0]) * 60;
+    const [timeLeft, setTimeLeft] = useState(totalTimeInSeconds);
+    const [testCompletionDialogOpen, setTestCompletionDialogOpen] = useState(false);
+    const initialFormattedTime = formatTime(totalTimeInSeconds);
+
+    useEffect(() => {
+        if (timeLeft > 0) {
+            const timerId = setInterval(() => {
+                setTimeLeft(prevTime => prevTime - 1);
+            }, 1000);
+            return () => clearInterval(timerId);
+        } else {
+            setTestCompletionDialogOpen(true)
+            setTimeout(() => {
+                router.push('/analysis'); // Redirect to the analysis page
+            }, 3000);
+        }
+    }, [timeLeft, router]);
 
     // Define currentQuestionNumber
     const [currentQuestionNumber, setCurrentQuestionNumber] = useState(1);
@@ -31,12 +67,15 @@ const MainComponent = () => {
     const [selectedOption, setSelectedOption] = useState(-1);
     // Define legendCounts
     const [legendCounts, setLegendCounts] = useState({
-        notVisited: 50, // Assuming 50 questions initially
+        notVisited: Number(maxQuestions), // Assuming 50 questions initially
         notAnswered: 0,
         answered: 0,
         markedForReview: 0,
         answeredAndMarkedForReview: 0
     });
+
+    // Track the time when the user starts viewing a question
+    const [questionStartTime, setQuestionStartTime] = useState(Date.now())
 
     type LegendAction = keyof typeof legendCounts;
 
@@ -55,10 +94,15 @@ const MainComponent = () => {
         index: number;
         state: QuestionState;
         selectedAnswer: number;
-        uniqueIdentification: string;
+        questionId: string;
+        timeTaken: number;
     };
 
     const [questionPalette, setQuestionPalette] = useState<QuestionPaletteItem[]>([]);
+
+    // Required to handle edge cases while updating question palette
+    const [lastQuestionUpdated, setLastQuestionUpdated] = useState(false)
+    const [firstQuestionUpdated, setFirstQuestionUpdated] = useState(false)
 
     useEffect(() => {
         const fetchQuestions = async () => {
@@ -67,9 +111,10 @@ const MainComponent = () => {
 
                 const initialPalette: QuestionPaletteItem[] = questions.map((question, index) => ({
                     index: index,
-                    uniqueIdentification: question.uniqueIdentification || 'N/A', // Fallback to 0 if undefined
+                    questionId: question.questionId || 'N/A', // Fallback to 0 if undefined
                     state: QuestionState.NotVisited,
-                    selectedAnswer: -1
+                    selectedAnswer: -1,
+                    timeTaken: 0 // In seconds
                 }));
                 setQuestionPalette(initialPalette);
             } catch (error) {
@@ -137,7 +182,7 @@ const MainComponent = () => {
     }, [currentQuestionNumber]);
 
     useEffect(() => {
-        if (questionPalette.length > 0) {
+        if (questionPalette.length > 0 && selectedOption !== -1) {
             // Ensure the index is valid to avoid accessing undefined
             const currentSelection = questionPalette[currentQuestionNumber - 1]?.selectedAnswer;
             setSelectedOption(currentSelection);
@@ -154,28 +199,49 @@ const MainComponent = () => {
             case QuestionState.NotAnswered:
                 return (
                     <div className="w-8 h-8 relative inline-block">
-                        <img src="images/not_answered.svg" alt="Not Answered" className="block w-full h-auto" />
+                        <Image
+                            src="/images/not_answered.svg"
+                            alt="Not Answered"
+                            layout="fill"
+                            className="block w-full h-auto"
+                        />
                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{index + 1}</span>
                     </div>
                 );
             case QuestionState.Answered:
                 return (
                     <div className="w-8 h-8 relative inline-block">
-                        <img src="images/answered.svg" alt="Answered" className="block w-full h-auto" />
+                        <Image
+                            src="/images/answered.svg"
+                            alt="Answered"
+                            layout="fill"
+                            className="block w-full h-auto"
+                        />
                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{index + 1}</span>
                     </div>
                 );
             case QuestionState.MarkedForReview:
                 return (
                     <div className="w-8 h-8 relative inline-block">
-                        <img src="images/marked_for_review.svg" alt="Marked for Review" className="block w-full h-auto" />
+                        <Image
+                            src="/images/marked_for_review.svg"
+                            alt="Marked for Review"
+                            layout="fill"
+                            className="block w-full h-auto"
+                        />
                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{index + 1}</span>
                     </div>
                 );
             case QuestionState.AnsweredAndMarkedForReview:
                 return (
                     <div className="relative inline-block">
-                        <img src="images/marked_for_review_other.svg" alt="Answered & Marked for Review" className="block w-8 h-8" />
+                        <Image
+                            src="/images/marked_for_review_other.svg"
+                            alt="Answered & Marked for Review"
+                            width={32}
+                            height={32}
+                            className="block"
+                        />
                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{index + 1}</span>
                     </div>
                 );
@@ -190,7 +256,19 @@ const MainComponent = () => {
     };
 
 
-    const onCickQuestionPalette = (index: number) => {
+    const onClickQuestionPalette = (index: number) => {
+        if (currentQuestionNumber - 1 == index) { return; }
+        // Calculate time spent on the current question
+        const timeSpent = Math.floor((Date.now() - questionStartTime) / 1000);
+
+        const updateTimeSpentPerQuestion = () => {
+            setQuestionPalette(prevPalette => {
+                const newPalette = [...prevPalette];
+                newPalette[currentQuestionNumber - 1].timeTaken += timeSpent / 2;
+                return newPalette;
+            });
+        }
+
         // Update questionPalette immutably
         setQuestionPalette(prevPalette => {
             const newPalette = [...prevPalette];
@@ -207,61 +285,116 @@ const MainComponent = () => {
             return newPalette;
         });
 
+        updateTimeSpentPerQuestion();
         // Update the current question number
         setCurrentQuestionNumber(index + 1);
         // Ensure selectedOption is updated for the new current question
         setSelectedOption(prev => questionPalette[index].selectedAnswer);
+        // Reset the question start time
+        setQuestionStartTime(Date.now());
     };
 
 
 
-    const onClickNavigationButtons = (state: QuestionState) => {
-        if (selectedOption !== -1) {
-            const currentIndex = currentQuestionNumber - 1;
-            const oldState = questionPalette[currentIndex].state;
-            // Update legend counts accordingly using the mapping
-            setLegendCounts(prevCounts => ({
-                ...prevCounts,
-                [stateToLegendAction[oldState]]: prevCounts[stateToLegendAction[oldState] as LegendAction] - 1,  // Decrement the count of the old state
-                [stateToLegendAction[state]]: prevCounts[stateToLegendAction[state] as LegendAction] + 1  // Increment the count of the new state
-            }));
+    const onClickNavigationButtons = (
+        state: QuestionState,
+        operator: string,
+        overrideSelectedOption: boolean
+    ) => {
+        const currentIndex = currentQuestionNumber - 1;
+        const oldState = questionPalette[currentIndex].state;
+        const isLastQuestion = currentQuestionNumber === Number(maxQuestions) && operator === 'increment';
+        const isFirstQuestion = currentQuestionNumber === 1 && operator === 'decrement';
 
-            // Correctly update questionPalette with immutability
+        // Calculate time spent on the current question
+        const timeSpent = Math.floor((Date.now() - questionStartTime) / 1000);
+
+        const updateLegendCounts = (oldState: QuestionState, newState: QuestionState) => {
+            if (oldState !== newState) {
+                setLegendCounts(prevCounts => ({
+                    ...prevCounts,
+                    [stateToLegendAction[oldState]]: prevCounts[stateToLegendAction[oldState] as LegendAction] - 1,
+                    [stateToLegendAction[newState]]: prevCounts[stateToLegendAction[newState] as LegendAction] + 1
+                }));
+            }
+        };
+
+        const updateQuestionPalette = (index: number, newState: QuestionState) => {
             setQuestionPalette(prevPalette => {
                 const newPalette = [...prevPalette];
-
-                // Ensure you are modifying the correct item by checking within bounds
-                if (currentQuestionNumber - 1 < newPalette.length) {
-                    newPalette[currentQuestionNumber - 1].state = state;
+                if (index < newPalette.length) {
+                    newPalette[index].state = newState;
                 }
-
                 return newPalette;
             });
+        };
 
-            // Increment the current question number correctly and handle selectedOption. 
-            // Make sure you are not incrementing out of bounds.
-            if (currentQuestionNumber !== Number(maxQuestions)) {
-                setCurrentQuestionNumber(prevCurrent => {
-                    const newCurrent = prevCurrent + 1;
-                    // Make sure you're not accessing out of bounds
-                    if (newCurrent - 1 < questionPalette.length) {
-                        setSelectedOption(questionPalette[newCurrent - 1].selectedAnswer);
-                    } else {
-                        // Handle case where there is no next question
-                        setSelectedOption(-1);
-                    }
-                    return newCurrent;
-                });
+        const updateTimeSpentPerQuestion = () => {
+            setQuestionPalette(prevPalette => {
+                const newPalette = [...prevPalette];
+                newPalette[currentQuestionNumber - 1].timeTaken += timeSpent / 2;
+                return newPalette;
+            });
+        }
+
+
+        const updateCurrentQuestionNumber = (operator: string) => {
+            setCurrentQuestionNumber(prevCurrent => {
+                const newCurrent = operator === 'increment' ? prevCurrent + 1 : prevCurrent - 1;
+                setSelectedOption(newCurrent - 1 < questionPalette.length ? questionPalette[newCurrent - 1].selectedAnswer : -1);
+                return newCurrent;
+            });
+        };
+
+        updateTimeSpentPerQuestion()
+
+        if (overrideSelectedOption) {
+            if (oldState === QuestionState.NotVisited) {
+                if (isLastQuestion && !lastQuestionUpdated) {
+                    updateLegendCounts(oldState, state);
+                    setLastQuestionUpdated(true);
+                } else if (isFirstQuestion && !firstQuestionUpdated) {
+                    updateLegendCounts(oldState, state);
+                    setFirstQuestionUpdated(true);
+                } else if (!isLastQuestion && !isFirstQuestion) {
+                    updateLegendCounts(oldState, state);
+                }
+                updateQuestionPalette(currentIndex, state);
+            }
+            if (!(isLastQuestion || isFirstQuestion)) {
+                updateCurrentQuestionNumber(operator);
+            }
+        } else if (selectedOption !== -1) {
+            if (isLastQuestion && !lastQuestionUpdated) {
+                updateLegendCounts(oldState, state);
+                setLastQuestionUpdated(true);
+            } else if (isFirstQuestion && !firstQuestionUpdated) {
+                updateLegendCounts(oldState, state);
+                setFirstQuestionUpdated(true);
+            } else {
+                updateLegendCounts(oldState, state);
+            }
+            updateQuestionPalette(currentIndex, state);
+            if (currentQuestionNumber !== Number(maxQuestions) && currentQuestionNumber !== 0) {
+                updateCurrentQuestionNumber(operator);
             }
         }
+
+        // Reset the question start time
+        setQuestionStartTime(Date.now());
+    };
+
+
+
+    const submit = () => {
         // Check if its the last question and minimum number of questions have been answered.
         const minimumAnsweredQuestions = legendCounts.answered + legendCounts.answeredAndMarkedForReview + 1
-        if (currentQuestionNumber === Number(maxQuestions) && minimumAnsweredQuestions >= Number(minimumRequiredQuestions)) {
+        if (minimumAnsweredQuestions >= Number(minimumRequiredQuestions)) {
             setDialogOpen(true);
             setIsCompleted(true);
         }
         else {
-            if (currentQuestionNumber === Number(maxQuestions) && minimumAnsweredQuestions < Number(minimumRequiredQuestions)) {
+            if (minimumAnsweredQuestions < Number(minimumRequiredQuestions)) {
                 setDialogOpen(true);
                 setIsCompleted(false);
             }
@@ -270,15 +403,66 @@ const MainComponent = () => {
 
 
     const clearResponse = () => {
-        setSelectedOption(-1); // Clear the selected option when "Clear Response" button is clicked
+        if (selectedOption !== -1) {
+            const currentIndex = currentQuestionNumber - 1;
+            const oldState = questionPalette[currentIndex].state;
+            // Update the legend counts
+            const updateLegendCounts = (oldState: QuestionState, newState: QuestionState) => {
+                if (oldState !== newState) {
+                    setLegendCounts(prevCounts => ({
+                        ...prevCounts,
+                        [stateToLegendAction[oldState]]: prevCounts[stateToLegendAction[oldState] as LegendAction] - 1,
+                        [stateToLegendAction[newState]]: prevCounts[stateToLegendAction[newState] as LegendAction] + 1
+                    }));
+                }
+            };
+            // Update the question palette
+            const updateQuestionPalette = (index: number, newState: QuestionState) => {
+                setQuestionPalette(prevPalette => {
+                    const newPalette = [...prevPalette];
+                    if (index < newPalette.length) {
+                        newPalette[index].state = newState;
+                        console.log("Updated Palette:", newPalette);
+                    }
+                    return newPalette;
+                });
+            };
+
+            updateLegendCounts(oldState, QuestionState.NotVisited)
+            updateQuestionPalette(currentIndex, QuestionState.NotVisited)
+            setSelectedOption(-1); // Clear the selected option when "Clear Response" button is clicked
+        }
     };
+
+    async function storeQuestionPalette(items: QuestionPaletteItem[]) {
+        try {
+            const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
+            const res = await fetch(`${baseUrl}/create-or-update-answers`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    "Cache-Control": "no-cache"
+                },
+                body: JSON.stringify(items),
+                credentials: 'include'
+            });
+            if (!res.ok) {
+                throw new Error(`Error storing question palette, status = ${res.status}`);
+            }
+        } catch (error) {
+            console.error("Error storing question palette:", error);
+            throw error;
+        }
+    }
 
     // Function to populate question palette state
     async function populateQuestionPalette(items: QuestionPaletteItem[]) {
         // Clear any existing records in the questionPalette object store
-        await db.questionPalette.clear();
+        db.questionPalette.clear();
         // Add the initial state to the questionPalette object store
-        await db.questionPalette.bulkPut(items);
+        db.questionPalette.bulkPut(items);
+        // Function used to store questionPalette(user's answers)
+        storeQuestionPalette(items)
     }
 
     useEffect(() => {
@@ -293,71 +477,18 @@ const MainComponent = () => {
         router.push('/analysis')
     }
 
-    const handleClickOutside = (event: MouseEvent) => {
-        if (avatarRef.current && !avatarRef.current.contains(event.target as Node) && signOutRef.current && !signOutRef.current.contains(event.target as Node)) {
-            setShowSignOut(false);
-        }
-    };
-
-    useEffect(() => {
-        if (showSignOut) {
-            document.addEventListener('click', handleClickOutside, true);
-        } else {
-            document.removeEventListener('click', handleClickOutside, true);
-        }
-        return () => {
-            document.removeEventListener('click', handleClickOutside, true);
-        };
-    }, [showSignOut]);
-
-    useEffect(() => {
-        const userName = localStorage.getItem('google_user_name') || localStorage.getItem('other_name') || 'User Name';
-        const userEmail = localStorage.getItem('google_user_email') || localStorage.getItem('other_email') || 'User Email';
-        setUserInfo({ userName, userEmail });
-    }, []);
-
-    const toggleSignOut = () => {
-        setShowSignOut(!showSignOut);
-    };
-
     if (loading) {
         return <OrigamiAnimation />;
     }
 
+    if (!isAuthenticated) {
+        return <OrigamiAnimation />;
+    }
+
     return (
-        <Flex className="bg-[#38B6FF]" direction='column' height={{ md: '100vh' }} width={{ md: '100vw' }} style={{ position: 'absolute' }}>
-            <Box className="bg-[#EAF6FA] bg-opacity-[0.5] px-10" height='64px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
-                <IconButton size='3' style={{
-                    backgroundColor: '#1DACFF', boxShadow: '2px 2px 10px 3px rgba(0, 0, 0, 0.15)', cursor: 'pointer'
-                }}>
-                    <img src="images/back_button.svg" alt="Back Button" className="w-4 h-4" />
-                </IconButton>
-                <Text color='indigo' size='6' weight='bold' wrap='pretty' >CUET Mock Test</Text>
-                <Flex justify="center" align="center">
-                    <Box ref={avatarRef} onClick={toggleSignOut} style={{ cursor: 'pointer' }}>
-                        <Avatar
-                            size="3"
-                            radius="medium"
-                            fallback={userInfo.userName.charAt(0).toUpperCase()}
-                            highContrast
-                        />
-                    </Box>
-                    {showSignOut && (
-                        <Box ref={signOutRef} style={{
-                            position: 'absolute',
-                            top: '100%', // Position it just below the avatar
-                            right: '0',
-                            zIndex: 10,
-                            marginTop: '8px',
-                            marginRight: '42px',
-                            pointerEvents: 'auto'
-                        }}>
-                            <SignOut name={userInfo.userName} email={userInfo.userEmail} onClose={() => { setShowSignOut(false) }} />
-                        </Box>
-                    )}
-                </Flex>
-            </Box>
-            <Box style={{ 'height': '85%', 'width': '100%' }}>
+        <Flex className="bg-[#38B6FF] p-8" direction='column' height={{ md: '100vh' }} width={{ md: '100vw' }} style={{ position: 'absolute' }}>
+            <Header></Header>
+            <Box className="pl-4" style={{ 'height': '85%', 'width': '100%' }}>
                 <Flex style={{ height: '100%', width: '100%' }} gap='4'>
                     <Box style={{ 'height': '100%', 'width': '70%' }}>
                         <Flex direction='column' style={{ height: '100%', width: '100%' }} gap='4'>
@@ -435,49 +566,89 @@ const MainComponent = () => {
                             </Dialog.Root>
 
                             {/* Navigation Buttons */}
-
-                            <Box className="gap-8" style={{ 'height': '10%', 'width': '100%', 'display': 'flex', 'alignItems': 'center', 'justifyContent': 'center' }}>
-                                <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
-                                    onClickNavigationButtons(QuestionState.Answered)
-                                }}>Save and Next</Button>
-                                <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
-                                    clearResponse()
-                                }}>Clear Response</Button>
-                                <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
-                                    onClickNavigationButtons(QuestionState.AnsweredAndMarkedForReview)
-                                }}>Save and Mark for Review</Button>
-                                <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
-                                    onClickNavigationButtons(QuestionState.MarkedForReview)
-                                }}>Mark for Review and Next</Button>
+                            <Box className="gap-4" style={{ 'height': '20%', 'width': '100%', 'display': 'flex', 'flexDirection': 'column', 'alignItems': 'center', 'justifyContent': 'start' }}>
+                                <Box className="gap-8" style={{ 'height': '50%', 'width': '80%', 'display': 'flex', 'flexDirection': 'row', 'alignItems': 'center', 'justifyContent': 'start' }}>
+                                    <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
+                                        onClickNavigationButtons(QuestionState.Answered, 'increment', false)
+                                    }}>Save and Next</Button>
+                                    <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
+                                        clearResponse()
+                                    }}>Clear Response</Button>
+                                    <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
+                                        onClickNavigationButtons(QuestionState.AnsweredAndMarkedForReview, 'increment', false)
+                                    }}>Save and Mark for Review</Button>
+                                    <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => {
+                                        onClickNavigationButtons(QuestionState.MarkedForReview, 'increment', false)
+                                    }}>Mark for Review and Next</Button>
+                                </Box>
+                                <Box className="gap-8" style={{ 'height': '50%', 'width': '85%', 'display': 'flex', 'flexDirection': 'row', 'alignItems': 'center', 'justifyContent': 'space-between' }}>
+                                    <Box className="gap-8 ml-6" style={{ 'height': '50%', 'display': 'flex', 'flexDirection': 'row', 'alignItems': 'center' }}>
+                                        <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => { onClickNavigationButtons(QuestionState.NotAnswered, 'decrement', true) }}>Previous</Button>
+                                        <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={() => { onClickNavigationButtons(QuestionState.NotAnswered, 'increment', true) }}>Next</Button>
+                                    </Box>
+                                    <Box style={{ 'height': '50%', 'display': 'flex', 'flexDirection': 'row', 'alignItems': 'center', justifySelf: 'end' }}>
+                                        <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={submit}>Submit</Button>
+                                    </Box>
+                                </Box>
                             </Box>
                         </Flex>
                     </Box>
-                    <Box style={{ 'height': '100%', 'width': '30%' }}>
-                        <Flex direction='column' style={{ height: '100%', width: '90%' }}>
-                            <Box style={{ 'height': '11%', 'width': '90%', 'display': 'flex', 'alignItems': 'center' }}>
-                                <Text className="pl-8 pt-5" size='4' weight='bold' wrap='pretty' >Question Palette</Text>
+                    <Box className="my-4" style={{ 'height': '100%', 'width': '30%' }}>
+                        <Flex gapY='4' direction='column' style={{ height: '100%', width: '90%', alignItems: 'center' }}>
+                            {/* Timer */}
+                            <Box p='6' style={{ 'width': '100%', alignItems: 'center', justifyItems: 'center', justifyContent: 'space-between', display: 'flex', flexDirection: 'column', borderRadius: '5px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                                <Flex gapX='2' style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', height: '10%', width: '100%' }}>
+                                    <Image
+                                        src="/images/timer.svg"
+                                        alt="Timer"
+                                        width={24}
+                                        height={24}
+                                    />
+                                    <Text size='4' weight='medium' wrap='pretty'>Time Remaining</Text>
+                                </Flex>
+                                <Text>{formatTime(timeLeft)} / {initialFormattedTime}</Text>
                             </Box>
+                            {/* Test completion dialog */}
+                            <Dialog.Root open={testCompletionDialogOpen}>
+                                <Dialog.Content style={{ backgroundColor: '#DFF6FA', borderRadius: '5px', padding: '20px', boxShadow: '0px 10px 50px hsla(0, 0%, 0%, 0.1)' }}>
+                                    <Text>The test has ended. Please wait while we redirect you to the analysis page.</Text>
+                                </Dialog.Content>
+                            </Dialog.Root>
+                            <Flex gapX='2' style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'left', height: '10%', width: '100%' }}>
+                                <Image
+                                    src="/images/question_palette.svg"
+                                    alt="Question Palette"
+                                    width={24}
+                                    height={24}
+                                />
+                                <Text size='4' weight='medium' wrap='pretty'>Question Palette</Text>
+                            </Flex>
                             {/* Questions List */}
-                            <Box className="pl-8" style={{ 'height': '50%', 'width': '100%', 'display': 'grid', 'gridTemplateColumns': 'repeat(8, 1fr)', 'alignItems': 'center', 'justifyItems': 'center' }}>
+                            <Grid gapY='1' style={{ 'height': '100%', 'width': '100%', 'gridTemplateColumns': 'repeat(8, 1fr)', alignItems: 'center', justifyItems: 'center' }}>
                                 {questionPalette.map((state, index) => (
-                                    <div key={index} className="flex flex-col items-center justify-center">
+                                    <div key={index}>
                                         <button onClick={() => {
                                             // Here index is the index of the question that is clicked
-                                            onCickQuestionPalette(index)
+                                            onClickQuestionPalette(index)
                                         }}>{getComponentForState(state)}</button>
                                     </div>
                                 ))}
-                            </Box>
-                            <Box style={{ 'height': '7%', 'width': '90%', 'display': 'flex', 'alignItems': 'center' }}>
-                                <Text className="pl-8" size='4' weight='bold' wrap='pretty' >Legend</Text>
-                            </Box>
+                            </Grid>
+                            <Flex gapX='2' style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'left', height: '10%', width: '100%' }}>
+                                <Image
+                                    src="/images/legend.svg"
+                                    alt="Legend"
+                                    width={24}
+                                    height={24}
+                                />
+                            </Flex>
                             {/* Legend */}
-                            <Box style={{
+                            <Grid gapX='9' pl='2' style={{
                                 'height': '25%', 'width': '100%', 'display': 'grid', gridTemplateRows: 'repeat(3, 2fr)',
                                 gridTemplateColumns: 'min-content auto', // This will allow for natural width of the icons and the rest for text
-                                alignItems: 'center'
+                                alignItems: 'center', justifyItems: 'left'
                             }}>
-                                <div className="pl-10 flex flex-row items-center justify-center w-40">
+                                <div className="flex flex-row items-center justify-center">
                                     <div className="w-8 h-8 flex items-center justify-center rounded-lg text-white bg-gradient-to-tr from-stone-500 to-stone-400 text-sm">
                                         {legendCounts.notVisited}
                                     </div>
@@ -485,33 +656,54 @@ const MainComponent = () => {
                                 </div>
                                 <div className="flex flex-row items-center justify-center">
                                     <div className="w-8 h-8 relative inline-block">
-                                        <img src="images/not_answered.svg" alt="Custom Vector" className="block w-full h-auto" />
+                                        <Image
+                                            src="/images/not_answered.svg"
+                                            alt="Not Answered"
+                                            layout="fill"
+                                            className="block w-full h-auto"
+                                        />
                                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{legendCounts.notAnswered}</span>
                                     </div>
                                     <div className="pl-1 whitespace-nowrap">Not Answered</div>
                                 </div>
-                                <div className="pl-8 flex flex-row items-center justify-center">
+                                <div className="flex flex-row items-center justify-center">
                                     <div className="w-8 h-8 relative inline-block">
-                                        <img src="images/answered.svg" alt="Custom Vector" className="block w-full h-auto" />
+                                        <Image
+                                            src="/images/answered.svg"
+                                            alt="Answered"
+                                            layout="fill"
+                                            className="block w-full h-auto"
+                                        />
                                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{legendCounts.answered}</span>
                                     </div>
                                     <div className="pl-1">Answered</div>
                                 </div>
-                                <div className="pl-8 flex flex-row items-center justify-center">
+                                <div className="flex flex-row items-center justify-center">
                                     <div className="w-8 h-8 relative inline-block">
-                                        <img src="images/marked_for_review.svg" alt="Custom Vector" className="block w-full h-auto" />
+                                        <Image
+                                            src="/images/marked_for_review.svg"
+                                            alt="Marked For Review"
+                                            layout="fill"
+                                            className="block w-full h-auto"
+                                        />
                                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{legendCounts.markedForReview}</span>
                                     </div>
                                     <div className="pl-1">Marked for Review</div>
                                 </div>
-                                <div className="pl-11 flex flex-row items-center justify-center" style={{ 'gridColumn': '1 / span 2', 'gridRow': '3 / 4' }}>
+                                <div className="flex flex-row items-center justify-center" style={{ 'gridColumn': '1 / span 2', 'gridRow': '3 / 4' }}>
                                     <div className="relative inline-block">
-                                        <img src="images/marked_for_review_other.svg" alt="Custom Vector" className="block w-12 h-12" />
+                                        <Image
+                                            src="/images/marked_for_review_other.svg"
+                                            alt="Marked For Review Other"
+                                            width={48}
+                                            height={48}
+                                            className="block"
+                                        />
                                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{legendCounts.answeredAndMarkedForReview}</span>
                                     </div>
                                     <div className="pl-1">Answered & Marked for Review (will be considered for evaluation)</div>
                                 </div>
-                            </Box>
+                            </Grid>
                         </Flex>
                     </Box>
                 </Flex >

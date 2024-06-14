@@ -1,14 +1,18 @@
 'use client'
 
-import { Flex, Box, Text, ScrollArea, IconButton, Avatar } from "@radix-ui/themes";
+import { Flex, Box, Text, ScrollArea } from "@radix-ui/themes";
 import OverviewPerformancePieChart from "@/app/components/visualisations/OverviewPerformancePieChart";
-import React, { Suspense, useEffect, useRef, useState } from 'react';
+import React, { Suspense, useEffect, useState } from 'react';
 import PerformanceTable from "@/app/components/visualisations/PerformanceTable";
 import db from "@/app/utils/indexedDbUtils";
 import useAuth from "@/app/hooks/useAuth";
 import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
-import SignOut from "@/app/components/SignOut";
+import Header from "@/app/components/header/Header";
+import TimeTakenPerQuestion from "@/app/components/visualisations/TimeTakenPerQuestion";
+import Image from 'next/image';
+
+
 
 interface IPerformanceTable {
     question_number: number;
@@ -17,16 +21,17 @@ interface IPerformanceTable {
     result_status: string;
 }
 
+interface ITimeTakenPerQuestion {
+    'question': string;
+    'timeTaken': number
+}
+
 const MainComponent = () => {
     console.log('analysis component mounted')
     const { isAuthenticated, loading } = useAuth();
     const [performanceScores, setPerformanceScores] = useState({ correctAnswers: 0, incorrectAnswers: 0 });
     const [performanceTable, setPerformanceTable] = useState<IPerformanceTable[]>([]);
-    const [showSignOut, setShowSignOut] = useState(false);
-
-    const avatarRef = useRef<HTMLDivElement>(null);
-    const signOutRef = useRef<HTMLDivElement>(null);
-    const [userInfo, setUserInfo] = useState({ userName: 'User Name', userEmail: 'User Email' });
+    const [timeTakenPerQuestion, setTimeTakenPerQuestion] = useState<ITimeTakenPerQuestion[]>([]);
 
     // Function to fetch performance scores
     async function getPerformanceScores() {
@@ -40,83 +45,42 @@ const MainComponent = () => {
         setPerformanceTable(performanceTable); // Update state with fetched data
     }
 
+    // Function to fetch question analysis table
+    async function getTimeSpentPerQuestion() {
+        const timeTakenPerQuestion = await db.getTimeTakenPerQuestion(); // Assume this returns an array of analysis data
+        setTimeTakenPerQuestion(timeTakenPerQuestion); // Update state with fetched data
+    }
+
     // Effect to run once on component mount
     useEffect(() => {
         getPerformanceScores();
         getPerformanceTable();
+        getTimeSpentPerQuestion();
     }, []); // Empty dependency array ensures this effect runs only once after the initial render
-
-    const handleClickOutside = (event: MouseEvent) => {
-        if (avatarRef.current && !avatarRef.current.contains(event.target as Node) && signOutRef.current && !signOutRef.current.contains(event.target as Node)) {
-            setShowSignOut(false);
-        }
-    };
-
-    useEffect(() => {
-        if (showSignOut) {
-            document.addEventListener('click', handleClickOutside, true);
-        } else {
-            document.removeEventListener('click', handleClickOutside, true);
-        }
-        return () => {
-            document.removeEventListener('click', handleClickOutside, true);
-        };
-    }, [showSignOut]);
-
-    useEffect(() => {
-        const userName = localStorage.getItem('google_user_name') || localStorage.getItem('other_name') || 'User Name';
-        const userEmail = localStorage.getItem('google_user_email') || localStorage.getItem('other_email') || 'User Email';
-        setUserInfo({ userName, userEmail });
-    }, []);
-
-    const toggleSignOut = () => {
-        setShowSignOut(!showSignOut);
-    };
 
     if (loading) {
         return <OrigamiAnimation />;
     }
 
+    if (!isAuthenticated) {
+        return <OrigamiAnimation />;
+    }
+
     return (
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh', position: 'absolute' }}>
-            <Flex direction='column' className="bg-[#38B6FF] flex-col items-center justify-center gap-8 p-8" style={{ position: 'relative' }}>
-                <Box className="bg-[#38B6FF]" style={{
-                    height: '5%', width: '100%', position: 'relative'
-                }}>
-                    <Flex className="h-full px-10" justify='between' align='center'>
-                        <IconButton size='3' style={{
-                            backgroundColor: '#1DACFF', boxShadow: '2px 2px 10px 3px rgba(0, 0, 0, 0.15)', cursor: 'pointer'
-                        }}>
-                            <img src="images/back_button.svg" alt="Back Button" className="w-4 h-4" />
-                        </IconButton>
-                        <Flex justify="center" align="center">
-                            <Box ref={avatarRef} onClick={toggleSignOut} style={{ cursor: 'pointer' }}>
-                                <Avatar
-                                    size="3"
-                                    radius="medium"
-                                    fallback={userInfo.userName.charAt(0).toUpperCase()}
-                                    highContrast
-                                />
-                            </Box>
-                            {showSignOut && (
-                                <Box ref={signOutRef} style={{
-                                    position: 'absolute',
-                                    top: '100%', // Position it just below the avatar
-                                    right: '0',
-                                    zIndex: 10,
-                                    marginTop: '8px',
-                                    marginRight: '42px',
-                                    pointerEvents: 'auto'
-                                }}>
-                                    <SignOut name={userInfo.userName} email={userInfo.userEmail} onClose={() => { setShowSignOut(false) }} />
-                                </Box>
-                            )}
-                        </Flex>
-                    </Flex>
-                </Box>
-                <Box className="bg-[#EAF6FA] px-8" style={{ 'width': '50%', 'display': 'flex', 'flexDirection': 'column', 'justifyContent': 'start', 'alignItems': 'start', 'borderRadius': '5px', 'boxShadow': '2px 2px 10px 2px rgba(0, 0, 0, 0.15)' }}>
+            <Flex direction='column' className="bg-[#38B6FF] flex-col items-center justify-center gap-8 p-8" style={{ position: 'relative', height: '100%' }}>
+                <Header></Header>
+                <Box className="bg-[#EAF6FA] px-8" style={{ 'width': '70%', 'display': 'flex', 'flexDirection': 'column', 'justifyContent': 'start', 'alignItems': 'start', 'borderRadius': '5px', 'boxShadow': '2px 2px 10px 2px rgba(0, 0, 0, 0.15)' }}>
                     <Flex className="flex-col gap-8 p-14">
-                        <Text size='5' weight='bold' wrap='pretty' >Overview of Performance</Text>
+                        <Flex direction='row' gap='3' style={{ alignContent: 'center' }}>
+                            <Image
+                                src="/images/performance_overview.svg"
+                                alt="Performance Overview"
+                                width={40}
+                                height={40}
+                            />
+                            <Text size='8' wrap='pretty' >Overview of Performance</Text>
+                        </Flex>
                         <Text size='4' weight='light' wrap='pretty' >This section provides a quick glance at your overall test results. The chart visualizes the proportion of correct to incorrect answers, offering you a clear, immediate sense of how you performed.
                             Below, a concise summary highlights your total correct answers, giving you a foundational snapshot of your performance.</Text>
                         <Box style={{ "alignSelf": 'center' }}>
@@ -124,14 +88,39 @@ const MainComponent = () => {
                         </Box>
                     </Flex >
                 </Box>
-                <Box className="bg-[#EAF6FA] px-8" style={{ 'width': '50%', 'display': 'flex', 'flexDirection': 'column', 'justifyContent': 'start', 'alignItems': 'start', 'borderRadius': '5px', 'boxShadow': '2px 2px 10px 2px rgba(0, 0, 0, 0.15)' }}>
+                <Box className="bg-[#EAF6FA] px-8" style={{ 'width': '70%', 'display': 'flex', 'flexDirection': 'column', 'justifyContent': 'start', 'alignItems': 'start', 'borderRadius': '5px', 'boxShadow': '2px 2px 10px 2px rgba(0, 0, 0, 0.15)' }}>
                     <Flex className="flex-col gap-8 p-14">
-                        <Text size='5' weight='bold' wrap='pretty' >Detailed Question Analysis</Text>
+                        <Flex direction='row' align='start' gap='3' style={{ alignContent: 'center' }}>
+                            <Image
+                                src="/images/detailed_analysis.svg"
+                                alt="Performance Overview"
+                                width={40}
+                                height={40}
+                            />
+                            <Text size='8' wrap='pretty' >Detailed Question Analysis</Text>
+                        </Flex>
                         <Text size='4' weight='light' wrap='pretty' >Dive into every question you faced with this detailed table. It lists your answers alongside the correct answers, color-coded to distinguish successes from missteps.
                             This tool is perfect for reviewing specific areas where you excelled or need improvement, making it easier to target your studies effectively.</Text>
                         <Box style={{ "alignSelf": 'center' }}>
                             <PerformanceTable data={performanceTable} />
                         </Box>
+                    </Flex >
+                </Box>
+                <Box className="bg-[#EAF6FA] px-8" style={{ 'width': '70%', 'display': 'flex', 'flexDirection': 'column', 'justifyContent': 'start', 'alignItems': 'start', 'borderRadius': '5px', 'boxShadow': '2px 2px 10px 2px rgba(0, 0, 0, 0.15)' }}>
+                    <Flex className="flex-col gap-8 p-14">
+                        <Flex direction='row' align='start' gap='3' style={{ alignContent: 'center' }}>
+                            <Image
+                                src="/images/time_spent_per_question.svg"
+                                alt="Performance Overview"
+                                width={40}
+                                height={40}
+                            />
+                            <Text size='8' wrap='pretty' >Time Taken Per Question</Text>
+                        </Flex>
+                        <Text size='4' weight='light' wrap='pretty' >This chart displays the duration taken to answer each question in a sequence.
+                            Each point on the chart represents the time spent on a specific question, with the line connecting these points to illustrate the overall trend.
+                            You can zoom in to see the points better and pick to move around the graph.</Text>
+                        <TimeTakenPerQuestion data={timeTakenPerQuestion} />
                     </Flex >
                 </Box>
             </Flex >

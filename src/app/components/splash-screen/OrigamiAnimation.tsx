@@ -1,5 +1,6 @@
 'use client';
 import React from 'react';
+import Image from 'next/image';
 
 const OrigamiAnimation = () => {
     const containerStyle = {
@@ -36,7 +37,13 @@ const OrigamiAnimation = () => {
     return (
         <div style={containerStyle}>
             <div style={imageContainerStyle}>
-                <img src="images/splash_screen_logo.png" alt="Origami Bird" style={imageStyle} />
+                <Image
+                    src="/images/splash_screen_logo.png"
+                    alt="Origami Bird"
+                    width={500}
+                    height={500}
+                    style={imageStyle}
+                />
                 <div style={gradientStyle}></div>
             </div>
             <style jsx>{`

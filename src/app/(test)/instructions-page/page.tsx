@@ -1,13 +1,15 @@
 'use client'
 import useAuth from "@/app/hooks/useAuth";
 import { useRouter, useSearchParams } from 'next/navigation';
-import { Flex, Box, ScrollArea, Text, Button, IconButton, Avatar } from "@radix-ui/themes";
+import { Flex, Box, ScrollArea, Text, Button } from "@radix-ui/themes";
 import { useCallback, useEffect, useState, useRef } from 'react';
 import db from '@/app/utils/indexedDbUtils';
 import { Suspense } from 'react'
 import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
-import SignOut from "@/app/components/SignOut";
+import Header from "@/app/components/header/Header";
+import { encryptParams, decryptParams, Params } from "@/app/utils/paramUtils";
+import Image from 'next/image';
 
 const MainComponent = () => {
     console.log('instructions page component mounted')
@@ -17,29 +19,38 @@ const MainComponent = () => {
     const searchParams = useSearchParams()
     const hasRun = useRef(false);
 
-    const subject = searchParams.get('subject') as string
-    const language = searchParams.get('language')
-    // duration later populated via indexDB
-    const duration = searchParams.get('duration')
-    const maxQuestions = searchParams.get('maxQuestions')
-    const minimumRequiredQuestions = searchParams.get('minimumRequiredQuestions')
-    const [showSignOut, setShowSignOut] = useState(false);
+    // Decode the params
+    const encodedParams = searchParams.get('params');
+    let decodedParams: Params = {}; // Ensure decodedParams is always of type Params
 
-    const avatarRef = useRef<HTMLDivElement>(null);
-    const signOutRef = useRef<HTMLDivElement>(null);
-    const [userInfo, setUserInfo] = useState({ userName: 'User Name', userEmail: 'User Email' });
+    if (encodedParams) {
+        const decoded = decryptParams(encodedParams);
+        if (decoded !== null) {
+            decodedParams = decoded;
+        } else {
+            // Handle the case when decoding fails, if needed
+            console.error('Failed to decode parameters');
+        }
+    }
+
+    const subject = decodedParams.subject;
+    const language = decodedParams.language;
+    const duration = decodedParams.duration;
+    const maxQuestions = decodedParams.maxQuestions;
+    const minimumRequiredQuestions = decodedParams.minimumRequiredQuestions;
+
 
     // Get a new searchParams string by merging the current
     // searchParams with a provided key/value pair
     const createQueryString = useCallback(
-        (searchParams: URLSearchParams, queryParams: Record<string, any>) => {
-            const params = new URLSearchParams(searchParams.toString())
+        (queryParams: Record<string, any>) => {
+            const params = new URLSearchParams()
             // Add each query parameter to the URLSearchParams object
             Object.entries(queryParams).forEach(([name, value]) => {
                 params.set(name, value);
             });
-
-            return params.toString();
+            const encodedParams = encryptParams(Object.fromEntries(params));
+            return `params=${encodedParams}`;
         },
         []
     );
@@ -61,85 +72,35 @@ const MainComponent = () => {
 
     const handleButtonClick = () => {
         if (isChecked) {
-            const queryString = createQueryString(searchParams, { questionNumber: 1 });
+            const queryString = createQueryString({ subject: subject, language: language, duration: duration, maxQuestions: maxQuestions, minimumRequiredQuestions: minimumRequiredQuestions });
             router.push('/question' + '?' + queryString);
         } else {
             alert('Please check the box to indicate that you have read and understood the instructions.');
         }
     };
 
-    const handleClickOutside = (event: MouseEvent) => {
-        if (avatarRef.current && !avatarRef.current.contains(event.target as Node) && signOutRef.current && !signOutRef.current.contains(event.target as Node)) {
-            setShowSignOut(false);
-        }
-    };
-
-    useEffect(() => {
-        if (showSignOut) {
-            document.addEventListener('click', handleClickOutside, true);
-        } else {
-            document.removeEventListener('click', handleClickOutside, true);
-        }
-        return () => {
-            document.removeEventListener('click', handleClickOutside, true);
-        };
-    }, [showSignOut]);
-
-    useEffect(() => {
-        const userName = localStorage.getItem('google_user_name') || localStorage.getItem('other_name') || 'User Name';
-        const userEmail = localStorage.getItem('google_user_email') || localStorage.getItem('other_email') || 'User Email';
-        setUserInfo({ userName, userEmail });
-    }, []);
-
-    const toggleSignOut = () => {
-        setShowSignOut(!showSignOut);
-    };
-
     if (loading) {
+        return <OrigamiAnimation />;
+    }
+
+    if (!isAuthenticated) {
         return <OrigamiAnimation />;
     }
 
     return (
         <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh', position: 'absolute' }}>
-            <Flex className="bg-[#38B6FF]" direction='column' style={{ position: 'relative' }}>
-                <Box className="bg-[#EAF6FA] bg-opacity-[0.5] px-10" height='64px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'space-between', alignItems: 'center', position: 'relative' }}>
-                    <IconButton size='3' style={{
-                        backgroundColor: '#1DACFF', boxShadow: '2px 2px 10px 3px rgba(0, 0, 0, 0.15)', cursor: 'pointer'
-                    }}>
-                        <img src="images/back_button.svg" alt="Back Button" className="w-4 h-4" />
-                    </IconButton>
-                    <Text color='indigo' size='6' weight='bold' wrap='pretty' >CUET Mock Test</Text>
-                    <Flex justify="center" align="center">
-                        <Box ref={avatarRef} onClick={toggleSignOut} style={{ cursor: 'pointer' }}>
-                            <Avatar
-                                size="3"
-                                radius="medium"
-                                fallback={userInfo.userName.charAt(0).toUpperCase()}
-                                highContrast
-                            />
-                        </Box>
-                        {showSignOut && (
-                            <Box ref={signOutRef} style={{
-                                position: 'absolute',
-                                top: '100%', // Position it just below the avatar
-                                right: '0',
-                                zIndex: 10,
-                                marginTop: '8px',
-                                marginRight: '42px',
-                                pointerEvents: 'auto'
-                            }}>
-                                <SignOut name={userInfo.userName} email={userInfo.userEmail} onClose={() => { setShowSignOut(false) }} />
-                            </Box>
-                        )}
-                    </Flex>
+            <Flex className="bg-[#38B6FF] flex-col items-center justify-center gap-2 p-8" direction='column' style={{ position: 'relative', height: '100%' }}>
+                <Header></Header>
+                <Box className="pl-12 pt-8 pb-4" height='42px' flexGrow='1' style={{ width: '100%', display: 'flex', 'flexDirection': 'row', justifyContent: 'left', alignItems: 'center' }}>
+                    <Image
+                        src="/images/guide.svg"
+                        alt="Guide"
+                        width={28}
+                        height={28}
+                    />
+                    <Text size='6' className="ml-3" weight='regular' wrap='pretty' >General Instructions</Text>
                 </Box>
-                <Box className="bg-[#EAF6FA] bg-opacity-[0.3]" height='32px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                    <Text size='5' weight='regular' wrap='pretty' >Instructions</Text>
-                </Box>
-                <Box className="pl-6 py-8" height='42px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
-                    <Text size='6' weight='regular' wrap='pretty' >General Instructions</Text>
-                </Box>
-                <Box className="pl-6" flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
+                <Box className="pl-5" flexGrow='1' style={{ width: '95%', display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
                     <div style={{ padding: '1rem' }}>
                         <ol className="list-decimal">
                             <li>Total duration of {subject.charAt(0).toUpperCase() + subject.slice(1)} paper is {duration}.</li>
@@ -178,15 +139,15 @@ const MainComponent = () => {
                         </ol>
                     </div>
                 </Box>
-                <Box className="pl-6 py-6" height='64px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
+                <Box className="pl-12 py-6" height='64px' flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
                     <Text color="red" size='3' weight='light' wrap='pretty' >Please note all questions will appear in {language}.
                         This language is fixed and cannot be changed later on.</Text>
                 </Box>
-                <Box className="pl-6" flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
+                <Box className="pl-12" flexGrow='1' style={{ width: '100%', display: 'flex', justifyContent: 'left', alignItems: 'center' }}>
                     <label className="flex items-start space-x-2">
-                        <input id="proceed-checkbox" type="checkbox" className="form-checkbox text-blue-500 h-4 w-4 mt-1" onChange={handleCheckboxChange}
+                        <input id="proceed-checkbox" type="checkbox" className="form-checkbox text-blue-500 h-8 w-8" onChange={handleCheckboxChange}
                             checked={isChecked} />
-                        <span className="text-gray-800">
+                        <span className="text-gray-800 mt-1">
                             I have read and understood the instructions. My computer hardware are in proper working condition.
                             I declare that I am not using any prohibited gadget like mobile phone, bluetooth devices etc. while giving the test. I agree that in case of not adhering to the instructions, I shall be liable
                             to be debarred from this test and/or to disciplinary action, which may include ban from future tests/examinations.
@@ -194,7 +155,7 @@ const MainComponent = () => {
                     </label>
                 </Box>
                 <Box className="p-4" style={{ height: '20%', width: '20%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                    <Button className="w-full h-full" style={{ 'backgroundColor': '#120052', cursor: 'pointer' }} size="4" variant='solid' onClick={handleButtonClick}>I am ready to begin</Button>
+                    <Button className="w-full h-full" style={{ 'backgroundColor': '#120052', cursor: 'pointer', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }} size="4" variant='solid' onClick={handleButtonClick}>I am ready to begin</Button>
                 </Box>
             </Flex>
         </ScrollArea >

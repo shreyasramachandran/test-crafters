@@ -2,6 +2,24 @@ import { NextResponse } from "next/server";
 import type { NextRequest } from 'next/server'
 
 export async function middleware(request: NextRequest) {
+    const domain = process.env.NEXT_PUBLIC_DOMAIN
+
+    const referer = request.headers.get('referer') || '';
+    const protectedPaths = ['/instructions-page', '/question', '/analysis'];
+    const allowedReferers = {
+        '/instructions-page': '/test-picker',
+        '/question': '/instructions-page',
+        '/analysis': '/question',
+    };
+
+    const currentPath = request.nextUrl.pathname;
+    const expectedReferer = allowedReferers[currentPath as keyof typeof allowedReferers];
+
+    // if (protectedPaths.includes(currentPath) && !referer.includes(expectedReferer)) {
+    //     const url = new URL('/test-picker', request.url);
+    //     return NextResponse.redirect(url);
+    // }
+
     async function createSession() {
         try {
             const baseUrl = process.env.NEXT_PUBLIC_BACKEND_API_BASE_URL;
@@ -35,14 +53,15 @@ export async function middleware(request: NextRequest) {
     // If no session cookie exists, generate a new session session and store its id as a cookie
     if (!sessionId) {
         sessionId = await createSession()
-        console.log('sessionId', sessionId)
         // SessionId is sent via http cookies
         const response = NextResponse.next()
+        // Set the sessionId in the response headers
+        response.headers.set('sessionId', sessionId);
         response?.cookies.set({
             name: 'sessionId',
             value: sessionId, // Generate a random session IDx
             path: '/',
-            domain: '.cuet.net.in',
+            domain: domain, // Set it to cuet.net.in on prod
             httpOnly: true,
             secure: true, // Set to true if using HTTPS
             sameSite: 'none', // Recommended for most use cases

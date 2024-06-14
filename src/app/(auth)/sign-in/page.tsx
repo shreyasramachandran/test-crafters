@@ -40,7 +40,7 @@ const MainComponent = () => {
                 });
             }
             const responseData = await res.json();
-            return responseData.isValid
+            return responseData.data.isValid
         }
         catch (error) {
             // Handle other errors
