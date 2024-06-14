@@ -15,10 +15,10 @@ export async function middleware(request: NextRequest) {
     const currentPath = request.nextUrl.pathname;
     const expectedReferer = allowedReferers[currentPath as keyof typeof allowedReferers];
 
-    if (protectedPaths.includes(currentPath) && !referer.includes(expectedReferer)) {
-        const url = new URL('/test-picker', request.url);
-        return NextResponse.redirect(url);
-    }
+    // if (protectedPaths.includes(currentPath) && !referer.includes(expectedReferer)) {
+    //     const url = new URL('/test-picker', request.url);
+    //     return NextResponse.redirect(url);
+    // }
 
     async function createSession() {
         try {

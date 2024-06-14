@@ -5,6 +5,7 @@ import { useEffect, useRef, useState } from "react";
 import Settings from "./Settings";
 import Refer from "../Refer";
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 
 export default function Header() {
     const router = useRouter();
@@ -59,7 +60,12 @@ export default function Header() {
                 <IconButton size='3' style={{
                     backgroundColor: '#1DACFF', boxShadow: '2px 2px 10px 3px rgba(0, 0, 0, 0.15)', cursor: 'pointer'
                 }} onClick={handleBackClick}>
-                    <img src="images/back_button.svg" alt="Back Button" className="w-4 h-4" />
+                    <Image
+                        src="/images/back_button.svg"
+                        alt="Back Button"
+                        width={16}
+                        height={16}
+                    />
                 </IconButton>
                 <Flex justify="center" align="center">
                     <Box ref={avatarRef} onClick={toggleSettings} style={{ cursor: 'pointer' }}>

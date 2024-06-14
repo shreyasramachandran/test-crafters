@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
 import Header from "@/app/components/header/Header";
 import { decryptParams, Params } from "@/app/utils/paramUtils";
+import Image from 'next/image';
 
 const MainComponent = () => {
     // Get isAuthenticated in case you need to use it for future operations
@@ -198,28 +199,49 @@ const MainComponent = () => {
             case QuestionState.NotAnswered:
                 return (
                     <div className="w-8 h-8 relative inline-block">
-                        <img src="images/not_answered.svg" alt="Not Answered" className="block w-full h-auto" />
+                        <Image
+                            src="/images/not_answered.svg"
+                            alt="Not Answered"
+                            layout="fill"
+                            className="block w-full h-auto"
+                        />
                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{index + 1}</span>
                     </div>
                 );
             case QuestionState.Answered:
                 return (
                     <div className="w-8 h-8 relative inline-block">
-                        <img src="images/answered.svg" alt="Answered" className="block w-full h-auto" />
+                        <Image
+                            src="/images/answered.svg"
+                            alt="Answered"
+                            layout="fill"
+                            className="block w-full h-auto"
+                        />
                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{index + 1}</span>
                     </div>
                 );
             case QuestionState.MarkedForReview:
                 return (
                     <div className="w-8 h-8 relative inline-block">
-                        <img src="images/marked_for_review.svg" alt="Marked for Review" className="block w-full h-auto" />
+                        <Image
+                            src="/images/marked_for_review.svg"
+                            alt="Marked for Review"
+                            layout="fill"
+                            className="block w-full h-auto"
+                        />
                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{index + 1}</span>
                     </div>
                 );
             case QuestionState.AnsweredAndMarkedForReview:
                 return (
                     <div className="relative inline-block">
-                        <img src="images/marked_for_review_other.svg" alt="Answered & Marked for Review" className="block w-8 h-8" />
+                        <Image
+                            src="/images/marked_for_review_other.svg"
+                            alt="Answered & Marked for Review"
+                            width={32}
+                            height={32}
+                            className="block"
+                        />
                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{index + 1}</span>
                     </div>
                 );
@@ -576,7 +598,12 @@ const MainComponent = () => {
                             {/* Timer */}
                             <Box p='6' style={{ 'width': '100%', alignItems: 'center', justifyItems: 'center', justifyContent: 'space-between', display: 'flex', flexDirection: 'column', borderRadius: '5px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1)' }}>
                                 <Flex gapX='2' style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', height: '10%', width: '100%' }}>
-                                    <img src="images/timer.svg" alt="Wallet" className="w-6 h-6" />
+                                    <Image
+                                        src="/images/timer.svg"
+                                        alt="Timer"
+                                        width={24}
+                                        height={24}
+                                    />
                                     <Text size='4' weight='medium' wrap='pretty'>Time Remaining</Text>
                                 </Flex>
                                 <Text>{formatTime(timeLeft)} / {initialFormattedTime}</Text>
@@ -588,7 +615,12 @@ const MainComponent = () => {
                                 </Dialog.Content>
                             </Dialog.Root>
                             <Flex gapX='2' style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'left', height: '10%', width: '100%' }}>
-                                <img src="images/question_palette.svg" alt="Wallet" className="w-6 h-6" />
+                                <Image
+                                    src="/images/question_palette.svg"
+                                    alt="Question Palette"
+                                    width={24}
+                                    height={24}
+                                />
                                 <Text size='4' weight='medium' wrap='pretty'>Question Palette</Text>
                             </Flex>
                             {/* Questions List */}
@@ -603,8 +635,12 @@ const MainComponent = () => {
                                 ))}
                             </Grid>
                             <Flex gapX='2' style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyContent: 'left', height: '10%', width: '100%' }}>
-                                <img src="images/legend.svg" alt="Wallet" className="w-6 h-6" />
-                                <Text size='4' weight='medium' wrap='pretty'>Legend</Text>
+                                <Image
+                                    src="/images/legend.svg"
+                                    alt="Legend"
+                                    width={24}
+                                    height={24}
+                                />
                             </Flex>
                             {/* Legend */}
                             <Grid gapX='9' pl='2' style={{
@@ -620,28 +656,49 @@ const MainComponent = () => {
                                 </div>
                                 <div className="flex flex-row items-center justify-center">
                                     <div className="w-8 h-8 relative inline-block">
-                                        <img src="images/not_answered.svg" alt="Custom Vector" className="block w-full h-auto" />
+                                        <Image
+                                            src="/images/not_answered.svg"
+                                            alt="Not Answered"
+                                            layout="fill"
+                                            className="block w-full h-auto"
+                                        />
                                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{legendCounts.notAnswered}</span>
                                     </div>
                                     <div className="pl-1 whitespace-nowrap">Not Answered</div>
                                 </div>
                                 <div className="flex flex-row items-center justify-center">
                                     <div className="w-8 h-8 relative inline-block">
-                                        <img src="images/answered.svg" alt="Custom Vector" className="block w-full h-auto" />
+                                        <Image
+                                            src="/images/answered.svg"
+                                            alt="Answered"
+                                            layout="fill"
+                                            className="block w-full h-auto"
+                                        />
                                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{legendCounts.answered}</span>
                                     </div>
                                     <div className="pl-1">Answered</div>
                                 </div>
                                 <div className="flex flex-row items-center justify-center">
                                     <div className="w-8 h-8 relative inline-block">
-                                        <img src="images/marked_for_review.svg" alt="Custom Vector" className="block w-full h-auto" />
+                                        <Image
+                                            src="/images/marked_for_review.svg"
+                                            alt="Marked For Review"
+                                            layout="fill"
+                                            className="block w-full h-auto"
+                                        />
                                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{legendCounts.markedForReview}</span>
                                     </div>
                                     <div className="pl-1">Marked for Review</div>
                                 </div>
                                 <div className="flex flex-row items-center justify-center" style={{ 'gridColumn': '1 / span 2', 'gridRow': '3 / 4' }}>
                                     <div className="relative inline-block">
-                                        <img src="images/marked_for_review_other.svg" alt="Custom Vector" className="block w-12 h-12" />
+                                        <Image
+                                            src="/images/marked_for_review_other.svg"
+                                            alt="Marked For Review Other"
+                                            width={48}
+                                            height={48}
+                                            className="block"
+                                        />
                                         <span className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 text-white text-sm">{legendCounts.answeredAndMarkedForReview}</span>
                                     </div>
                                     <div className="pl-1">Answered & Marked for Review (will be considered for evaluation)</div>

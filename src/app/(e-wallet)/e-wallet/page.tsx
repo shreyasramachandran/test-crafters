@@ -8,6 +8,8 @@ import { Table, Text, Box, Flex, ScrollArea, Strong, Button } from "@radix-ui/th
 import Header from "@/app/components/header/Header";
 import WeeklyFinancesChart from "@/app/components/visualisations/WeeklyFinances";
 import RazorpayPayButton from "@/app/components/RazorpayPayButton";
+import Image from 'next/image';
+
 
 type ExchangeRate = {
     baseCurrency: string;
@@ -105,7 +107,13 @@ const MainComponent = () => {
                 <Flex direction='row' gap='5' style={{ width: '60%' }}>
                     <Box p='6' className="bg-[#EAF6FA]" style={{ justifyContent: 'space-between', display: 'flex', flexDirection: 'column', height: '100%', width: '100%', borderRadius: '5px', boxShadow: '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
                         <Box style={{ display: 'flex', flexDirection: 'row', height: '10%', width: '100%' }}>
-                            <img src="images/available_balance.svg" alt="Wallet" className="w-10 h-10 ml-4" />
+                            <Image
+                                src="/images/available_balance.svg"
+                                alt="Wallet"
+                                width={40}
+                                height={40}
+                                className="ml-4"
+                            />
                             <Text as="div" size="7" className="ml-3">Available Balance</Text>
                         </Box>
                         <Text as="div" style={{ fontSize: '46px', alignSelf: 'center' }}>₹ {userWallet.balance.toFixed(2)}</Text>
@@ -116,7 +124,13 @@ const MainComponent = () => {
                     <Box style={{ gap: '15px', display: 'flex', flexDirection: 'column', height: '100%', width: '100%' }}>
                         <Box p='5' className="bg-[#EAF6FA]" style={{ justifyContent: 'space-between', display: 'flex', flexDirection: 'column', height: '50%', width: '100%', borderRadius: '5px', boxShadow: '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
                             <Box style={{ display: 'flex', flexDirection: 'row', height: '40%', width: '100%', alignItems: 'center' }}>
-                                <img src="images/exchange_rate.svg" alt="Exchange Rate" className="w-9 h-9 ml-4" />
+                                <Image
+                                    src="/images/exchange_rate.svg"
+                                    alt="Exchange Rate"
+                                    width={36}
+                                    height={36}
+                                    className="ml-4"
+                                />
                                 <Text as="div" size="7" className="ml-3">Exchange Rate</Text>
                             </Box>
                             <Box mb='2' style={{ display: 'flex', flexDirection: 'row', height: '10%', width: '100%', justifyContent: 'center', alignItems: 'center' }}>
@@ -125,7 +139,13 @@ const MainComponent = () => {
                         </Box>
                         <Box p='5' className="bg-[#EAF6FA]" style={{ justifyContent: 'space-between', display: 'flex', flexDirection: 'column', height: '100%', width: '100%', borderRadius: '5px', boxShadow: '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
                             <Box style={{ display: 'flex', flexDirection: 'row', height: '27%', width: '100%', alignItems: 'center' }}>
-                                <img src="images/last_transaction.svg" alt="Last Transaction" className="w-9 h-9 ml-4" />
+                                <Image
+                                    src="/images/last_transaction.svg"
+                                    alt="Last Transaction"
+                                    width={36}
+                                    height={36}
+                                    className="ml-4"
+                                />
                                 <Text as="div" size="7" className="ml-3">Last Transaction</Text>
                             </Box>
                             {transactions.length > 0 ? (
@@ -147,7 +167,13 @@ const MainComponent = () => {
                 <Flex direction='column' gap='5' style={{ width: '60%' }}>
                     <Box p='6' className="bg-[#EAF6FA]" style={{ justifyContent: 'space-between', display: 'flex', flexDirection: 'column', height: '100%', width: '100%', borderRadius: '5px', boxShadow: '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
                         <Box style={{ display: 'flex', flexDirection: 'row', height: '10%', width: '100%' }}>
-                            <img src="images/statistics.svg" alt="Wallet" className="w-10 h-10 ml-4" />
+                            <Image
+                                src="/images/statistics.svg"
+                                alt="Wallet"
+                                width={40}
+                                height={40}
+                                className="ml-4"
+                            />
                             <Text as="div" size="7" className="ml-3">Weekly Expenses</Text>
                         </Box>
                         <Box p='4'>
@@ -159,7 +185,13 @@ const MainComponent = () => {
                 <Flex direction='column' gap='5' style={{ width: '60%' }}>
                     <Flex gap='6' p='6' className="bg-[#EAF6FA]" style={{ justifyContent: 'space-between', display: 'flex', flexDirection: 'column', height: '100%', width: '100%', borderRadius: '5px', boxShadow: '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
                         <Box style={{ display: 'flex', flexDirection: 'row', height: '10%', width: '100%' }}>
-                            <img src="images/timeline.svg" alt="Wallet" className="w-10 h-10 ml-4" />
+                            <Image
+                                src="/images/timeline.svg"
+                                alt="Wallet"
+                                width={40}
+                                height={40}
+                                className="ml-4"
+                            />
                             <Text as="div" size="7" className="ml-3">Timeline</Text>
                         </Box>
                         <Table.Root variant="surface">
@@ -184,9 +216,12 @@ const MainComponent = () => {
                                                 </Text>
                                             </Table.Cell>
                                             <Table.Cell>
-                                                <img
-                                                    src={transaction.status ? "images/success.svg" : "images/failure.svg"}
-                                                    className="w-5 h-5 ml-4"
+                                                <Image
+                                                    src={transaction.status ? "/images/success.svg" : "/images/failure.svg"}
+                                                    alt={transaction.status ? "Success" : "Failure"}
+                                                    width={20}
+                                                    height={20}
+                                                    className="ml-4"
                                                 />
                                             </Table.Cell>
                                         </Table.Row>

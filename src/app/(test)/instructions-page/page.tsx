@@ -9,6 +9,7 @@ import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
 import Header from "@/app/components/header/Header";
 import { encryptParams, decryptParams, Params } from "@/app/utils/paramUtils";
+import Image from 'next/image';
 
 const MainComponent = () => {
     console.log('instructions page component mounted')
@@ -91,7 +92,12 @@ const MainComponent = () => {
             <Flex className="bg-[#38B6FF] flex-col items-center justify-center gap-2 p-8" direction='column' style={{ position: 'relative', height: '100%' }}>
                 <Header></Header>
                 <Box className="pl-12 pt-8 pb-4" height='42px' flexGrow='1' style={{ width: '100%', display: 'flex', 'flexDirection': 'row', justifyContent: 'left', alignItems: 'center' }}>
-                    <img src="images/guide.svg" alt="Guide" className="w-7 h-7" />
+                    <Image
+                        src="/images/guide.svg"
+                        alt="Guide"
+                        width={28}
+                        height={28}
+                    />
                     <Text size='6' className="ml-3" weight='regular' wrap='pretty' >General Instructions</Text>
                 </Box>
                 <Box className="pl-5" flexGrow='1' style={{ width: '95%', display: 'flex', justifyContent: 'left', alignItems: 'center' }}>

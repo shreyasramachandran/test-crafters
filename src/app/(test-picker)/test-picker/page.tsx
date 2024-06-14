@@ -9,6 +9,8 @@ import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
 import Header from "@/app/components/header/Header";
 import { encryptParams } from "@/app/utils/paramUtils";
+import Image from 'next/image';
+
 
 type UserWallet = {
     balance: number;
@@ -217,7 +219,13 @@ const MainComponent = () => {
                 <Box className="bg-[#EAF6FA] m-24" style={{ 'height': '64%', 'width': '30%', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)', alignSelf: 'center', justifySelf: 'center' }}>
                     <Flex className="h-full" direction='column' py='9' gap='6'>
                         <Box style={{ 'height': '10%', 'width': '47%', display: 'flex', 'flexDirection': 'row', justifyContent: 'center', alignItems: 'center' }}>
-                            <img src="images/filter.svg" alt="Filter" className="w-7 h-7 ml-8" />
+                            <Image
+                                src="/images/filter.svg"
+                                alt="Filter"
+                                width={28}
+                                height={28}
+                                className="ml-8"
+                            />
                             <Text size='6' className="ml-3" weight='bold' wrap='pretty'>Pick a test</Text>
                         </Box>
                         <Flex className="h-full" direction='column' justify='center' gap='5'>
