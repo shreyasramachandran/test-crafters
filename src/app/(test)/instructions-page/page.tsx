@@ -88,7 +88,7 @@ const MainComponent = () => {
     }
 
     return (
-        <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh', position: 'absolute' }}>
+        <ScrollArea type="hover" scrollbars="vertical" size="2" style={{ height: '100vh', position: 'absolute' }}>
             <Flex className="bg-[#38B6FF] flex-col items-center justify-center gap-2 p-8" direction='column' style={{ position: 'relative', height: '100%' }}>
                 <Header></Header>
                 <Box className="pl-12 pt-8 pb-4" height='42px' flexGrow='1' style={{ width: '100%', display: 'flex', 'flexDirection': 'row', justifyContent: 'left', alignItems: 'center' }}>

@@ -42,7 +42,6 @@ const MainComponent = () => {
                 params.set(name, value);
             });
             const encodedParams = encryptParams(Object.fromEntries(params));
-            console.log(encodedParams)
             return `params=${encodedParams}`;
         },
         []
