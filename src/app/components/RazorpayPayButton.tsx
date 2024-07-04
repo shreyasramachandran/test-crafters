@@ -151,7 +151,6 @@ export default function RazorpayPayButton({ name }: RazorpayPayButtonProps) {
         if (!orderId) {
             return;
         }
-
         const options = {
             "key_id": process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
             "amount": Number(amount) * 100,
