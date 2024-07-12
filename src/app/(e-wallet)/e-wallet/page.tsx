@@ -106,12 +106,12 @@ const MainComponent = () => {
                 </Box>
                 <Flex direction='row' gap='5' style={{ width: '60%' }}>
                     <Box p='6' className="bg-[#EAF6FA]" style={{ justifyContent: 'space-between', display: 'flex', flexDirection: 'column', height: '100%', width: '100%', borderRadius: '5px', boxShadow: '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
-                        <Box style={{ display: 'flex', flexDirection: 'row', height: '10%', width: '100%' }}>
+                        <Box style={{ display: 'flex', flexDirection: 'row', width: '100%' }}>
                             <Image
                                 src="/images/available_balance.svg"
                                 alt="Wallet"
-                                width={40}
-                                height={40}
+                                width={36}
+                                height={36}
                                 className="ml-4"
                             />
                             <Text as="div" size="7" className="ml-3">Available Balance</Text>
@@ -138,12 +138,12 @@ const MainComponent = () => {
                             </Box>
                         </Box>
                         <Box p='5' className="bg-[#EAF6FA]" style={{ justifyContent: 'space-between', display: 'flex', flexDirection: 'column', height: '100%', width: '100%', borderRadius: '5px', boxShadow: '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
-                            <Box style={{ display: 'flex', flexDirection: 'row', height: '27%', width: '100%', alignItems: 'center' }}>
+                            <Box style={{ display: 'flex', flexDirection: 'row', width: '100%', alignItems: 'center' }}>
                                 <Image
                                     src="/images/last_transaction.svg"
                                     alt="Last Transaction"
-                                    width={36}
-                                    height={36}
+                                    width={34}
+                                    height={34}
                                     className="ml-4"
                                 />
                                 <Text as="div" size="7" className="ml-3">Last Transaction</Text>
