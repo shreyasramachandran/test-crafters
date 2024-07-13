@@ -2,7 +2,7 @@
 
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
 import useAuth from "@/app/hooks/useAuth";
-import { Suspense } from "react";
+import { Suspense, useState } from "react";
 import dynamic from "next/dynamic";
 import { Box, Flex, ScrollArea, Text } from "@radix-ui/themes";
 import Header from "@/app/components/header/Header";
@@ -12,6 +12,8 @@ import Image from 'next/image';
 const MainComponent = () => {
     console.log('Tolystoy mounted');
     const { isAuthenticated, loading } = useAuth();
+
+    const [currentMessage, setCurrentMessage] = useState('');
 
     const conversations = [
         { id: 1, title: 'Interaction for Pronoun Test' },
@@ -76,11 +78,19 @@ const MainComponent = () => {
                         <ScrollArea type="hover" scrollbars="vertical" size="2" style={{ height: '100%' }}>
 
                         </ScrollArea>
-                        <Box px='3' className="bg-[#EAF6FA]" style={{ display: 'flex', flexDirection: 'row', height: '7%', width: '80%', borderRadius: '5px', boxShadow: '4px 4px 25px 5px rgba(0, 0, 0, 0.25)', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Box px='4' className="bg-[#EAF6FA]" style={{ display: 'flex', flexDirection: 'row', height: '7%', width: '80%', borderRadius: '5px', boxShadow: '4px 4px 25px 5px rgba(0, 0, 0, 0.25)', justifyContent: 'space-between', alignItems: 'center' }}>
                             <input
                                 type="text"
                                 placeholder="Message Tolystoy"
                                 className="bg-[#EAF6FA]"
+                                value={currentMessage}
+                                onChange={(e) => setCurrentMessage(e.target.value)}
+                                onKeyDown={(e) => {
+                                    if (e.key === 'Enter') {
+                                        setCurrentMessage('');  // Clear the input field
+                                        e.preventDefault();     // Optional: Prevent the default action of the enter key
+                                    }
+                                }}
                                 style={{ width: '96%', height: '100%', outline: 'none' }}
                             />
                             <Image
