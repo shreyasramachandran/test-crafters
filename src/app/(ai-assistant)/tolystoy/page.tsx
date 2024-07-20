@@ -74,7 +74,7 @@ const MainComponent = () => {
                         <ScrollArea type="hover" scrollbars="vertical" size="2" style={{ height: '100%', width: '100%' }}>
                             <Flex pt='1' direction='column' gap='1' style={{ width: '100%' }}>
                                 {conversations.map((conversation) => (
-                                    <Box mr='4' p='1' style={{ display: 'flex', flexDirection: 'row', width: '262px', borderRadius: '4px', backgroundColor: 'rgba(194, 205, 208, 0.75)', boxShadow: '2px 2px 10px 1px rgba(0, 0, 0, 0.02)', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}>
+                                    <Box key={conversation.id} mr='4' p='1' style={{ display: 'flex', flexDirection: 'row', width: '262px', borderRadius: '4px', backgroundColor: 'rgba(194, 205, 208, 0.75)', boxShadow: '2px 2px 10px 1px rgba(0, 0, 0, 0.02)', justifyContent: 'space-between', alignItems: 'center', cursor: 'pointer' }}>
                                         <Text as="div" weight='medium' size="3" className="ml-3" style={{
                                             overflow: 'hidden', // Hides overflow
                                             whiteSpace: 'nowrap', // Keeps the text on a single line
@@ -97,7 +97,7 @@ const MainComponent = () => {
                     <Box style={{ justifyContent: 'space-between', display: 'flex', flexDirection: 'column', height: '100%', width: '75%', borderRadius: '5px', justifyItems: 'center', alignItems: 'center' }}>
                         <ScrollArea type="hover" scrollbars="vertical" size="2" style={{ height: '100%', width: '80%', paddingTop: '5px' }}>
                             {conversations.map((conversation) => (
-                                <Box ml='5' mr='5' mt='4' mb='10px' p='3' style={{
+                                <Box key={conversation.id} ml='5' mr='5' mt='4' mb='10px' p='3' style={{
                                     display: 'flex',
                                     flexDirection: 'row',
                                     borderRadius: '5px',
