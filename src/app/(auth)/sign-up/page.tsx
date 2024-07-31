@@ -125,13 +125,13 @@ const MainComponent = () => {
     }
 
     return (
-        <Flex className="bg-[#38B6FF]" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center'>
-            <Box className="bg-[#EAF6FA]" style={{ 'height': '83%', 'width': '30%', 'borderRadius': '10px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
+        <Flex className="bg-[#38B6FF] h-screen w-screen" justify='center' align='center'>
+            <Box className="bg-[#EAF6FA] h-[85%] w-10/12 max-w-lg" style={{ 'borderRadius': '10px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
                 <Flex className="h-full" direction='column' justify='start' gap='2' pt='6'>
                     <Box style={{ 'height': '10%', 'width': '40%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
                         <Text size='6' weight='bold' wrap='pretty'>Sign Up</Text>
                     </Box>
-                    <Box style={{ 'height': '12%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                    <Box className="h-[7.3%] w-[77%] flex justify-center items-center self-center">
                         <ContinueWithGoogle />
                     </Box>
                     <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
@@ -192,14 +192,13 @@ const MainComponent = () => {
                     <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                         <Button style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={handleSignUp}>Sign Up</Button>
                     </Box>
-                    <Box style={{ 'height': '3%', 'width': '50%', display: 'flex', justifyContent: 'space-evenly', alignItems: 'center', alignSelf: 'center' }}>
-                        <Text color='gray' size='2' weight='regular' wrap='pretty'>Already signed up?</Text>
-                        <Link href="/sign-in">
-                            <Text color='gray' size='2' weight='regular' wrap='pretty'>Sign In</Text>
-                        </Link>
-                    </Box>
-                    <Box style={{ 'height': '8%', 'width': '77%', display: 'flex', textAlign: 'center', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                        <Text color='gray' size='2' weight='regular' wrap='pretty'>By continuing you agree to Test Crafter&#x2019;s Terms of Service and Privacy Policy</Text>
+                    <Box className="pt-4 pb-2 h-5 w-full gap-3" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                        <Text color='gray' size='2' weight='regular' wrap='pretty'>
+                            Don&apos;t have an account?{' '}
+                            <Link href="/sign-up">
+                                <span className="underline">Sign Up</span>
+                            </Link>
+                        </Text>
                     </Box>
                 </Flex>
             </Box >
