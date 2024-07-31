@@ -31,7 +31,7 @@ export default function ContinueWithGoogle() {
 
     return <button
         onClick={initiateGoogleSignIn}
-        className="inline-flex items-center justify-center px-4 py-2 border border-solid border-[#79747E] shadow-sm text-sm font-medium rounded-md text-[#120052] bg-[#EAF6FA] hover:bg-[#FAF6FA] w-full">
+        className="inline-flex items-center justify-center px-4 py-2 border border-solid border-[#79747E] shadow-sm text-sm font-medium rounded-md text-[#120052] bg-[#EAF6FA] hover:bg-[#FAF6FA] w-full h-full">
         <Image
             src="/images/google_icon.svg"
             alt="Google Sign-In"
