@@ -17,7 +17,7 @@ const MainComponent = () => {
     }
 
     return (
-        <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '100vh' }}>
+        <ScrollArea className="w-screen" type="always" scrollbars="vertical" size="2" style={{ height: '100vh' }}>
             <Flex direction='column'>
                 <Box className="bg-[#EAF6FA]" height='64px' flexGrow='1' style={{ position: 'sticky', top: 0, zIndex: 10 }}>
                     <Flex className="h-full" justify='between' align='center' px='6'>
@@ -157,10 +157,8 @@ const MainComponent = () => {
                         <Box style={{ height: '75%', width: '30%' }} >
                             <Flex className="h-full" direction='column' gap='4' justify='center' align='center'>
                                 <Box style={{ height: '100%', width: '90%', display: 'flex', flexDirection: 'column', justifyContent: 'space-evenly' }}>
-                                    <Text className="text-black" size='8' weight='bold' wrap='pretty'>Begin Your Journey to CUET Success Now</Text>
-                                    <Text className="text-black" size='7' weight='light' wrap='pretty'>Embark on the path to your dreams with the CUET, each step you take is a
-                                        stride towards your aspirations. The peak of achievement awaits you, and your determination to succeed is the most powerful guide. Start your
-                                        journey today, your future is not just a destination, but a rewarding adventure.</Text>
+                                    <Text className="text-black" size='8' weight='bold' wrap='pretty'>Begin Your Journey to Success Now</Text>
+                                    <Text className="text-black" size='7' weight='light' wrap='pretty'>Start your journey today, your future is not just a destination, but a rewarding adventure.</Text>
                                     <Button radius="small" style={{ backgroundColor: '#120052', color: '#FFFFFF', height: '70px', width: '220px', fontSize: 'large', cursor: 'pointer' }} variant='solid' onClick={() => router.push('/sign-up')}>Begin your prep today</Button>
                                 </Box>
                             </Flex>

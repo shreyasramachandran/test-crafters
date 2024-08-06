@@ -216,9 +216,9 @@ const MainComponent = () => {
         <Flex direction='column' className="bg-[#38B6FF] h-screen w-screen p-8" justify='center' align='center' style={{ position: 'absolute' }}>
             <Flex direction='column' className="h-full w-full">
                 <Header></Header>
-                <Box className="bg-[#EAF6FA] m-4 my-24" style={{ 'height': '64%', 'width': '90%', 'maxWidth': '450px', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)', alignSelf: 'center', justifySelf: 'center' }}>
-                    <Flex className="h-full" direction='column' py='9' gap='6'>
-                        <Box className="h-[10%] w-[47%]" style={{ display: 'flex', 'flexDirection': 'row', justifyContent: 'center', alignItems: 'center', 'minWidth': '190px', 'maxWidth': '300px' }}>
+                <Box className="bg-[#EAF6FA] h-[64%] sm:h-[60%] md:h-[44%] lg:h-[58%] xl:h-[54%] 2xl:h-[54%] w-[90%] m-4 my-20 md:mt-44 lg:mt-24 xl:mt-38" style={{ 'maxWidth': '450px', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)', alignSelf: 'center', justifySelf: 'center' }}>
+                    <Flex className="h-[100%]" direction='column' py='8' gap='8'>
+                        <Box className="h-[15%] w-[75%] md:mx-4" style={{ display: 'flex', 'flexDirection': 'row', justifyContent: 'left', alignItems: 'center', 'minWidth': '190px', 'maxWidth': '300px' }}>
                             <Image
                                 src="/images/filter.svg"
                                 alt="Filter"
@@ -228,8 +228,8 @@ const MainComponent = () => {
                             />
                             <Text size='6' className="ml-3" weight='bold' wrap='pretty'>Pick a test</Text>
                         </Box>
-                        <Flex className="h-full" direction='column' justify='center' gap='5'>
-                            <Box style={{ height: '42%', width: '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                        <Flex className="h-[33%]" direction='column' justify='center' gap='5'>
+                            <Box className="h-[42%] w-[77%]" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', 'minHeight': '42px', 'maxHeight': '50px' }}>
                                 <DropdownMenu.Root>
                                     <DropdownMenu.Trigger>
                                         <button className="flex justify-between items-center px-4 py-2 bg-skyblue-200 border border-solid border-[#79747E] rounded-lg text-gray-700 shadow-sm w-full h-full">
@@ -250,7 +250,7 @@ const MainComponent = () => {
                                     </DropdownMenu.Content>
                                 </DropdownMenu.Root>
                             </Box>
-                            <Box style={{ height: '42%', width: '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                            <Box className="h-[42%] w-[77%]" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center', 'minHeight': '42px', 'maxHeight': '50px' }}>
                                 <DropdownMenu.Root>
                                     <DropdownMenu.Trigger>
                                         <button className="flex justify-between items-center px-4 py-2 bg-skyblue-200 border border-solid border-[#79747E] rounded-lg text-gray-700 shadow-sm w-full h-full">
@@ -272,8 +272,8 @@ const MainComponent = () => {
                                 </DropdownMenu.Root>
                             </Box>
                         </Flex>
-                        <Flex className="h-full" direction='column' justify='center' gap='4'>
-                            <Box className="h-[40%] w-[77%]" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                        <Flex className="h-[25%]" direction='column' justify='center' gap='4'>
+                            <Box className="h-[47%] w-[77%]" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                                 <Button style={{ 'height': '100%', 'width': '100%', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)', 'backgroundColor': '#120052', cursor: 'pointer', 'minHeight': '42px', 'maxHeight': '50px' }} size="3" variant='solid' onClick={handleStartMockTest}>Start Mock Test
                                 </Button>
                             </Box>
