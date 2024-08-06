@@ -164,7 +164,7 @@ const MainComponent = () => {
                     </Box>
                 </Flex>
                 {/* Weekly Expenses */}
-                <Flex direction='column' gap='5' style={{ width: '60%' }}>
+                {/* <Flex direction='column' gap='5' style={{ width: '60%' }}>
                     <Box p='6' className="bg-[#EAF6FA]" style={{ justifyContent: 'space-between', display: 'flex', flexDirection: 'column', height: '100%', width: '100%', borderRadius: '5px', boxShadow: '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
                         <Box style={{ display: 'flex', flexDirection: 'row', height: '10%', width: '100%' }}>
                             <Image
@@ -180,7 +180,7 @@ const MainComponent = () => {
                             <WeeklyFinancesChart weeklyExpenses={weeklyExpences} />
                         </Box>
                     </Box>
-                </Flex>
+                </Flex> */}
                 {/* Timeline */}
                 <Flex direction='column' gap='5' style={{ width: '60%' }}>
                     <Flex gap='6' p='6' className="bg-[#EAF6FA]" style={{ justifyContent: 'space-between', display: 'flex', flexDirection: 'column', height: '100%', width: '100%', borderRadius: '5px', boxShadow: '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>

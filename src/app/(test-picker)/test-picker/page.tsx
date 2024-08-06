@@ -213,12 +213,12 @@ const MainComponent = () => {
     }
 
     return (
-        <Flex direction='column' className="bg-[#38B6FF] p-8" height={{ md: '100vh' }} width={{ md: '100vw' }} justify='center' align='center' style={{ position: 'absolute' }}>
-            <Flex direction='column' style={{ 'height': '100%', 'width': '100%' }}>
+        <Flex direction='column' className="bg-[#38B6FF] h-screen w-screen p-8" justify='center' align='center' style={{ position: 'absolute' }}>
+            <Flex direction='column' className="h-full w-full">
                 <Header></Header>
-                <Box className="bg-[#EAF6FA] m-24" style={{ 'height': '64%', 'width': '30%', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)', alignSelf: 'center', justifySelf: 'center' }}>
+                <Box className="bg-[#EAF6FA] m-4 my-24" style={{ 'height': '64%', 'width': '90%', 'maxWidth': '450px', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)', alignSelf: 'center', justifySelf: 'center' }}>
                     <Flex className="h-full" direction='column' py='9' gap='6'>
-                        <Box style={{ 'height': '10%', 'width': '47%', display: 'flex', 'flexDirection': 'row', justifyContent: 'center', alignItems: 'center' }}>
+                        <Box className="h-[10%] w-[47%]" style={{ display: 'flex', 'flexDirection': 'row', justifyContent: 'center', alignItems: 'center', 'minWidth': '190px', 'maxWidth': '300px' }}>
                             <Image
                                 src="/images/filter.svg"
                                 alt="Filter"
@@ -273,8 +273,8 @@ const MainComponent = () => {
                             </Box>
                         </Flex>
                         <Flex className="h-full" direction='column' justify='center' gap='4'>
-                            <Box style={{ 'height': '40%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
-                                <Button style={{ 'height': '100%', 'width': '100%', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={handleStartMockTest}>Start Mock Test
+                            <Box className="h-[40%] w-[77%]" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                                <Button style={{ 'height': '100%', 'width': '100%', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)', 'backgroundColor': '#120052', cursor: 'pointer', 'minHeight': '42px', 'maxHeight': '50px' }} size="3" variant='solid' onClick={handleStartMockTest}>Start Mock Test
                                 </Button>
                             </Box>
                         </Flex>

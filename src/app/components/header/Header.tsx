@@ -56,7 +56,7 @@ export default function Header() {
         <Box className="bg-[#38B6FF]" style={{
             height: '5%', width: '100%', position: 'relative'
         }}>
-            <Flex className="h-full px-10" justify='between' align='center'>
+            <Flex className="h-full" justify='between' align='center'>
                 <IconButton size='3' style={{
                     backgroundColor: '#1DACFF', boxShadow: '2px 2px 10px 3px rgba(0, 0, 0, 0.15)', cursor: 'pointer'
                 }} onClick={handleBackClick}>
