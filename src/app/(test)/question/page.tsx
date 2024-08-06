@@ -641,6 +641,7 @@ const MainComponent = () => {
                                     width={24}
                                     height={24}
                                 />
+                                <Text size='4' weight='medium' wrap='pretty'>Legend</Text>
                             </Flex>
                             {/* Legend */}
                             <Grid gapX='9' pl='2' style={{

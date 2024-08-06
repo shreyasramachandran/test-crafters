@@ -3,7 +3,7 @@
 export default function Page() {
     console.log('refunds and cancellations component mounted')
     return (
-        <div className="bg-[#38B6FF] flex flex-col items-center justify-center min-h-screen px-4">
+        <div className="bg-[#38B6FF] flex flex-col items-center justify-center min-h-screen p-6">
             <div className="bg-[#EAF6FA] rounded-lg shadow overflow-hidden w-full max-w-3xl p-8" style={{ 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
                 <h1 className="text-3xl font-bold text-gray-900 mb-6">Refunds & Cancellations</h1>
                 <p className="text-gray-600">

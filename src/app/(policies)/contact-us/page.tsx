@@ -3,7 +3,7 @@
 export default function Page() {
     console.log('contact us component mounted')
     return (
-        <div className="bg-[#38B6FF] flex flex-col items-center justify-center min-h-screen py-2">
+        <div className="bg-[#38B6FF] flex flex-col items-center justify-center min-h-screen py-2 p-6">
             <div className="bg-[#EAF6FA] shadow-md rounded-lg p-8" style={{ 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
                 <div className="text-center">
                     <h1 className="text-4xl font-semibold text-gray-800">Contact Us</h1>
