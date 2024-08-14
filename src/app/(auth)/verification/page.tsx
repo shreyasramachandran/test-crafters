@@ -84,9 +84,9 @@ const MainComponent = () => {
 
     return (
         <Flex className="bg-[#38B6FF] h-screen w-screen" justify='center' align='center'>
-            <Box className="bg-[#EAF6FA] h-[55%] w-10/12 max-w-lg" style={{ 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
+            <Box className="bg-[#EAF6FA] mobile-very-small:h-[85%] mobile-very-small:w-11/12 h-[55%] w-10/12 max-w-lg" style={{ 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
                 <Flex className="h-full" direction='column' justify='start' gap='5' pt='7'>
-                    <Box style={{ 'width': '77%', 'textAlign': 'left', 'alignSelf': 'center' }}>
+                    <Box className="h-[10%] w-[77%] flex justify-center items-center self-center">
                         <Text size='6' weight='bold' wrap='pretty'>Verification</Text>
                     </Box>
                     <Box style={{ 'height': '15%', 'width': '77%', 'display': 'flex', textAlign: 'left', alignSelf: 'center' }}>

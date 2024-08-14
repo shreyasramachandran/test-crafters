@@ -9,6 +9,7 @@ import { randomBytes } from 'crypto';
 import { Suspense } from 'react'
 import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
+import { useMediaQuery } from 'react-responsive';
 
 const MainComponent = () => {
     console.log('sign up component mounted')
@@ -19,6 +20,9 @@ const MainComponent = () => {
     const [name, setName] = useState('');
 
     const router = useRouter();
+
+    const isHeightSmall = useMediaQuery({ query: '(max-height: 999px)' });
+    const isWidthSmall = useMediaQuery({ query: '(max-width: 499px)' });
 
     async function sendVerificationEmail() {
         const verificationCode = await generateVerificationCode()
@@ -126,22 +130,22 @@ const MainComponent = () => {
 
     return (
         <Flex className="bg-[#38B6FF] h-screen w-screen" justify='center' align='center'>
-            <Box className="bg-[#EAF6FA] h-[85%] w-10/12 max-w-lg" style={{ 'borderRadius': '10px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
-                <Flex className="h-full" direction='column' justify='start' gap='2' pt='6'>
-                    <Box style={{ 'height': '10%', 'width': '40%', display: 'flex', justifyContent: 'center', alignItems: 'center' }}>
-                        <Text size='6' weight='bold' wrap='pretty'>Sign Up</Text>
+            <Box className="bg-[#EAF6FA] mobile-very-small:h-[97%] mobile-very-small:w-[90%] h-[85%] w-10/12 max-w-lg" style={{ 'borderRadius': '10px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
+                <Flex className="h-full mobile-very-small:!pt-3 mobile-very-small:!gap-1" direction='column' justify='start' gap='2' pt='6'>
+                    <Box className="mobile-very-small:h-[5%] h-[10%] w-[77%] flex justify-center items-center self-center">
+                        <Text className="mobile-very-small:!text-lg" size='6' weight='bold' wrap='pretty'>Sign Up</Text>
                     </Box>
-                    <Box className="h-[7.3%] w-[77%] flex justify-center items-center self-center">
+                    <Box className="mobile-very-small:h-[8.7%] h-[7.3%] w-[77%] mobile-very-small:mt-3 flex justify-center items-center self-center">
                         <ContinueWithGoogle />
                     </Box>
-                    <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                    <Box className="mobile-very-small:h-[6%] h-[10%]" style={{ 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                         <div className="flex items-center justify-center w-full">
                             <div className="flex-grow border-t border-black"></div>
                             <span className="flex-shrink mx-4 text-black">or</span>
                             <div className="flex-grow border-t border-black"></div>
                         </div>
                     </Box>
-                    <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'end', alignItems: 'center', alignSelf: 'center' }}>
+                    <Box className="mobile-very-small:h-[12%] h-[10%]" style={{ 'width': '77%', display: 'flex', justifyContent: 'end', alignItems: 'center', alignSelf: 'center' }}>
                         <input
                             type="text"
                             className="border border-solid border-[#79747E] bg-[#EAF6FA] h-10 px-5  text-sm focus:outline-none"
@@ -151,7 +155,7 @@ const MainComponent = () => {
                             style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px' }}
                         />
                     </Box>
-                    <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'end', alignItems: 'center', alignSelf: 'center' }}>
+                    <Box className="mobile-very-small:h-[12%] h-[10%]" style={{ 'width': '77%', display: 'flex', justifyContent: 'end', alignItems: 'center', alignSelf: 'center' }}>
                         <input
                             type="text"
                             className="border border-solid border-[#79747E] bg-[#EAF6FA] h-10 px-5  text-sm focus:outline-none"
@@ -161,7 +165,7 @@ const MainComponent = () => {
                             style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px' }}
                         />
                     </Box>
-                    <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'end', alignItems: 'center', alignSelf: 'center' }}>
+                    <Box className="mobile-very-small:h-[12%] h-[10%]" style={{ 'width': '77%', display: 'flex', justifyContent: 'end', alignItems: 'center', alignSelf: 'center' }}>
                         <input
                             type="text"
                             className="border border-solid border-[#79747E] bg-[#EAF6FA] h-10 px-5  text-sm focus:outline-none"
@@ -176,7 +180,7 @@ const MainComponent = () => {
                             </svg>
                         </button>
                     </Box>
-                    <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'end', alignItems: 'center', alignSelf: 'center' }}>
+                    <Box className="mobile-very-small:h-[12%] h-[10%]" style={{ 'width': '77%', display: 'flex', justifyContent: 'end', alignItems: 'center', alignSelf: 'center' }}>
                         <input
                             type="text"
                             className="border border-solid border-[#79747E] bg-[#EAF6FA] h-10 px-5  text-sm focus:outline-none"
@@ -189,7 +193,7 @@ const MainComponent = () => {
                             </svg>
                         </button>
                     </Box>
-                    <Box style={{ 'height': '10%', 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                    <Box className="mobile-very-small:h-[11.5%] h-[10%]" style={{ 'width': '77%', display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
                         <Button style={{ 'height': '75%', 'width': '100%', 'borderRadius': '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={handleSignUp}>Sign Up</Button>
                     </Box>
                     <Box className="pt-4 pb-2 h-5 w-full gap-3" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>

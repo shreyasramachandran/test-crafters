@@ -17,25 +17,7 @@ const MainComponent = () => {
 
     const conversations = [
         { id: 1, title: 'Interaction for Pronoun Test' },
-        { id: 2, title: 'Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children.. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. ' },
-        { id: 3, title: 'Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children.. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. ' },
-        { id: 4, title: 'Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children.. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. ' },
-        { id: 5, title: 'Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children.. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. ' },
-        { id: 6, title: 'Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children.. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. ' },
-        { id: 7, title: 'Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children.. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. ' },
-        { id: 8, title: 'Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children.. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. ' },
-        { id: 9, title: 'Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children.. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. ' },
-        { id: 10, title: 'Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children.. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. ' },
-        { id: 11, title: 'Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children.. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. ' },
-        { id: 12, title: 'Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children.. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. ' },
-        { id: 13, title: 'Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children.. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. ' },
-        { id: 14, title: 'Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children.. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. ' },
-        { id: 15, title: 'Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children.. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. ' },
-        { id: 16, title: 'Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children.. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. ' },
-        { id: 17, title: 'Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children.. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. ' },
-        { id: 18, title: 'Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children.. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. ' },
-        { id: 19, title: 'Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children.. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. ' }
-
+        { id: 2, title: 'Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children.. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. Mindstroms: Lego Kit for children. ' }
 
     ]
 
@@ -118,7 +100,14 @@ const MainComponent = () => {
                                 </Box>
                             ))}
                         </ScrollArea>
-                        <Box m='4' mb='-4' px='4' mt='0' className="bg-[#EAF6FA]" style={{ display: 'flex', flexDirection: 'row', height: '7%', width: '80%', borderRadius: '5px', boxShadow: '4px 4px 20px 4px rgba(0, 0, 0, 0.25)', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <Box m='4' mb='-4' px='3' mt='0' className="bg-[#EAF6FA]" style={{ display: 'flex', flexDirection: 'row', height: '7%', width: '80%', borderRadius: '5px', boxShadow: '4px 4px 20px 4px rgba(0, 0, 0, 0.25)', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <Image
+                                src="/images/attach_file.svg"
+                                alt="Attach File"
+                                width={24}
+                                height={24}
+                                style={{ cursor: 'pointer' }}
+                            />
                             <input
                                 type="text"
                                 placeholder="Message Tolystoy"

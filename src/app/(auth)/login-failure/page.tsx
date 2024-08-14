@@ -14,9 +14,9 @@ export default function Page() {
 
     return (
         <Flex className="bg-[#38B6FF] h-screen w-screen" justify='center' align='center'>
-            <Box className="bg-[#EAF6FA] h-[60%] w-10/12 max-w-lg" style={{ 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
+            <Box className="bg-[#EAF6FA] mobile-very-small:h-[90%] mobile-very-small:w-11/12 h-[60%] w-10/12 max-w-lg" style={{ 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)' }}>
                 <Flex className="h-full" direction='column' justify='start' gap='8' pt='8'>
-                    <Box style={{ 'height': '15%', 'width': '77%', 'textAlign': 'left', 'alignSelf': 'center' }}>
+                    <Box style={{ 'height': '8%', 'width': '77%', 'display': 'flex', textAlign: 'left', alignSelf: 'center' }}>
                         <Text size='6' weight='bold' wrap='pretty'>Log In Failed</Text>
                     </Box>
                     <Box style={{ 'height': '25%', 'width': '77%', 'display': 'flex', textAlign: 'left', alignSelf: 'center' }}>

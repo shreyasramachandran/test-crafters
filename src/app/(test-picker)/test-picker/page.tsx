@@ -10,6 +10,7 @@ import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
 import Header from "@/app/components/header/Header";
 import { encryptParams } from "@/app/utils/paramUtils";
 import Image from 'next/image';
+import { useMediaQuery } from 'react-responsive';
 
 
 type UserWallet = {
@@ -30,6 +31,8 @@ const MainComponent = () => {
     const { isAuthenticated, loading } = useAuth();
     const [userWallet, setUserWallet] = useState<UserWallet | null>(null);
     const [alertOpen, setAlertOpen] = useState(false);
+
+    const isMobileSmall = useMediaQuery({ query: '(max-width: 499px) and (max-height: 999px)' });
 
 
     // Get a new searchParams string by merging the current
@@ -212,11 +215,90 @@ const MainComponent = () => {
         return <OrigamiAnimation />;
     }
 
-    return (
+    return isMobileSmall ? (
         <Flex direction='column' className="bg-[#38B6FF] h-screen w-screen p-8" justify='center' align='center' style={{ position: 'absolute' }}>
             <Flex direction='column' className="h-full w-full">
                 <Header></Header>
-                <Box className="bg-[#EAF6FA] h-[64%] sm:h-[60%] md:h-[44%] lg:h-[58%] xl:h-[54%] 2xl:h-[54%] w-[90%] m-4 my-20 md:mt-44 lg:mt-24 xl:mt-38" style={{ 'maxWidth': '450px', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)', alignSelf: 'center', justifySelf: 'center' }}>
+                <Box className="bg-[#EAF6FA] h-[64%] w-[90%] m-4 my-20" style={{ 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)', alignSelf: 'center', justifySelf: 'center' }}>
+                    <Flex className="h-[100%]" direction='column' py='8' gap='8'>
+                        <Box className="h-[15%] w-[75%] md:mx-4" style={{ display: 'flex', 'flexDirection': 'row', justifyContent: 'left', alignItems: 'center' }}>
+                            <Image
+                                src="/images/filter.svg"
+                                alt="Filter"
+                                width={28}
+                                height={28}
+                                className="ml-8"
+                            />
+                            <Text size='6' className="ml-3" weight='bold' wrap='pretty'>Pick a test</Text>
+                        </Box>
+                        <Flex className="h-[33%]" direction='column' justify='center' gap='5'>
+                            <Box className="h-[42%] w-[77%]" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                                <DropdownMenu.Root>
+                                    <DropdownMenu.Trigger>
+                                        <button className="flex justify-between items-center px-4 py-2 bg-skyblue-200 border border-solid border-[#79747E] rounded-lg text-gray-700 shadow-sm w-full h-full">
+                                            {selectedSubject}
+                                            <span className="ml-2">
+                                                <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                            </span>
+                                        </button>
+                                    </DropdownMenu.Trigger>
+                                    <DropdownMenu.Content style={{ 'backgroundColor': '#EAF6FA' }} className="bg-white shadow-lg rounded-md py-1 mt-1">
+                                        {subjects.map((subject) => (
+                                            <DropdownMenu.Item key={subject} onSelect={() => handleSubjectChange(subject)} className="px-4 py-2 text-sm text-gray-700 hover:bg-[#120052]">
+                                                {subject}
+                                            </DropdownMenu.Item>
+                                        ))}
+                                    </DropdownMenu.Content>
+                                </DropdownMenu.Root>
+                            </Box>
+                            <Box className="h-[42%] w-[77%]" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                                <DropdownMenu.Root>
+                                    <DropdownMenu.Trigger>
+                                        <button className="flex justify-between items-center px-4 py-2 bg-skyblue-200 border border-solid border-[#79747E] rounded-lg text-gray-700 shadow-sm w-full h-full">
+                                            {selectedLanguage}
+                                            <span className="ml-2">
+                                                <svg className="w-4 h-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7" />
+                                                </svg>
+                                            </span>
+                                        </button>
+                                    </DropdownMenu.Trigger>
+                                    <DropdownMenu.Content style={{ 'backgroundColor': '#EAF6FA' }} className="bg-white shadow-lg rounded-md py-1 mt-1">
+                                        {languages.map((language) => (
+                                            <DropdownMenu.Item key={language} onSelect={() => handleLanguageChange(language)} className="px-4 py-2 text-sm text-gray-700 hover:bg-[#120052]">
+                                                {language}
+                                            </DropdownMenu.Item>
+                                        ))}
+                                    </DropdownMenu.Content>
+                                </DropdownMenu.Root>
+                            </Box>
+                        </Flex>
+                        <Flex className="h-[25%]" direction='column' justify='center' gap='4'>
+                            <Box className="h-[47%] w-[77%]" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', alignSelf: 'center' }}>
+                                <Button style={{ 'height': '100%', 'width': '100%', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)', 'backgroundColor': '#120052', cursor: 'pointer' }} size="3" variant='solid' onClick={handleStartMockTest}>Start Mock Test
+                                </Button>
+                            </Box>
+                        </Flex>
+                    </Flex>
+                </Box >
+            </Flex>
+            {/* Alert Dialog */}
+            <Dialog.Root open={alertOpen} onOpenChange={setAlertOpen}>
+                <Dialog.Content className="bg-[#EAF6FA]" style={{ 'display': 'flex', 'flexDirection': 'column', 'padding': '20px', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)', 'alignSelf': 'center', 'justifySelf': 'center', zIndex: 9999 }}>
+                    <Dialog.Title size='5' >Insufficient Balance</Dialog.Title>
+                    <Dialog.Description size="4">
+                        Your balance is insufficient to start a mock test. Please add funds.
+                    </Dialog.Description>
+                </Dialog.Content>
+            </Dialog.Root>
+        </Flex >
+    ) : (
+        <Flex direction='column' className="bg-[#38B6FF] h-screen w-screen p-8" justify='center' align='center' style={{ position: 'absolute' }}>
+            <Flex direction='column' className="h-full w-full">
+                <Header></Header>
+                <Box className="mobile-small:bg-blue-500 bg-[#EAF6FA] h-[64%] sm:h-[60%] md:h-[44%] lg:h-[58%] xl:h-[54%] 2xl:h-[54%] w-[90%] m-4 my-20 md:mt-44 lg:mt-24 xl:mt-38" style={{ 'maxWidth': '450px', 'borderRadius': '5px', 'boxShadow': '4px 4px 50px 5px rgba(0, 0, 0, 0.25)', alignSelf: 'center', justifySelf: 'center' }}>
                     <Flex className="h-[100%]" direction='column' py='8' gap='8'>
                         <Box className="h-[15%] w-[75%] md:mx-4" style={{ display: 'flex', 'flexDirection': 'row', justifyContent: 'left', alignItems: 'center', 'minWidth': '190px', 'maxWidth': '300px' }}>
                             <Image
