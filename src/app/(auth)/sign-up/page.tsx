@@ -9,7 +9,6 @@ import { randomBytes } from 'crypto';
 import { Suspense } from 'react'
 import dynamic from "next/dynamic";
 import OrigamiAnimation from "@/app/components/splash-screen/OrigamiAnimation";
-import { useMediaQuery } from 'react-responsive';
 
 const MainComponent = () => {
     console.log('sign up component mounted')
@@ -20,9 +19,6 @@ const MainComponent = () => {
     const [name, setName] = useState('');
 
     const router = useRouter();
-
-    const isHeightSmall = useMediaQuery({ query: '(max-height: 999px)' });
-    const isWidthSmall = useMediaQuery({ query: '(max-width: 499px)' });
 
     async function sendVerificationEmail() {
         const verificationCode = await generateVerificationCode()

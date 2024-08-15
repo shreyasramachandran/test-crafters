@@ -3,7 +3,7 @@ import { Flex, Box, Text, Button } from "@radix-ui/themes"
 import ContinueWithGoogle from "@/app/components/ContinueWithGoogle"
 import useAuth from "@/app/hooks/useAuth"
 import Link from 'next/link';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Suspense } from 'react'
 import dynamic from "next/dynamic";
