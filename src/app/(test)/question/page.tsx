@@ -17,6 +17,7 @@ const MainComponent = () => {
     const { isAuthenticated, loading } = useAuth();
     const router = useRouter();
     // Define breakpoints for tablet and mobile screens
+    const isMobileSmall = useMediaQuery({ query: '(max-width: 499px) and (max-height: 999px)' });
     const isTabletMedium = useMediaQuery({ query: '(min-width: 500px) and (max-width: 900px) and (max-height: 1500px)' });
     const searchParams = useSearchParams()
     // Decode the params
@@ -488,7 +489,156 @@ const MainComponent = () => {
         return <OrigamiAnimation />;
     }
 
-    return (
+    return isMobileSmall ? (
+        <Flex direction='column' className="bg-[#38B6FF] px-3 pt-7 pb-4 h-screen w-screen" style={{ position: 'absolute' }}>
+            <Flex direction='column' className="h-full w-full" gapY='2'>
+                <Header></Header>
+                <Box className="mt-[8px] mobile-very-small:mt-[12px] h-[10%]" style={{
+                    display: 'flex',
+                    flexDirection: 'row', justifyContent: 'center',
+                    alignItems: 'stretch',
+                    gap: '10px', // Reduced gap for mobile
+                    flex: 1,
+                }}>
+                    {/* Menu Box */}
+                    <Box p="4" style={{
+                        width: '50%',
+                        display: 'flex',
+                        flexDirection: 'row',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        borderRadius: '5px',
+                        cursor: 'pointer',
+                        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1)'
+                    }}>
+                        <Flex gapX='2' style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', height: '100%', width: '100%' }}>
+                            <Image
+                                src="/images/menu.svg"
+                                alt="Menu"
+                                width={18}
+                                height={18}
+                            />
+                            <Text size="2" weight="medium" wrap="pretty">Question</Text>
+                        </Flex>
+                    </Box>
+                    {/* Timer */}
+                    <Flex direction='column' p='4' style={{ 'width': '50%', alignItems: 'center', justifyContent: 'center', borderRadius: '5px', boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1)' }}>
+                        <Flex gapX='2' style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', justifyItems: 'center', justifyContent: 'center', height: '100%', width: '100%' }}>
+                            <Image
+                                src="/images/timer.svg"
+                                alt="Timer"
+                                width={18}
+                                height={18}
+                            />
+                            <Text size='2' weight='medium' wrap='pretty'>Time Remaining</Text>
+                        </Flex>
+                        <Text>{formatTime(timeLeft)} / {initialFormattedTime}</Text>
+                    </Flex>
+                </Box>
+                <Text className="pl-8 pt-2" size='6' weight='bold' wrap='pretty' >Question {currentQuestionNumber}</Text>
+                {/* Saperator */}
+                <Flex style={{ 'width': '100%', 'alignItems': 'center' }}>
+                    <div className="flex items-center justify-center w-full p-4">
+                        <div className="flex-grow border-t border-black"></div>
+                    </div>
+                </Flex>
+                <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: '65%' }}>
+                    <Flex direction='column' gap='3'>
+                        {/* Question Pre Text*/}
+                        <Box style={{ 'width': '100%', 'display': 'flex', 'alignItems': 'center' }}>
+                            <Text className="pl-8 pr-8" size='3' weight='regular' wrap='pretty' >{questionPreText}</Text>
+                        </Box>
+                        {/* Question */}
+                        <Box style={{ 'width': '100%', 'display': 'flex', 'alignItems': 'center' }}>
+                            <Text className="pl-8 pr-8" size='3' weight='medium' wrap='pretty' >{question}</Text>
+                        </Box>
+                        {/* Options */}
+                        <Box style={{ 'width': '100%', 'display': 'flex', 'alignItems': 'center' }}>
+                            <RadioGroup.Root size='3' name="Options" className="pl-8 pr-8" highContrast style={{ fontSize: '1.1rem', width: '100%' }}>
+                                {options.map((option, index) => (
+                                    <RadioGroup.Item
+                                        style={{
+                                            cursor: 'pointer'
+                                        }}
+                                        key={index}
+                                        value={option}
+                                        className="flex items-center h-8 w-8 pr-8 tablet-medium:m-2"
+                                        checked={selectedOption === index}
+                                        onClickCapture={(isChecked) => {
+                                            if (isChecked) setSelectedOption(index); // Update the selected option state
+                                        }}
+                                    >
+                                        {option}
+                                    </RadioGroup.Item>
+                                ))}
+                            </RadioGroup.Root>
+                        </Box>
+                    </Flex>
+                </ScrollArea>
+                {/* Saperator */}
+                <Flex style={{ 'width': '100%', 'display': 'flex', 'alignItems': 'center' }}>
+                    <div className="flex items-center justify-center w-full p-4">
+                        <div className="flex-grow border-t border-black"></div>
+                    </div>
+                </Flex>
+                {/* Dialog Box */}
+                <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
+                    <Dialog.Content style={{ backgroundColor: '#DFF6FA', borderRadius: '5px', padding: '20px', boxShadow: '0px 10px 50px hsla(0, 0%, 0%, 0.1)' }}>
+                        <div>
+                            {!isCompleted ?
+                                <Text trim="both" size="4">
+                                    Solve at least {minimumRequiredQuestions} questions to complete the test.
+                                </Text> :
+                                <Flex gap='5' style={{ 'height': '100%', 'width': '100%', 'display': 'flex', 'flexDirection': 'column', 'alignItems': 'flex-start', 'justifyContent': 'flex-start' }}>
+                                    <Text className="pl-4" size='6' weight='medium' align='left'>Proceed to submit</Text>
+                                    <Text className="pl-4" size='4' weight='regular' align='left'>You have reached the end of the test.
+                                        Do you wish to proceed to submit?</Text>
+                                    <Flex gap='4' className="pl-4" style={{ 'height': '100%', 'width': '100%', 'display': 'flex', 'flexDirection': 'row', 'justifyContent': 'flex-start' }} >
+                                        <Dialog.Close>
+                                            <Button style={{ borderRadius: '5px', backgroundColor: 'rgba(0, 0, 59, 0.051)', color: '#60646C', }} size="3" variant='soft' onClick={() => {
+                                            }}>Cancel</Button>
+                                        </Dialog.Close>
+                                        <Button style={{ borderRadius: '5px', backgroundColor: '#120052' }} size="3" variant='solid' onClick={handleTestCompletion}>Proceed</Button>
+                                    </Flex>
+                                </Flex>
+                            }
+                        </div>
+                    </Dialog.Content>
+                </Dialog.Root>
+                {/* Test completion dialog, Not part of this Flex */}
+                <Dialog.Root open={testCompletionDialogOpen}>
+                    <Dialog.Content style={{ backgroundColor: '#DFF6FA', borderRadius: '5px', padding: '20px', boxShadow: '0px 10px 50px hsla(0, 0%, 0%, 0.1)' }}>
+                        <Text>The test has ended. Please wait while we redirect you to the analysis page.</Text>
+                    </Dialog.Content>
+                </Dialog.Root>
+
+                {/* Navigation Buttons */}
+                <Flex direction='column' className="gap-4 w-[100%]" style={{ 'alignContent': 'center', 'justifyContent': 'start' }}>
+                    <Flex direction='row' className="gap-1 w-[100%]" style={{ 'alignItems': 'center', 'justifyContent': 'center' }}>
+                        <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="2" variant='solid' onClick={() => {
+                            onClickNavigationButtons(QuestionState.Answered, 'increment', false)
+                        }}>Save and Next</Button>
+                        <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="2" variant='solid' onClick={() => {
+                            clearResponse()
+                        }}>Clear Response</Button>
+                    </Flex>
+                    <Flex direction='row' className="gap-1 w-[100%]" style={{ 'alignItems': 'center', 'justifyContent': 'center' }}>
+                        <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer', padding: '6px' }} size="2" variant='solid' onClick={() => {
+                            onClickNavigationButtons(QuestionState.AnsweredAndMarkedForReview, 'increment', false)
+                        }}>Save and Mark for Review</Button>
+                        <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer', padding: '6px' }} size="2" variant='solid' onClick={() => {
+                            onClickNavigationButtons(QuestionState.MarkedForReview, 'increment', false)
+                        }}>Mark for Review and Next</Button>
+                    </Flex>
+                    <Flex direction='row' className="gap-1 w-[100%]" style={{ 'alignItems': 'center', 'justifyContent': 'center' }}>
+                        <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="2" variant='solid' onClick={() => { onClickNavigationButtons(QuestionState.NotAnswered, 'decrement', true) }}>Previous</Button>
+                        <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="2" variant='solid' onClick={submit}>Submit</Button>
+                        <Button style={{ borderRadius: '5px', 'backgroundColor': '#120052', cursor: 'pointer' }} size="2" variant='solid' onClick={() => { onClickNavigationButtons(QuestionState.NotAnswered, 'increment', true) }}>Next</Button>
+                    </Flex>
+                </Flex>
+            </Flex>
+        </Flex>
+    ) : (
         <Flex className="bg-[#38B6FF] p-8 h-screen w-screen" direction='column' style={{ position: 'absolute' }}>
             <Header></Header>
             <Box className="h-[100%] w-[100%]">
@@ -498,15 +648,14 @@ const MainComponent = () => {
                             <Flex direction='row' style={{ 'width': '100%', 'justifyContent': 'space-between', 'alignItems': 'center' }}>
                                 <Text className="pl-8" size='6' weight='bold' wrap='pretty' >Question {currentQuestionNumber}</Text>
                                 {/* Menu Box */}
-                                <Box p="4" mr='5' className="mix-blend-multiply" style={{
+                                <Box p="4" mr='5' style={{
                                     display: 'flex',
                                     flexDirection: 'row',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    borderRadius: '12px',
-                                    backgroundColor: '#EAF6FA',
+                                    borderRadius: '5px',
                                     cursor: 'pointer',
-                                    boxShadow: '1px 1px 20px 5px rgba(0, 0, 0, 0.15)'
+                                    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1), 0 4px 8px rgba(0, 0, 0, 0.1)'
                                 }}>
                                     <Image
                                         src="/images/menu.svg"
@@ -523,17 +672,17 @@ const MainComponent = () => {
                                     <div className="flex-grow border-t border-black"></div>
                                 </div>
                             </Flex>
-                            <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: isTabletMedium ? '50%' : '40%' }}>
+                            <ScrollArea type="always" scrollbars="vertical" size="2" style={{ height: isTabletMedium ? '50%' : '40%', maxHeight: isTabletMedium ? '50vh' : '300px', overflow: 'hidden' }}>
                                 <Flex direction='column' gap='3'>
-                                    {/* Question Pre Text*/}
+
                                     <Box style={{ 'width': '100%', 'display': 'flex', 'alignItems': 'center' }}>
                                         <Text className="pl-8 pr-8" size='3' weight='regular' wrap='pretty' >{questionPreText}</Text>
                                     </Box>
-                                    {/* Question */}
+
                                     <Box style={{ 'width': '100%', 'display': 'flex', 'alignItems': 'center' }}>
                                         <Text className="pl-8 pr-8" size='3' weight='medium' wrap='pretty' >{question}</Text>
                                     </Box>
-                                    {/* Options */}
+
                                     <Box style={{ 'width': '100%', 'display': 'flex', 'alignItems': 'center' }}>
                                         <RadioGroup.Root size='3' name="Options" className="pl-8 pr-8" highContrast style={{ fontSize: '1.1rem', width: '100%' }}>
                                             {options.map((option, index) => (
@@ -586,7 +735,6 @@ const MainComponent = () => {
                                     </div>
                                 </Dialog.Content>
                             </Dialog.Root>
-
                             {/* Navigation Buttons */}
                             <Flex direction='column' className="gap-4 w-[100%]" style={{ 'alignContent': 'center', 'justifyContent': 'start' }}>
                                 <Flex direction='row' className="gap-6 w-[100%]" style={{ 'alignItems': 'center', 'justifyContent': 'center' }}>
@@ -646,13 +794,13 @@ const MainComponent = () => {
                                     <Text size='4' weight='medium' wrap='pretty'>Question Palette</Text>
                                 </Flex>
                                 {/* Questions List Buttons */}
-                                <Grid gapY='1' style={{ 'height': 'auto', 'width': '100%', 'gridTemplateColumns': 'repeat(8, 1fr)', alignItems: 'center', justifyItems: 'center' }}>
+                                <Grid gapY='1' style={{ 'width': '100%', 'gridTemplateColumns': 'repeat(8, 1fr)', alignItems: 'center', justifyItems: 'center' }}>
                                     {questionPalette.map((state, index) => (
-                                        <div key={index}>
+                                        <div key={index} style={{ width: '30px', height: '30px' }}>
                                             <button onClick={() => {
                                                 // Here index is the index of the question that is clicked
                                                 onClickQuestionPalette(index)
-                                            }}>{getComponentForState(state)}</button>
+                                            }} style={{ width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>{getComponentForState(state)}</button>
                                         </div>
                                     ))}
                                 </Grid>
@@ -669,9 +817,9 @@ const MainComponent = () => {
                                     <Text size='4' weight='medium' wrap='pretty'>Legend</Text>
                                 </Flex>
                                 {/* Legend Buttons */}
-                                <Grid gapX='9' pl='2' style={{
-                                    'width': '100%', 'display': 'grid', gridTemplateRows: 'repeat(3, 2fr)',
-                                    gridTemplateColumns: 'min-content auto', // This will allow for natural width of the icons and the rest for text
+                                <Grid gapX={isTabletMedium ? '3' : '9'} pl={isTabletMedium ? '0' : '2'} style={{
+                                    'width': '100%', 'display': 'grid', gridTemplateRows: isTabletMedium ? 'repeat(3, 2fr)' : 'repeat(3, 2fr)',
+                                    gridTemplateColumns: isTabletMedium ? '2fr 1fr' : 'min-content auto',
                                     alignItems: 'center', justifyItems: 'left'
                                 }}>
                                     <div className="flex flex-row items-center justify-center">
@@ -705,7 +853,7 @@ const MainComponent = () => {
                                         <div className="pl-1">Answered</div>
                                     </div>
                                     <div className="flex flex-row items-center justify-center">
-                                        <div className="w-7 h-7 relative inline-block">
+                                        <div className="tablet-medium:w-9 tablet-medium:h:9 w-7 h-7 relative inline-block">
                                             <Image
                                                 src="/images/marked_for_review.svg"
                                                 alt="Marked For Review"
@@ -717,7 +865,7 @@ const MainComponent = () => {
                                         <div className="pl-1">Marked for Review</div>
                                     </div>
                                     <div className="flex flex-row items-center justify-center" style={{ 'gridColumn': '1 / span 2', 'gridRow': '3 / 4' }}>
-                                        <div className="w-11 h-11 relative inline-block">
+                                        <div className="tablet-medium:w-14 tablet-medium:h:14 w-11 h-11 relative inline-block">
                                             <Image
                                                 src="/images/marked_for_review_other.svg"
                                                 alt="Marked For Review Other"
