@@ -4,6 +4,7 @@ import { Avatar, Box, Card, Flex, Text } from "@radix-ui/themes"
 import { useRouter } from 'next/navigation';
 import { deleteCookie } from "../../utils/cookieUtils";
 import Image from 'next/image';
+import { useMediaQuery } from "react-responsive";
 
 
 interface SettingsProps {
@@ -57,9 +58,9 @@ export default function Settings({ name, email, dialogState, onClose }: Settings
         onClose();
     }
 
-    const refer = async () => {
-        dialogState(true)
-    }
+    // const refer = async () => {
+    //     dialogState(true)
+    // }
 
     const redirectEWallet = async () => {
         // Redirect to e-wallet
@@ -69,17 +70,17 @@ export default function Settings({ name, email, dialogState, onClose }: Settings
     const fallback = name.charAt(0).toUpperCase()
 
     return (
-        <Box className="py-6 pl-6">
-            <Box width="400px" className="bg-[#EAF6FA]" style={{ 'borderRadius': '5px', 'boxShadow': '2px 2px 25px 2px rgba(0, 0, 0, 0.25)' }}>
+        <Box className="py-3">
+            <Box className="bg-[#EAF6FA]" style={{ 'borderRadius': '5px', 'boxShadow': '2px 2px 25px 2px rgba(0, 0, 0, 0.25)' }}>
                 <Card size="1" variant="ghost">
                     <Flex direction="column" gap="4" className="py-4">
-                        <Flex gap="4" align="center" className="ml-3">
-                            <Avatar size="4" radius="medium" fallback={fallback} highContrast />
+                        <Flex gap="4" align="center" className="mx-3">
+                            <Avatar size="3" radius="medium" fallback={fallback} highContrast />
                             <Box>
-                                <Text as="div" size="4" weight="bold">
+                                <Text as="div" size="3" weight="bold">
                                     {name}
                                 </Text>
-                                <Text as="div" size="4" color="gray">
+                                <Text as="div" size="2" weight='regular' color="gray">
                                     {email}
                                 </Text>
                             </Box>
@@ -91,12 +92,12 @@ export default function Settings({ name, email, dialogState, onClose }: Settings
                             <Image
                                 src="/images/wallet.svg"
                                 alt="Wallet"
-                                width={20}
-                                height={20}
+                                width={18}
+                                height={18}
                             />
-                            <Text as="div" size="4" color="gray" className="ml-3">Wallet</Text>
+                            <Text as="div" size="3" color="gray" className="ml-2">Wallet</Text>
                         </Flex>
-                        <Flex gap="4" align="center" className="ml-6" onClick={refer} style={{ cursor: 'pointer' }}>
+                        {/* <Flex gap="4" align="center" className="ml-6" onClick={refer} style={{ cursor: 'pointer' }}>
                             <Image
                                 src="/images/refer.svg"
                                 alt="Refer"
@@ -104,15 +105,15 @@ export default function Settings({ name, email, dialogState, onClose }: Settings
                                 height={20}
                             />
                             <Text as="div" size="4" color="gray" className="ml-3">Refer</Text>
-                        </Flex>
+                        </Flex> */}
                         <Flex gap="4" align="center" className="ml-6" onClick={signOut} style={{ cursor: 'pointer' }}>
                             <Image
                                 src="/images/log_out.svg"
                                 alt="Sign Out"
-                                width={20}
-                                height={20}
+                                width={18}
+                                height={18}
                             />
-                            <Text as="div" size="4" color="gray" className="ml-3">Sign Out</Text>
+                            <Text as="div" size="3" color="gray" className="ml-2">Sign Out</Text>
                         </Flex>
                     </Flex>
                 </Card>

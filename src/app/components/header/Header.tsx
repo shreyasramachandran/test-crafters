@@ -58,7 +58,9 @@ export default function Header() {
         }}>
             <Flex className="h-full" justify='between' align='center'>
                 <IconButton size='3' style={{
-                    backgroundColor: '#1DACFF', boxShadow: '2px 2px 10px 3px rgba(0, 0, 0, 0.15)', cursor: 'pointer'
+                    backgroundColor: '#1DACFF',
+                    boxShadow: '2px 2px 10px 3px rgba(0, 0, 0, 0.15)',
+                    cursor: 'pointer'
                 }} onClick={handleBackClick}>
                     <Image
                         src="/images/back_button.svg"
@@ -86,15 +88,19 @@ export default function Header() {
                             marginRight: '42px',
                             pointerEvents: 'auto'
                         }}>
-                            <Settings name={userInfo.userName} email={userInfo.userEmail} dialogState={setDialogOpen} onClose={() => { setSettings(false) }} />
+                            <Settings
+                                name={userInfo.userName}
+                                email={userInfo.userEmail}
+                                dialogState={setDialogOpen} // Clean up later
+                                onClose={() => { setSettings(false) }} />
                         </Box>
                     )}
                     {/* Dialog Box */}
-                    <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
+                    {/* <Dialog.Root open={dialogOpen} onOpenChange={setDialogOpen}>
                         <Dialog.Content style={{ padding: '0px' }}>
                             <Refer code="shreyas" />
                         </Dialog.Content>
-                    </Dialog.Root>
+                    </Dialog.Root> */}
                 </Flex>
             </Flex>
         </Box>
